@@ -1,0 +1,54 @@
+<client_config>
+	<!--
+		This file should only be edited by OT maintainers.
+		If you don't know what you're doing, changing anything
+		in this file
+
+		** CAN BREAK ANY MAP YOU OPEN PERMANENTLY. **
+	-->
+
+	<otbs>
+		<!-- This is only used as a mapping for parsing the versions later on-->
+		<otb client="11" version="3" id="62"/>
+	</otbs>
+
+	<clients>
+<!--
+		name is the name that's displayed in the UI for this version.
+
+		otb is what otb file it uses (see above). More than one client
+		using the same otb version WILL NOT WORK
+
+		Tag the ones that can be selected in the UI with visible
+
+		Tag the ONE that is the default when the editor opens up on the
+		first time with default="true"
+
+		otbm - There can be multiple otbm subtags, list what map version
+		that client version uses. If multiple, set one as default="true"
+		and the editor will use that one as the default for new maps.
+		Otherwise the first one will be preferred.
+
+		extensions - Tag with range of extensions that version should load.
+		If you set it for to=8.20 for example, all made extension for 8.20
+		and later will be loaded
+
+		data - The .dat / .spr id (first four bytes). Used to recognize
+		the client data files. The format is what version
+		of the loader the editor should use (ie. last time data format
+		changed)
+-->
+		<client name="Client 11" otb="11" default="true" visible="true" data_directory="materials">
+			<otbm version="3"/>
+			<data format="11" dat="0x4A10" spr="0x59E48E02"/>
+		</client>
+	</clients>
+
+	<conversions>
+		<!-- Used by the editor to figure out when to run conversions -->
+		<convert after="760" using="760to740"/>
+		<convert before="810" using="800to810"/>
+		<convert at="854" using="854badto854"/>
+	</conversions>
+
+</client_config>

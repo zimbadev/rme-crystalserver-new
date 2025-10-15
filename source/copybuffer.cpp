@@ -1,0 +1,389 @@
+//////////////////////////////////////////////////////////////////////
+// This file is part of Remere's Map Editor
+//////////////////////////////////////////////////////////////////////
+// Remere's Map Editor is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Remere's Map Editor is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see <http://www.gnu.org/licenses/>.
+//////////////////////////////////////////////////////////////////////
+
+#include "main.h"
+
+#include "copybuffer.h"
+#include "editor.h"
+#include "gui.h"
+#include "monster.h"
+#include "npc.h"
+
+CopyBuffer::CopyBuffer() :
+	tiles(newd BaseMap()) {
+	;
+}
+
+size_t CopyBuffer::GetTileCount() {
+	return tiles ? (size_t)tiles->size() : 0;
+}
+
+BaseMap &CopyBuffer::getBufferMap() {
+	ASSERT(tiles);
+	return *tiles;
+}
+
+CopyBuffer::~CopyBuffer() {
+	clear();
+}
+
+Position CopyBuffer::getPosition() const {
+	ASSERT(tiles);
+	return copyPos;
+}
+
+void CopyBuffer::clear() {
+	delete tiles;
+	tiles = nullptr;
+}
+
+void CopyBuffer::copy(Editor &editor, int floor) {
+	if (!editor.hasSelection()) {
+		g_gui.SetStatusText("No tiles to copy.");
+		return;
+	}
+
+	clear();
+	tiles = newd BaseMap();
+
+	int tile_count = 0;
+	int item_count = 0;
+	int monsterCount = 0;
+	copyPos = Position(0xFFFF, 0xFFFF, floor);
+
+	for (Tile* tile : editor.getSelection()) {
+		++tile_count;
+
+		TileLocation* newlocation = tiles->createTileL(tile->getPosition());
+		Tile* copied_tile = tiles->allocator(newlocation);
+
+		if (tile->ground && tile->ground->isSelected()) {
+			copied_tile->house_id = tile->house_id;
+			copied_tile->setMapFlags(tile->getMapFlags());
+		}
+
+		ItemVector tile_selection = tile->getSelectedItems();
+		for (ItemVector::iterator iit = tile_selection.begin(); iit != tile_selection.end(); ++iit) {
+			++item_count;
+			// Copy items to copybuffer
+			copied_tile->addItem((*iit)->deepCopy());
+		}
+
+		// Monster
+		const auto monstersSelection = tile->getSelectedMonsters();
+		std::ranges::for_each(monstersSelection, [&](const auto monster) {
+			++monsterCount;
+			copied_tile->addMonster(monster->deepCopy());
+		});
+
+		if (tile->spawnMonster && tile->spawnMonster->isSelected()) {
+			copied_tile->spawnMonster = tile->spawnMonster->deepCopy();
+		}
+		// Npc
+		if (tile->npc && tile->npc->isSelected()) {
+			copied_tile->npc = tile->npc->deepCopy();
+		}
+		if (tile->spawnNpc && tile->spawnNpc->isSelected()) {
+			copied_tile->spawnNpc = tile->spawnNpc->deepCopy();
+		}
+
+		tiles->setTile(copied_tile);
+
+		if (copied_tile->getX() < copyPos.x) {
+			copyPos.x = copied_tile->getX();
+		}
+
+		if (copied_tile->getY() < copyPos.y) {
+			copyPos.y = copied_tile->getY();
+		}
+	}
+
+	fmt::dynamic_format_arg_store<fmt::format_context> store;
+
+	store.push_back(tile_count);
+	tile_count > 1 ? store.push_back("s") : store.push_back("");
+	store.push_back(item_count);
+	item_count > 1 ? store.push_back("s") : store.push_back("");
+	store.push_back(monsterCount);
+	monsterCount > 1 ? store.push_back("s") : store.push_back("");
+
+	g_gui.SetStatusText(fmt::vformat("Copied {} tile{}, {} item{} and {} monster{}", store));
+}
+
+void CopyBuffer::cut(Editor &editor, int floor) {
+	if (!editor.hasSelection()) {
+		g_gui.SetStatusText("No tiles to cut.");
+		return;
+	}
+
+	clear();
+	tiles = newd BaseMap();
+
+	Map &map = editor.getMap();
+	int tile_count = 0;
+	int item_count = 0;
+	int monsterCount = 0;
+	copyPos = Position(0xFFFF, 0xFFFF, floor);
+
+	BatchAction* batch = editor.createBatch(ACTION_CUT_TILES);
+	Action* action = editor.createAction(batch);
+
+	PositionList tilestoborder;
+
+	for (Tile* tile : editor.getSelection()) {
+		tile_count++;
+
+		Tile* newtile = tile->deepCopy(map);
+		Tile* copied_tile = tiles->allocator(tile->getLocation());
+
+		if (tile->ground && tile->ground->isSelected()) {
+			copied_tile->house_id = newtile->house_id;
+			newtile->house_id = 0;
+			copied_tile->setMapFlags(tile->getMapFlags());
+			newtile->setMapFlags(TILESTATE_NONE);
+		}
+
+		ItemVector tile_selection = newtile->popSelectedItems();
+		for (ItemVector::iterator iit = tile_selection.begin(); iit != tile_selection.end(); ++iit) {
+			item_count++;
+			// Add items to copybuffer
+			copied_tile->addItem(*iit);
+		}
+
+		// Monster
+		const auto monsterSelection = newtile->popSelectedMonsters();
+		for (auto monsterIt = monsterSelection.begin(); monsterIt != monsterSelection.end(); ++monsterIt) {
+			++monsterCount;
+			copied_tile->monsters.emplace_back(*monsterIt);
+		}
+
+		if (newtile->spawnMonster && newtile->spawnMonster->isSelected()) {
+			copied_tile->spawnMonster = newtile->spawnMonster;
+			newtile->spawnMonster = nullptr;
+		}
+
+		// Npc
+		if (newtile->npc && newtile->npc->isSelected()) {
+			copied_tile->npc = newtile->npc;
+			newtile->npc = nullptr;
+		}
+
+		if (newtile->spawnNpc && newtile->spawnNpc->isSelected()) {
+			copied_tile->spawnNpc = newtile->spawnNpc;
+			newtile->spawnNpc = nullptr;
+		}
+
+		tiles->setTile(copied_tile->getPosition(), copied_tile);
+
+		if (copied_tile->getX() < copyPos.x) {
+			copyPos.x = copied_tile->getX();
+		}
+
+		if (copied_tile->getY() < copyPos.y) {
+			copyPos.y = copied_tile->getY();
+		}
+
+		if (g_settings.getInteger(Config::USE_AUTOMAGIC)) {
+			for (int y = -1; y <= 1; y++) {
+				for (int x = -1; x <= 1; x++) {
+					tilestoborder.push_back(Position(tile->getX() + x, tile->getY() + y, tile->getZ()));
+				}
+			}
+		}
+		action->addChange(newd Change(newtile));
+	}
+
+	batch->addAndCommitAction(action);
+
+	// Remove duplicates
+	tilestoborder.sort();
+	tilestoborder.unique();
+
+	if (g_settings.getInteger(Config::USE_AUTOMAGIC)) {
+		action = editor.createAction(batch);
+		for (PositionList::iterator it = tilestoborder.begin(); it != tilestoborder.end(); ++it) {
+			TileLocation* location = map.createTileL(*it);
+			if (location->get()) {
+				Tile* new_tile = location->get()->deepCopy(map);
+				new_tile->borderize(&map);
+				new_tile->wallize(&map);
+				action->addChange(newd Change(new_tile));
+			} else {
+				Tile* new_tile = map.allocator(location);
+				new_tile->borderize(&map);
+				if (new_tile->size()) {
+					action->addChange(newd Change(new_tile));
+				} else {
+					delete new_tile;
+				}
+			}
+		}
+
+		batch->addAndCommitAction(action);
+	}
+
+	editor.addBatch(batch);
+	editor.updateActions();
+
+	fmt::dynamic_format_arg_store<fmt::format_context> store;
+
+	store.push_back(tile_count);
+	tile_count > 1 ? store.push_back("s") : store.push_back("");
+	store.push_back(item_count);
+	item_count > 1 ? store.push_back("s") : store.push_back("");
+	store.push_back(monsterCount);
+	monsterCount > 1 ? store.push_back("s") : store.push_back("");
+
+	g_gui.SetStatusText(fmt::vformat("Cut out {} tile{}, {} item{} and {} monster{}", store));
+}
+
+void CopyBuffer::paste(Editor &editor, const Position &toPosition) {
+	if (!tiles) {
+		return;
+	}
+
+	Map &map = editor.getMap();
+
+	BatchAction* batchAction = editor.createBatch(ACTION_PASTE_TILES);
+	Action* action = editor.createAction(batchAction);
+	for (MapIterator it = tiles->begin(); it != tiles->end(); ++it) {
+		Tile* buffer_tile = (*it)->get();
+		Position pos = buffer_tile->getPosition() - copyPos + toPosition;
+
+		if (!pos.isValid()) {
+			continue;
+		}
+
+		TileLocation* location = map.createTileL(pos);
+		Tile* copy_tile = buffer_tile->deepCopy(map);
+		Tile* old_dest_tile = location->get();
+		Tile* new_dest_tile = nullptr;
+		copy_tile->setLocation(location);
+
+		if (g_settings.getInteger(Config::MERGE_PASTE) || !copy_tile->ground) {
+			if (old_dest_tile) {
+				new_dest_tile = old_dest_tile->deepCopy(map);
+			} else {
+				new_dest_tile = map.allocator(location);
+			}
+			new_dest_tile->merge(copy_tile);
+			delete copy_tile;
+		} else {
+			// If the copied tile has ground, replace target tile
+			new_dest_tile = copy_tile;
+		}
+
+		// Add all surrounding tiles to the map, so they get borders
+		map.createTile(pos.x - 1, pos.y - 1, pos.z);
+		map.createTile(pos.x, pos.y - 1, pos.z);
+		map.createTile(pos.x + 1, pos.y - 1, pos.z);
+		map.createTile(pos.x - 1, pos.y, pos.z);
+		map.createTile(pos.x + 1, pos.y, pos.z);
+		map.createTile(pos.x - 1, pos.y + 1, pos.z);
+		map.createTile(pos.x, pos.y + 1, pos.z);
+		map.createTile(pos.x + 1, pos.y + 1, pos.z);
+
+		action->addChange(newd Change(new_dest_tile));
+	}
+	batchAction->addAndCommitAction(action);
+
+	if (g_settings.getInteger(Config::USE_AUTOMAGIC) && g_settings.getInteger(Config::BORDERIZE_PASTE)) {
+		action = editor.createAction(batchAction);
+		TileList borderize_tiles;
+
+		// Go through all modified (selected) tiles (might be slow)
+		for (MapIterator it = tiles->begin(); it != tiles->end(); ++it) {
+			bool add_me = false; // If this tile is touched
+			Position pos = (*it)->getPosition() - copyPos + toPosition;
+			if (pos.z < rme::MapMinLayer || pos.z > rme::MapMaxLayer) {
+				continue;
+			}
+			// Go through all neighbours
+			Tile* t;
+			t = map.getTile(pos.x - 1, pos.y - 1, pos.z);
+			if (t && !t->isSelected()) {
+				borderize_tiles.push_back(t);
+				add_me = true;
+			}
+			t = map.getTile(pos.x, pos.y - 1, pos.z);
+			if (t && !t->isSelected()) {
+				borderize_tiles.push_back(t);
+				add_me = true;
+			}
+			t = map.getTile(pos.x + 1, pos.y - 1, pos.z);
+			if (t && !t->isSelected()) {
+				borderize_tiles.push_back(t);
+				add_me = true;
+			}
+			t = map.getTile(pos.x - 1, pos.y, pos.z);
+			if (t && !t->isSelected()) {
+				borderize_tiles.push_back(t);
+				add_me = true;
+			}
+			t = map.getTile(pos.x + 1, pos.y, pos.z);
+			if (t && !t->isSelected()) {
+				borderize_tiles.push_back(t);
+				add_me = true;
+			}
+			t = map.getTile(pos.x - 1, pos.y + 1, pos.z);
+			if (t && !t->isSelected()) {
+				borderize_tiles.push_back(t);
+				add_me = true;
+			}
+			t = map.getTile(pos.x, pos.y + 1, pos.z);
+			if (t && !t->isSelected()) {
+				borderize_tiles.push_back(t);
+				add_me = true;
+			}
+			t = map.getTile(pos.x + 1, pos.y + 1, pos.z);
+			if (t && !t->isSelected()) {
+				borderize_tiles.push_back(t);
+				add_me = true;
+			}
+			if (add_me) {
+				borderize_tiles.push_back(map.getTile(pos));
+			}
+		}
+		// Remove duplicates
+		borderize_tiles.sort();
+		borderize_tiles.unique();
+
+		for (Tile* tile : borderize_tiles) {
+			if (tile) {
+				Tile* newTile = tile->deepCopy(map);
+				newTile->borderize(&map);
+
+				if (tile->ground && tile->ground->isSelected()) {
+					newTile->selectGround();
+				}
+
+				newTile->wallize(&map);
+				action->addChange(newd Change(newTile));
+			}
+		}
+
+		// Commit changes to map
+		batchAction->addAndCommitAction(action);
+	}
+
+	editor.addBatch(batchAction);
+	editor.updateActions();
+}
+
+bool CopyBuffer::canPaste() const {
+	return tiles && tiles->size() != 0;
+}

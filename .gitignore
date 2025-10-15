@@ -1,0 +1,65 @@
+# CMake
+CMakeCache.txt
+CMakeFiles
+cmake_install.cmake
+Makefile
+build/
+build.*/
+build-debug
+build-release
+CMakeLists.txt.user*
+
+# RME
+remeres
+rme
+rme.cfg
+data/user
+world
+
+# Visual Studio
+*.MAP
+*.user
+*.APS
+*.opensdf
+*.sdf
+*.suo
+*.obj
+*.db
+*.opendb
+*.vs
+
+vcproj/
+vcproj/generated/
+vcproj/ipch/
+vcproj/Beta Release/
+vcproj/Debug/
+vcproj/Release/
+vcproj/x64/
+vcproj/Project/Beta Release/
+vcproj/Project/Debug/
+vcproj/Project/Release/
+vcproj/Project/x64/
+vcproj/Installer/Beta Release/
+vcproj/Installer/Debug/
+vcproj/Installer/Release/
+vcpkg_installed/
+.vscode/
+*.filters
+*.users
+
+# Xcode
+xcuserdata
+.DS_STORE
+
+# CLion
+.idea/
+cmake-build-debug/
+
+# User
+*.dll
+*.exe
+*.pdb
+*.rar
+*.lzma
+*.dat
+*.manifest
