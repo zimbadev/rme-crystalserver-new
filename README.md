@@ -1,3 +1,5 @@
+# Remere's Map Editor (Canary Fork)
+
 What is this?
 =============
 
@@ -30,3 +32,15 @@ Download
 ========
 
 You can find the releases in [opentibiabr remere's map editor](https://github.com/opentibiabr/remeres-map-editor/releases).
+
+Running on Linux
+================
+
+After downloading the Linux version (e.g., an AppImage or binary), you first need to make it executable.
+
+```bash
+chmod +x canary-map-editor
+
+
+```bash
+./canary-map-editor
