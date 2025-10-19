@@ -41,6 +41,4 @@ After downloading the Linux version (e.g., an AppImage or binary), you first nee
 ```bash
 chmod +x canary-map-editor
 
-
-```bash
 ./canary-map-editor
