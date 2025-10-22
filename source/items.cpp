@@ -453,8 +453,8 @@ bool ItemDatabase::loadFromOtb(const FileName &datafile, wxString &error, wxArra
 }
 #endif
 
-bool ItemDatabase::loadFromProtobuf(wxString &error, wxArrayString &warnings, canary::protobuf::appearances::Appearances &appearances) {
-	using namespace canary::protobuf::appearances;
+bool ItemDatabase::loadFromProtobuf(wxString &error, wxArrayString &warnings, rme::protobuf::appearances::Appearances &appearances) {
+	using namespace rme::protobuf::appearances;
 
 	for (uint16_t it = 0; it < static_cast<uint16_t>(appearances.object_size()); ++it) {
 		Appearance object = appearances.object(it);

@@ -96,4 +96,4 @@ jobs:
         with:
           name: ${{ matrix.os }}-${{ matrix.buildtype }}
           path: |
-            ${{ github.workspace }}/canary-map-editor
+            ${{ github.workspace }}/rme

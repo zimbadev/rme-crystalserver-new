@@ -30,7 +30,7 @@
 #include "palette_window.h"
 #include "zone_brush.h"
 
-namespace canary {
+namespace rme {
 	namespace protobuf {
 		namespace appearances {
 			class Appearances;
@@ -456,7 +456,7 @@ public:
 	FlagBrush* pvp_brush;
 	ZoneBrush* zone_brush;
 
-	std::unique_ptr<canary::protobuf::appearances::Appearances> m_appearancesPtr; // Protobuf appearances file parsed
+	std::unique_ptr<rme::protobuf::appearances::Appearances> m_appearancesPtr; // Protobuf appearances file parsed
 
 protected:
 	//=========================================================================

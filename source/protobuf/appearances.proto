@@ -1,6 +1,6 @@
 syntax = "proto2";
 
-package canary.protobuf.appearances;
+package rme.protobuf.appearances;
 
 message Coordinate {
 	optional uint32 x = 1;
@@ -41,6 +41,8 @@ enum ITEM_CATEGORY {
 	ITEM_CATEGORY_PREMIUM_SCROLLS = 22;
 	ITEM_CATEGORY_TIBIA_COINS = 23;
 	ITEM_CATEGORY_CREATURE_PRODUCTS = 24;
+	ITEM_CATEGORY_QUIVER = 25;
+	ITEM_CATEGORY_SOULCORES = 26;
 }
 
 enum PLAYER_PROFESSION {
@@ -115,8 +117,31 @@ message Appearance {
 	optional uint32 id = 1;
 	repeated FrameGroup frame_group = 2;
 	optional AppearanceFlags flags = 3;
-	optional string name = 4;
-	optional string description = 5;
+	optional bytes name = 4;
+	optional bytes description = 5;
+}
+
+enum WEAPON_TYPE {
+  WEAPON_TYPE_NOWEAPON = 0;
+  WEAPON_TYPE_SWORD = 1;
+  WEAPON_TYPE_AXE = 2;
+  WEAPON_TYPE_CLUB = 3;
+  WEAPON_TYPE_FIST = 4;
+  WEAPON_TYPE_BOW = 5;
+  WEAPON_TYPE_CROSSBOW = 6;
+  WEAPON_TYPE_WAND_ROD = 7;
+  WEAPON_TYPE_THROW = 8;
+}
+
+enum VOCATION {
+  VOCATION_ANY = -1;
+  VOCATION_NONE = 0;
+  VOCATION_KNIGHT = 1;
+  VOCATION_PALADIN = 2;
+  VOCATION_SORCERER = 3;
+  VOCATION_DRUID = 4;
+  VOCATION_MONK = 5;
+  VOCATION_PROMOTED = 10;
 }
 
 message AppearanceFlags {
@@ -168,6 +193,22 @@ message AppearanceFlags {
 	optional bool show_off_socket = 46;
 	optional bool reportable = 47;
 	optional AppearanceFlagUpgradeClassification upgradeclassification = 48;
+	optional bool reverse_addons_east = 49;
+	optional bool reverse_addons_west = 50;
+	optional bool reverse_addons_south = 51;
+	optional bool reverse_addons_north = 52;
+	optional bool wearout = 53;
+	optional bool clockexpire = 54;
+	optional bool expire = 55;
+	optional bool expirestop = 56;
+	optional bool wrapkit = 57;
+	optional AppearanceFlagSkillWheelGem skillwheel_gem = 58;
+	optional bool dual_wielding = 59;
+	optional AppearanceFlagImbueable imbueable = 60;
+	optional AppearanceFlagProficiency proficiency = 61;
+	repeated VOCATION restrict_to_vocation = 62;
+	optional uint32 minimum_level = 63;
+	optional WEAPON_TYPE weapon_type = 64;
 }
 
 message AppearanceFlagUpgradeClassification {
@@ -212,18 +253,17 @@ message AppearanceFlagMarket {
 	optional ITEM_CATEGORY category = 1;
 	optional uint32 trade_as_object_id = 2;
 	optional uint32 show_as_object_id = 3;
-	optional string name = 4;
 	repeated PLAYER_PROFESSION restrict_to_profession = 5;
 	optional uint32 minimum_level = 6;
 }
 
 message AppearanceFlagNPC {
-	optional string name = 1;
-	optional string location = 2;
+	optional bytes name = 1;
+	optional bytes location = 2;
 	optional uint32 sale_price = 3;
 	optional uint32 buy_price = 4;
 	optional uint32 currency_object_type_id = 5;
-	optional string currency_quest_flag_display_name = 6;
+	optional bytes currency_quest_flag_display_name = 6;
 }
 
 message AppearanceFlagAutomap {
@@ -253,10 +293,24 @@ message SpecialMeaningAppearanceIds {
 	optional uint32 tibia_coin_id = 4;
 	optional uint32 stamped_letter_id = 5;
 	optional uint32 supply_stash_id = 6;
+	optional uint32 reward_chest_id = 7;
 }
 
 enum FIXED_FRAME_GROUP {
 	FIXED_FRAME_GROUP_OUTFIT_IDLE = 0;
 	FIXED_FRAME_GROUP_OUTFIT_MOVING = 1;
 	FIXED_FRAME_GROUP_OBJECT_INITIAL = 2;
+}
+
+message AppearanceFlagSkillWheelGem {
+  optional uint32 gem_quality_id = 1;
+  optional uint32 vocation_id = 2;
+}
+
+message AppearanceFlagImbueable {
+  optional uint32 slot_count = 1;
+}
+
+message AppearanceFlagProficiency {
+  optional uint32 proficiency_id = 1;
 }

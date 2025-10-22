@@ -3,9 +3,9 @@
 # Project remeres
 # *****************************************************************************
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    project(canary-map-editor-debug LANGUAGES CXX)
+    project(rme-debug LANGUAGES CXX)
 else()
-    project(canary-map-editor LANGUAGES CXX)
+    project(rme LANGUAGES CXX)
 endif()
 
 find_package(asio CONFIG REQUIRED)

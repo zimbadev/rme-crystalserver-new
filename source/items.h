@@ -21,7 +21,7 @@
 #include "filehandle.h"
 #include "brush_enums.h"
 
-namespace canary {
+namespace rme {
 	namespace protobuf {
 		namespace appearances {
 			class Appearances;
@@ -440,7 +440,7 @@ public:
 	bool isValidID(uint16_t id) const;
 
 	bool loadFromOtb(const FileName &datafile, wxString &error, wxArrayString &warnings);
-	bool loadFromProtobuf(wxString &error, wxArrayString &warnings, canary::protobuf::appearances::Appearances &appearances);
+	bool loadFromProtobuf(wxString &error, wxArrayString &warnings, rme::protobuf::appearances::Appearances &appearances);
 	bool loadFromGameXml(const FileName &datafile, wxString &error, wxArrayString &warnings);
 	bool loadItemFromGameXml(pugi::xml_node itemNode, uint16_t id);
 	bool loadMetaItem(pugi::xml_node node);

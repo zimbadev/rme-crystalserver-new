@@ -882,7 +882,7 @@ bool GraphicManager::loadItemSpriteMetadata(const std::shared_ptr<ItemType> &t, 
 	return true;
 }
 
-bool GraphicManager::loadOutfitSpriteMetadata(canary::protobuf::appearances::Appearance outfit, wxString &error, wxArrayString &warnings) {
+bool GraphicManager::loadOutfitSpriteMetadata(rme::protobuf::appearances::Appearance outfit, wxString &error, wxArrayString &warnings) {
 	GameSprite* sType = newd GameSprite();
 	sType->id = outfit.id() + getItemSpriteMaxID();
 	sprite_space[outfit.id() + getItemSpriteMaxID()] = sType;

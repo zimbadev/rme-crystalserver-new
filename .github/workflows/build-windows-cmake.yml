@@ -86,6 +86,6 @@ jobs:
       - name: Create and Upload Artifact
         uses: actions/upload-artifact@main
         with:
-          name: canary-${{ matrix.buildtype }}-${{ github.sha }}
+          name: rme-${{ matrix.buildtype }}-${{ github.sha }}
           path: |
             ${{ github.workspace }}/*.exe
