@@ -100,7 +100,7 @@ bool Application::OnInit() {
 	spdlog::info("This is free software: you are free to change and redistribute it");
 	spdlog::info("There is NO WARRANTY, to the extent permitted by law");
 	spdlog::info("Review COPYING in RME distribution for details");
-	spdlog::info("Visit our website for updates, support, and resources: https://docs.opentibiabr.com/");
+	spdlog::info("Visit our website for updates, support, and resources: https://github.com/zimbadev/crystalserver/");
 	spdlog::info("Application started sucessfull!\n");
 
 	mt_seed(time(nullptr));

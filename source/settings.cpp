@@ -370,7 +370,7 @@ void Settings::load() {
 		use_file_cfg = true;
 		g_settings.setInteger(Config::INDIRECTORY_INSTALLATION, 1);
 	} else { // Use registry
-		conf = newd wxConfig("Canary Map Editor", "OpenTibiaBR", "", "", wxCONFIG_USE_GLOBAL_FILE);
+		conf = newd wxConfig("Remeres Map Editor", "RME", "", "", wxCONFIG_USE_GLOBAL_FILE);
 		g_settings.setInteger(Config::INDIRECTORY_INSTALLATION, 0);
 	}
 #else

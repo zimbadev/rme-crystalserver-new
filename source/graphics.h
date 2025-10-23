@@ -25,7 +25,7 @@
 #include <wx/artprov.h>
 
 // Forward declarations
-namespace canary {
+namespace rme {
 	namespace protobuf {
 		namespace appearances {
 			class Appearance;
@@ -334,7 +334,7 @@ public:
 	bool loadSpriteData(const FileName &datafile, wxString &error, wxArrayString &warnings);
 
 	bool loadItemSpriteMetadata(const std::shared_ptr<ItemType> &t, wxString &error, wxArrayString &warnings);
-	bool loadOutfitSpriteMetadata(canary::protobuf::appearances::Appearance outfit, wxString &error, wxArrayString &warnings);
+	bool loadOutfitSpriteMetadata(rme::protobuf::appearances::Appearance outfit, wxString &error, wxArrayString &warnings);
 
 	// Cleans old & unused textures according to config settings
 	void garbageCollection();
