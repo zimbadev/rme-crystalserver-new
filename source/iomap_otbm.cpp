@@ -359,6 +359,9 @@ bool Container::serializeItemNode_OTBM(const IOMap &maphandle, NodeFileWriteHand
 
 	serializeItemAttributes_OTBM(maphandle, file);
 	for (Item* item : contents) {
+		if (!item || item->isMetaItem() || item->getID() == 0) {
+			continue;
+		}
 		item->serializeItemNode_OTBM(maphandle, file);
 	}
 
@@ -1465,26 +1468,82 @@ bool IOMapOTBM::saveMap(Map &map, const FileName &identifier) {
 
 		g_gui.SetLoadDone(0, "Saving OTBM map...");
 
-		MemoryNodeFileWriteHandle otbmWriter;
-		saveMap(map, otbmWriter);
+		const std::string tempOtbmPath = nstr(wxFileName::CreateTempFileName("rme-otbm-save-"));
+		if (tempOtbmPath.empty()) {
+			archive_write_close(a);
+			archive_write_free(a);
+			error("Could not create temporary OTBM file for archive save.");
+			return false;
+		}
+
+		{
+			DiskNodeFileWriteHandle otbmWriter(tempOtbmPath, "OTBM");
+			if (!otbmWriter.isOk()) {
+				std::remove(tempOtbmPath.c_str());
+				archive_write_close(a);
+				archive_write_free(a);
+				error("Could not open temporary OTBM file for archive save.");
+				return false;
+			}
+
+			if (!saveMap(map, otbmWriter)) {
+				otbmWriter.close();
+				std::remove(tempOtbmPath.c_str());
+				archive_write_close(a);
+				archive_write_free(a);
+				return false;
+			}
+
+			otbmWriter.close();
+		}
+
+		FileReadHandle otbmReader(tempOtbmPath);
+		if (!otbmReader.isOk()) {
+			std::remove(tempOtbmPath.c_str());
+			archive_write_close(a);
+			archive_write_free(a);
+			error("Could not reopen temporary OTBM file for archive save.");
+			return false;
+		}
 
 		g_gui.SetLoadDone(75, "Compressing...");
 
 		// Create an archive entry for the otbm file
 		entry = archive_entry_new();
 		archive_entry_set_pathname(entry, "world/map.otbm");
-		archive_entry_set_size(entry, otbmWriter.getSize() + 4); // 4 bytes extra for header
+		archive_entry_set_size(entry, otbmReader.size());
 		archive_entry_set_filetype(entry, AE_IFREG);
 		archive_entry_set_perm(entry, 0644);
 		archive_write_header(a, entry);
 
-		// Write the version header
-		char otbm_identifier[] = "OTBM";
-		archive_write_data(a, otbm_identifier, 4);
+		// Stream the OTBM payload from disk so large maps do not need a second full copy in RAM.
+		uint8_t chunkBuffer[65536];
+		size_t bytesLeft = otbmReader.size();
+		while (bytesLeft > 0) {
+			const size_t chunkSize = bytesLeft > sizeof(chunkBuffer) ? sizeof(chunkBuffer) : bytesLeft;
+			if (!otbmReader.getRAW(chunkBuffer, chunkSize)) {
+				archive_entry_free(entry);
+				std::remove(tempOtbmPath.c_str());
+				archive_write_close(a);
+				archive_write_free(a);
+				error("Could not read temporary OTBM data for archive save.");
+				return false;
+			}
 
-		// Write the OTBM data
-		archive_write_data(a, otbmWriter.getMemory(), otbmWriter.getSize());
+			const la_ssize_t written = archive_write_data(a, chunkBuffer, chunkSize);
+			if (written < 0 || static_cast<size_t>(written) != chunkSize) {
+				archive_entry_free(entry);
+				std::remove(tempOtbmPath.c_str());
+				archive_write_close(a);
+				archive_write_free(a);
+				error("Could not write OTBM data to archive.");
+				return false;
+			}
+
+			bytesLeft -= chunkSize;
+		}
 		archive_entry_free(entry);
+		std::remove(tempOtbmPath.c_str());
 
 		// Free / close the archive
 		archive_write_close(a);
@@ -1634,7 +1693,7 @@ bool IOMapOTBM::saveMap(Map &map, NodeFileWriteHandle &f) {
 					} else if (ground->hasBorderEquivalent()) {
 						bool found = false;
 						for (Item* item : save_tile->items) {
-							if (item->getGroundEquivalent() == ground->getID()) {
+							if (item && item->getGroundEquivalent() == ground->getID()) {
 								// Do nothing
 								// Found equivalent
 								found = true;
@@ -1642,33 +1701,24 @@ bool IOMapOTBM::saveMap(Map &map, NodeFileWriteHandle &f) {
 							}
 						}
 
-						if (!found) {
-							if (ground->getID() == 0) {
-								continue;
-							}
+						if (!found && ground->getID() != 0) {
 							ground->serializeItemNode_OTBM(self, f);
 						}
 					} else if (ground->isComplex()) {
-						if (ground->getID() == 0) {
-							continue;
+						if (ground->getID() != 0) {
+							ground->serializeItemNode_OTBM(self, f);
 						}
-						ground->serializeItemNode_OTBM(self, f);
-					} else {
+					} else if (ground->getID() != 0) {
 						f.addByte(OTBM_ATTR_ITEM);
-						if (ground->getID() == 0) {
-							continue;
-						}
 						ground->serializeItemCompact_OTBM(self, f);
 					}
 				}
 
 				for (Item* item : save_tile->items) {
-					if (!item->isMetaItem()) {
-						if (item->getID() == 0) {
-							continue;
-						}
-						item->serializeItemNode_OTBM(self, f);
+					if (!item || item->isMetaItem() || item->getID() == 0) {
+						continue;
 					}
+					item->serializeItemNode_OTBM(self, f);
 				}
 				if (!save_tile->zones.empty()) {
 					f.addNode(OTBM_TILE_ZONE);
@@ -1691,6 +1741,9 @@ bool IOMapOTBM::saveMap(Map &map, NodeFileWriteHandle &f) {
 			f.addNode(OTBM_TOWNS);
 			for (const auto &townEntry : map.towns) {
 				Town* town = townEntry.second;
+				if (!town) {
+					continue;
+				}
 				const Position &townPosition = town->getTemplePosition();
 				f.addNode(OTBM_TOWN);
 				f.addU32(town->getID());
@@ -1706,6 +1759,9 @@ bool IOMapOTBM::saveMap(Map &map, NodeFileWriteHandle &f) {
 				f.addNode(OTBM_WAYPOINTS);
 				for (const auto &waypointEntry : map.waypoints) {
 					Waypoint* waypoint = waypointEntry.second;
+					if (!waypoint) {
+						continue;
+					}
 					f.addNode(OTBM_WAYPOINT);
 					f.addString(waypoint->name);
 					f.addU16(waypoint->pos.x);
@@ -1753,6 +1809,9 @@ bool IOMapOTBM::saveSpawns(Map &map, pugi::xml_document &doc) {
 
 		SpawnMonster* spawnMonster = tile->spawnMonster;
 		ASSERT(spawnMonster);
+		if (spawnMonster == nullptr) {
+			continue;
+		}
 
 		pugi::xml_node spawnNode = spawnNodes.append_child("monster");
 		spawnNode.append_attribute("centerx") = spawnPosition.x;
@@ -1822,6 +1881,9 @@ bool IOMapOTBM::saveHouses(Map &map, pugi::xml_document &doc) {
 	pugi::xml_node houseNodes = doc.append_child("houses");
 	for (const auto &houseEntry : map.houses) {
 		const House* house = houseEntry.second;
+		if (!house) {
+			continue;
+		}
 		pugi::xml_node houseNode = houseNodes.append_child("house");
 
 		houseNode.append_attribute("name") = house->name.c_str();
@@ -1909,6 +1971,9 @@ bool IOMapOTBM::saveSpawnsNpc(Map &map, pugi::xml_document &doc) {
 
 		SpawnNpc* spawnNpc = tile->spawnNpc;
 		ASSERT(spawnNpc);
+		if (spawnNpc == nullptr) {
+			continue;
+		}
 
 		pugi::xml_node spawnNpcNode = spawnNodes.append_child("npc");
 		spawnNpcNode.append_attribute("centerx") = spawnPosition.x;
