@@ -483,12 +483,12 @@ bool MainFrame::DoQuerySaveTileset(bool doclose) {
 	return !g_materials.needSave();
 }
 
-bool MainFrame::DoQuerySave(bool doclose) {
+bool MainFrame::DoQuerySave(bool doclose, bool checkTileset) {
 	if (!g_gui.IsEditorOpen()) {
 		return true;
 	}
 
-	if (!DoQuerySaveTileset()) {
+	if (checkTileset && !DoQuerySaveTileset()) {
 		return false;
 	}
 
@@ -643,26 +643,38 @@ bool MainFrame::LoadMap(FileName name) {
 }
 
 void MainFrame::OnExit(wxCloseEvent &event) {
-	// clicking 'x' button
+	if (!DoQuerySaveTileset()) {
+		if (event.CanVeto()) {
+			event.Veto();
+			return;
+		}
+	}
 
-	// do you want to save map changes?
-	while (g_gui.IsEditorOpen()) {
-		if (!DoQuerySave()) {
+	std::set<Map*> prompted;
+	for (int i = 0; i < g_gui.tabbook->GetTabCount(); ++i) {
+		auto* mapTab = dynamic_cast<MapTab*>(g_gui.tabbook->GetTab(i));
+		if (!mapTab || !mapTab->GetMap() || !mapTab->GetMap()->hasChanged()
+			|| prompted.contains(mapTab->GetMap())) {
+			continue;
+		}
+		prompted.insert(mapTab->GetMap());
+		g_gui.tabbook->SetFocusedTab(i);
+		if (!DoQuerySave(false, false)) {
 			if (event.CanVeto()) {
 				event.Veto();
 				return;
-			} else {
-				break;
 			}
+			break;
 		}
 	}
-	g_gui.aui_manager->UnInit();
-	((Application &)wxGetApp()).Unload();
-#ifdef __RELEASE__
-	// Hack, "crash" gracefully in release builds, let OS handle cleanup of windows
+
+	g_gui.SaveHotkeys();
+	g_gui.SavePerspective();
+	g_gui.root->SaveRecentFiles();
+	ClientAssets::save();
+	g_settings.save(true);
+	wxGetApp().ShutdownServices();
 	exit(0);
-#endif
-	Destroy();
 }
 
 void MainFrame::AddRecentFile(const FileName &file) {
