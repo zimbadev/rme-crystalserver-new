@@ -226,6 +226,7 @@ void Settings::IO(IOMode mode) {
 	Int(USE_CUSTOM_DATA_DIRECTORY, 0);
 	String(DATA_DIRECTORY, "");
 	String(ASSETS_DATA_DIRS, "");
+	String(SERVER_DATA_FOLDER, "");
 
 	section("Editor");
 	String(RECENT_FILES, "");

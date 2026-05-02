@@ -23,6 +23,238 @@
 #include "monsters.h"
 #include "monster_brush.h"
 
+#include <algorithm>
+#include <filesystem>
+#include <fstream>
+#include <regex>
+#include <unordered_set>
+#include <vector>
+
+namespace fs = std::filesystem;
+
+namespace {
+	bool extractLuaStringArgument(const std::string &content, const std::string &token, std::string &value) {
+		const size_t tokenPos = content.find(token);
+		if (tokenPos == std::string::npos) {
+			return false;
+		}
+
+		size_t pos = content.find('(', tokenPos + token.size());
+		if (pos == std::string::npos) {
+			return false;
+		}
+
+		++pos;
+		while (pos < content.size() && std::isspace(static_cast<unsigned char>(content[pos]))) {
+			++pos;
+		}
+
+		if (pos >= content.size() || (content[pos] != '"' && content[pos] != '\'')) {
+			return false;
+		}
+
+		const char quote = content[pos++];
+		const size_t start = pos;
+		while (pos < content.size()) {
+			if (content[pos] == quote && content[pos - 1] != '\\') {
+				value = content.substr(start, pos - start);
+				return true;
+			}
+			++pos;
+		}
+		return false;
+	}
+
+	bool extractLuaTableBlock(const std::string &content, const std::string &token, std::string &value) {
+		const size_t tokenPos = content.find(token);
+		if (tokenPos == std::string::npos) {
+			return false;
+		}
+
+		size_t pos = content.find('{', tokenPos + token.size());
+		if (pos == std::string::npos) {
+			return false;
+		}
+
+		const size_t start = pos;
+		int depth = 0;
+		while (pos < content.size()) {
+			if (content[pos] == '{') {
+				++depth;
+			} else if (content[pos] == '}') {
+				--depth;
+				if (depth == 0) {
+					value = content.substr(start, pos - start + 1);
+					return true;
+				}
+			}
+			++pos;
+		}
+		return false;
+	}
+
+	bool extractLuaIntegerField(const std::string &content, const char* fieldName, int &value) {
+		const std::regex pattern("\\b" + std::string(fieldName) + "\\b\\s*=\\s*(-?\\d+)");
+		std::smatch match;
+		if (!std::regex_search(content, match, pattern)) {
+			return false;
+		}
+
+		value = std::stoi(match[1].str());
+		return true;
+	}
+
+	bool hasMonsterNodeByName(const pugi::xml_node &monsterNodes, const std::string &name) {
+		const std::string lowerName = as_lower_str(name);
+		for (pugi::xml_node monsterNode = monsterNodes.child("monster"); monsterNode; monsterNode = monsterNode.next_sibling("monster")) {
+			const pugi::xml_attribute nameAttribute = monsterNode.attribute("name");
+			if (nameAttribute && as_lower_str(nameAttribute.as_string()) == lowerName) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	void appendMonsterNode(pugi::xml_node &monsterNodes, const MonsterType &monsterType) {
+		pugi::xml_node monsterNode = monsterNodes.append_child("monster");
+		monsterNode.append_attribute("name") = monsterType.name.c_str();
+
+		const Outfit &outfit = monsterType.outfit;
+		if (outfit.lookType != 0) {
+			monsterNode.append_attribute("looktype") = outfit.lookType;
+		}
+		if (outfit.lookItem != 0) {
+			monsterNode.append_attribute("lookitem") = outfit.lookItem;
+		}
+		if (outfit.lookMount != 0) {
+			monsterNode.append_attribute("lookmount") = outfit.lookMount;
+		}
+		if (outfit.lookAddon != 0) {
+			monsterNode.append_attribute("lookaddons") = outfit.lookAddon;
+		}
+		if (outfit.lookHead != 0) {
+			monsterNode.append_attribute("lookhead") = outfit.lookHead;
+		}
+		if (outfit.lookBody != 0) {
+			monsterNode.append_attribute("lookbody") = outfit.lookBody;
+		}
+		if (outfit.lookLegs != 0) {
+			monsterNode.append_attribute("looklegs") = outfit.lookLegs;
+		}
+		if (outfit.lookFeet != 0) {
+			monsterNode.append_attribute("lookfeet") = outfit.lookFeet;
+		}
+	}
+
+	void ensureXmlUtf8Declaration(pugi::xml_document &doc) {
+		pugi::xml_node decl;
+		for (pugi::xml_node node = doc.first_child(); node; node = node.next_sibling()) {
+			if (node.type() == pugi::node_declaration) {
+				decl = node;
+				break;
+			}
+		}
+		if (!decl) {
+			decl = doc.prepend_child(pugi::node_declaration);
+		}
+
+		pugi::xml_attribute version = decl.attribute("version");
+		if (!version) {
+			version = decl.append_attribute("version");
+		}
+		version.set_value("1.0");
+
+		pugi::xml_attribute encoding = decl.attribute("encoding");
+		if (!encoding) {
+			encoding = decl.append_attribute("encoding");
+		}
+		encoding.set_value("UTF-8");
+	}
+
+	struct MonsterXmlEntry {
+		std::string sortName;
+		std::vector<std::pair<std::string, std::string>> attributes;
+	};
+
+	void sortMonsterNodesAlphabetically(pugi::xml_node &monsterNodes) {
+		std::vector<MonsterXmlEntry> entries;
+		for (pugi::xml_node monsterNode = monsterNodes.child("monster"); monsterNode; monsterNode = monsterNode.next_sibling("monster")) {
+			MonsterXmlEntry entry;
+			const pugi::xml_attribute nameAttribute = monsterNode.attribute("name");
+			entry.sortName = nameAttribute ? as_lower_str(nameAttribute.as_string()) : "";
+
+			for (pugi::xml_attribute attribute = monsterNode.first_attribute(); attribute; attribute = attribute.next_attribute()) {
+				entry.attributes.emplace_back(attribute.name(), attribute.value());
+			}
+
+			entries.push_back(std::move(entry));
+		}
+
+		std::sort(entries.begin(), entries.end(), [](const MonsterXmlEntry &lhs, const MonsterXmlEntry &rhs) {
+			return lhs.sortName < rhs.sortName;
+		});
+
+		while (pugi::xml_node monsterNode = monsterNodes.child("monster")) {
+			monsterNodes.remove_child(monsterNode);
+		}
+
+		for (const MonsterXmlEntry &entry : entries) {
+			pugi::xml_node monsterNode = monsterNodes.append_child("monster");
+			for (const auto &[attributeName, attributeValue] : entry.attributes) {
+				monsterNode.append_attribute(attributeName.c_str()) = attributeValue.c_str();
+			}
+		}
+	}
+
+	MonsterType* loadFromServerLua(const fs::path &filePath) {
+		std::ifstream stream(filePath, std::ios::binary);
+		if (!stream.is_open()) {
+			return nullptr;
+		}
+
+		const std::string content((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
+		if (content.empty()) {
+			return nullptr;
+		}
+
+		std::string name;
+		if (!extractLuaStringArgument(content, "Game.createMonsterType", name)) {
+			return nullptr;
+		}
+
+		std::string outfitBlock;
+		if (!extractLuaTableBlock(content, "monster.outfit", outfitBlock)) {
+			return nullptr;
+		}
+
+		auto* monsterType = newd MonsterType();
+		monsterType->name = name;
+		monsterType->outfit.name = name;
+
+		extractLuaIntegerField(outfitBlock, "lookType", monsterType->outfit.lookType);
+		if (!extractLuaIntegerField(outfitBlock, "lookItem", monsterType->outfit.lookItem)) {
+			if (!extractLuaIntegerField(outfitBlock, "lookTypeEx", monsterType->outfit.lookItem)) {
+				extractLuaIntegerField(outfitBlock, "lookitem", monsterType->outfit.lookItem);
+			}
+		}
+		extractLuaIntegerField(outfitBlock, "lookMount", monsterType->outfit.lookMount);
+		if (!extractLuaIntegerField(outfitBlock, "lookAddons", monsterType->outfit.lookAddon)) {
+			extractLuaIntegerField(outfitBlock, "lookAddon", monsterType->outfit.lookAddon);
+		}
+		extractLuaIntegerField(outfitBlock, "lookHead", monsterType->outfit.lookHead);
+		extractLuaIntegerField(outfitBlock, "lookBody", monsterType->outfit.lookBody);
+		extractLuaIntegerField(outfitBlock, "lookLegs", monsterType->outfit.lookLegs);
+		extractLuaIntegerField(outfitBlock, "lookFeet", monsterType->outfit.lookFeet);
+
+		if (monsterType->outfit.lookType == 0 && monsterType->outfit.lookItem == 0) {
+			delete monsterType;
+			return nullptr;
+		}
+
+		return monsterType;
+	}
+} // namespace
+
 MonsterDatabase g_monsters;
 
 MonsterType::MonsterType() :
@@ -84,7 +316,7 @@ MonsterType* MonsterType::loadFromXML(pugi::xml_node node, wxArrayString &warnin
 		ct->outfit.lookMount = attribute.as_int();
 	}
 
-	if ((attribute = node.attribute("lookaddon"))) {
+	if ((attribute = node.attribute("lookaddon")) || (attribute = node.attribute("lookaddons"))) {
 		ct->outfit.lookAddon = attribute.as_int();
 	}
 
@@ -336,11 +568,104 @@ bool MonsterDatabase::importXMLFromOT(const FileName &filename, wxString &error,
 	return true;
 }
 
+bool MonsterDatabase::importMissingFromServerLua(const FileName &directory, const FileName &targetXml, wxString &error, wxArrayString &warnings) {
+	if (!directory.DirExists()) {
+		error = "Server data folder does not exist.";
+		return false;
+	}
+
+	std::unordered_set<std::string> missingNames;
+	for (const auto &monsterEntry : monster_map) {
+		if (monsterEntry.second && monsterEntry.second->missing) {
+			missingNames.insert(monsterEntry.first);
+		}
+	}
+
+	if (missingNames.empty()) {
+		return true;
+	}
+
+	pugi::xml_document doc;
+	const pugi::xml_parse_result result = doc.load_file(targetXml.GetFullPath().mb_str());
+	if (!result) {
+		error = "Couldn't open file \"" + targetXml.GetFullName() + "\".";
+		return false;
+	}
+
+	pugi::xml_node monsterNodes = doc.child("monsters");
+	if (!monsterNodes) {
+		error = "Invalid monsters.xml structure.";
+		return false;
+	}
+
+	bool xmlChanged = false;
+	int importedCount = 0;
+
+	try {
+		for (const auto &entry : fs::recursive_directory_iterator(fs::path(nstr(directory.GetFullPath())))) {
+			if (!entry.is_regular_file() || entry.path().extension() != ".lua") {
+				continue;
+			}
+
+			std::unique_ptr<MonsterType> parsedMonster(loadFromServerLua(entry.path()));
+			if (!parsedMonster) {
+				continue;
+			}
+
+			const std::string monsterKey = as_lower_str(parsedMonster->name);
+			if (!missingNames.contains(monsterKey)) {
+				continue;
+			}
+
+			MonsterType* currentMonster = (*this)[parsedMonster->name];
+			if (!currentMonster) {
+				continue;
+			}
+
+			MonsterBrush* existingBrush = currentMonster->brush;
+			*currentMonster = *parsedMonster;
+			currentMonster->brush = existingBrush;
+			currentMonster->missing = false;
+			currentMonster->standard = true;
+			currentMonster->outfit.name = currentMonster->name;
+
+			if (!hasMonsterNodeByName(monsterNodes, currentMonster->name)) {
+				appendMonsterNode(monsterNodes, *currentMonster);
+				xmlChanged = true;
+			}
+
+			missingNames.erase(monsterKey);
+			++importedCount;
+
+			if (missingNames.empty()) {
+				break;
+			}
+		}
+	} catch (const std::exception &e) {
+		error = wxString::Format("Failed to scan server data folder: %s", wxString(e.what(), wxConvUTF8));
+		return importedCount > 0;
+	}
+
+	if (xmlChanged) {
+		sortMonsterNodesAlphabetically(monsterNodes);
+		ensureXmlUtf8Declaration(doc);
+	}
+	if (xmlChanged && !doc.save_file(targetXml.GetFullPath().mb_str(), "\t", pugi::format_default, pugi::encoding_utf8)) {
+		error = "Failed to write updated monsters.xml.";
+		return false;
+	}
+
+	if (importedCount == 0 && error.empty()) {
+		error = "No missing monsters were found in the configured server data folder.";
+	}
+
+	return importedCount > 0;
+}
+
 bool MonsterDatabase::saveToXML(const FileName &filename) {
 	pugi::xml_document doc;
 
-	pugi::xml_node decl = doc.prepend_child(pugi::node_declaration);
-	decl.append_attribute("version") = "1.0";
+	ensureXmlUtf8Declaration(doc);
 
 	pugi::xml_node monsterNodes = doc.append_child("monsters");
 	for (const auto &monsterEntry : monster_map) {

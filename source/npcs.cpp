@@ -23,6 +23,301 @@
 #include "npcs.h"
 #include "npc_brush.h"
 
+#include <algorithm>
+#include <filesystem>
+#include <fstream>
+#include <regex>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+
+namespace fs = std::filesystem;
+
+namespace {
+	bool extractLuaStringArgument(const std::string &content, const std::string &token, std::string &value) {
+		const size_t tokenPos = content.find(token);
+		if (tokenPos == std::string::npos) {
+			return false;
+		}
+
+		size_t pos = content.find('(', tokenPos + token.size());
+		if (pos == std::string::npos) {
+			return false;
+		}
+
+		++pos;
+		while (pos < content.size() && std::isspace(static_cast<unsigned char>(content[pos]))) {
+			++pos;
+		}
+
+		if (pos >= content.size() || (content[pos] != '"' && content[pos] != '\'')) {
+			return false;
+		}
+
+		const char quote = content[pos++];
+		const size_t start = pos;
+		while (pos < content.size()) {
+			if (content[pos] == quote && content[pos - 1] != '\\') {
+				value = content.substr(start, pos - start);
+				return true;
+			}
+			++pos;
+		}
+		return false;
+	}
+
+	bool extractLuaStringAssignment(const std::string &content, const std::string &token, std::string &value) {
+		const size_t tokenPos = content.find(token);
+		if (tokenPos == std::string::npos) {
+			return false;
+		}
+
+		size_t pos = content.find('=', tokenPos + token.size());
+		if (pos == std::string::npos) {
+			return false;
+		}
+
+		++pos;
+		while (pos < content.size() && std::isspace(static_cast<unsigned char>(content[pos]))) {
+			++pos;
+		}
+
+		if (pos >= content.size() || (content[pos] != '"' && content[pos] != '\'')) {
+			return false;
+		}
+
+		const char quote = content[pos++];
+		const size_t start = pos;
+		while (pos < content.size()) {
+			if (content[pos] == quote && content[pos - 1] != '\\') {
+				value = content.substr(start, pos - start);
+				return true;
+			}
+			++pos;
+		}
+		return false;
+	}
+
+	bool extractLuaTableBlock(const std::string &content, const std::string &token, std::string &value) {
+		const size_t tokenPos = content.find(token);
+		if (tokenPos == std::string::npos) {
+			return false;
+		}
+
+		size_t pos = content.find('{', tokenPos + token.size());
+		if (pos == std::string::npos) {
+			return false;
+		}
+
+		const size_t start = pos;
+		int depth = 0;
+		while (pos < content.size()) {
+			if (content[pos] == '{') {
+				++depth;
+			} else if (content[pos] == '}') {
+				--depth;
+				if (depth == 0) {
+					value = content.substr(start, pos - start + 1);
+					return true;
+				}
+			}
+			++pos;
+		}
+		return false;
+	}
+
+	bool extractLuaIntegerField(const std::string &content, const char* fieldName, int &value) {
+		const std::regex pattern("\\b" + std::string(fieldName) + "\\b\\s*=\\s*(-?\\d+)");
+		std::smatch match;
+		if (!std::regex_search(content, match, pattern)) {
+			return false;
+		}
+
+		value = std::stoi(match[1].str());
+		return true;
+	}
+
+	void ensureXmlUtf8Declaration(pugi::xml_document &doc) {
+		pugi::xml_node decl;
+		for (pugi::xml_node node = doc.first_child(); node; node = node.next_sibling()) {
+			if (node.type() == pugi::node_declaration) {
+				decl = node;
+				break;
+			}
+		}
+		if (!decl) {
+			decl = doc.prepend_child(pugi::node_declaration);
+		}
+
+		pugi::xml_attribute version = decl.attribute("version");
+		if (!version) {
+			version = decl.append_attribute("version");
+		}
+		version.set_value("1.0");
+
+		pugi::xml_attribute encoding = decl.attribute("encoding");
+		if (!encoding) {
+			encoding = decl.append_attribute("encoding");
+		}
+		encoding.set_value("UTF-8");
+	}
+
+	struct NpcXmlEntry {
+		std::string sortName;
+		std::vector<std::pair<std::string, std::string>> attributes;
+	};
+
+	void sortNpcNodesAlphabetically(pugi::xml_node &npcNodes) {
+		std::vector<NpcXmlEntry> entries;
+		for (pugi::xml_node npcNode = npcNodes.child("npc"); npcNode; npcNode = npcNode.next_sibling("npc")) {
+			NpcXmlEntry entry;
+			const pugi::xml_attribute nameAttribute = npcNode.attribute("name");
+			entry.sortName = nameAttribute ? as_lower_str(nameAttribute.as_string()) : "";
+
+			for (pugi::xml_attribute attribute = npcNode.first_attribute(); attribute; attribute = attribute.next_attribute()) {
+				entry.attributes.emplace_back(attribute.name(), attribute.value());
+			}
+
+			entries.push_back(std::move(entry));
+		}
+
+		std::sort(entries.begin(), entries.end(), [](const NpcXmlEntry &lhs, const NpcXmlEntry &rhs) {
+			return lhs.sortName < rhs.sortName;
+		});
+
+		while (pugi::xml_node npcNode = npcNodes.child("npc")) {
+			npcNodes.remove_child(npcNode);
+		}
+
+		for (const NpcXmlEntry &entry : entries) {
+			pugi::xml_node npcNode = npcNodes.append_child("npc");
+			for (const auto &[attributeName, attributeValue] : entry.attributes) {
+				npcNode.append_attribute(attributeName.c_str()) = attributeValue.c_str();
+			}
+		}
+	}
+
+	bool hasNpcNodeByName(const pugi::xml_node &npcNodes, const std::string &name) {
+		const std::string lowerName = as_lower_str(name);
+		for (pugi::xml_node npcNode = npcNodes.child("npc"); npcNode; npcNode = npcNode.next_sibling("npc")) {
+			const pugi::xml_attribute nameAttribute = npcNode.attribute("name");
+			if (nameAttribute && as_lower_str(nameAttribute.as_string()) == lowerName) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	void appendNpcNode(pugi::xml_node &npcNodes, const NpcType &npcType) {
+		pugi::xml_node npcNode = npcNodes.append_child("npc");
+		npcNode.append_attribute("name") = npcType.name.c_str();
+
+		const Outfit &outfit = npcType.outfit;
+		if (outfit.lookType != 0) {
+			npcNode.append_attribute("looktype") = outfit.lookType;
+		}
+		if (outfit.lookItem != 0) {
+			npcNode.append_attribute("lookitem") = outfit.lookItem;
+		}
+		if (outfit.lookMount != 0) {
+			npcNode.append_attribute("lookmount") = outfit.lookMount;
+		}
+		if (outfit.lookAddon != 0) {
+			npcNode.append_attribute("lookaddons") = outfit.lookAddon;
+		}
+		if (outfit.lookHead != 0) {
+			npcNode.append_attribute("lookhead") = outfit.lookHead;
+		}
+		if (outfit.lookBody != 0) {
+			npcNode.append_attribute("lookbody") = outfit.lookBody;
+		}
+		if (outfit.lookLegs != 0) {
+			npcNode.append_attribute("looklegs") = outfit.lookLegs;
+		}
+		if (outfit.lookFeet != 0) {
+			npcNode.append_attribute("lookfeet") = outfit.lookFeet;
+		}
+	}
+
+	NpcType* loadFromServerLua(const fs::path &filePath) {
+		std::ifstream stream(filePath, std::ios::binary);
+		if (!stream.is_open()) {
+			return nullptr;
+		}
+
+		const std::string content((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
+		if (content.empty()) {
+			return nullptr;
+		}
+
+		std::unordered_map<std::string, std::string> stringVariables;
+		const std::regex stringAssignmentPattern(R"(\blocal\s+([A-Za-z_]\w*)\s*=\s*["']([^"']+)["'])");
+		for (std::sregex_iterator it(content.begin(), content.end(), stringAssignmentPattern), end; it != end; ++it) {
+			stringVariables[(*it)[1].str()] = (*it)[2].str();
+		}
+
+		std::string npcName;
+		if (!extractLuaStringArgument(content, "Game.createNpcType", npcName)) {
+			const std::regex createNpcTypeVarPattern(R"(\bGame\.createNpcType\s*\(\s*([A-Za-z_]\w*)\s*\))");
+			std::smatch createMatch;
+			if (std::regex_search(content, createMatch, createNpcTypeVarPattern)) {
+				const auto variableIt = stringVariables.find(createMatch[1].str());
+				if (variableIt != stringVariables.end()) {
+					npcName = variableIt->second;
+				}
+			}
+		}
+
+		if (npcName.empty()) {
+			extractLuaStringAssignment(content, "npcConfig.name", npcName);
+		}
+		if (npcName.empty()) {
+			const std::regex npcConfigNameVarPattern(R"(\bnpcConfig\.name\s*=\s*([A-Za-z_]\w*))");
+			std::smatch nameMatch;
+			if (std::regex_search(content, nameMatch, npcConfigNameVarPattern)) {
+				const auto variableIt = stringVariables.find(nameMatch[1].str());
+				if (variableIt != stringVariables.end()) {
+					npcName = variableIt->second;
+				}
+			}
+		}
+		if (npcName.empty()) {
+			return nullptr;
+		}
+
+		std::string outfitBlock;
+		if (!extractLuaTableBlock(content, "npcConfig.outfit", outfitBlock)) {
+			return nullptr;
+		}
+
+		auto* npcType = newd NpcType();
+		npcType->name = npcName;
+		npcType->outfit.name = npcName;
+
+		extractLuaIntegerField(outfitBlock, "lookType", npcType->outfit.lookType);
+		if (!extractLuaIntegerField(outfitBlock, "lookItem", npcType->outfit.lookItem)) {
+			if (!extractLuaIntegerField(outfitBlock, "lookTypeEx", npcType->outfit.lookItem)) {
+				extractLuaIntegerField(outfitBlock, "lookitem", npcType->outfit.lookItem);
+			}
+		}
+		extractLuaIntegerField(outfitBlock, "lookMount", npcType->outfit.lookMount);
+		if (!extractLuaIntegerField(outfitBlock, "lookAddons", npcType->outfit.lookAddon)) {
+			extractLuaIntegerField(outfitBlock, "lookAddon", npcType->outfit.lookAddon);
+		}
+		extractLuaIntegerField(outfitBlock, "lookHead", npcType->outfit.lookHead);
+		extractLuaIntegerField(outfitBlock, "lookBody", npcType->outfit.lookBody);
+		extractLuaIntegerField(outfitBlock, "lookLegs", npcType->outfit.lookLegs);
+		extractLuaIntegerField(outfitBlock, "lookFeet", npcType->outfit.lookFeet);
+
+		if (npcType->outfit.lookType == 0 && npcType->outfit.lookItem == 0) {
+			delete npcType;
+			return nullptr;
+		}
+
+		return npcType;
+	}
+} // namespace
+
 NpcDatabase g_npcs;
 
 NpcType::NpcType() :
@@ -80,7 +375,7 @@ NpcType* NpcType::loadFromXML(pugi::xml_node node, wxArrayString &warnings) {
 		npcType->outfit.lookItem = attribute.as_int();
 	}
 
-	if ((attribute = node.attribute("lookaddon"))) {
+	if ((attribute = node.attribute("lookaddon")) || (attribute = node.attribute("lookaddons"))) {
 		npcType->outfit.lookAddon = attribute.as_int();
 	}
 
@@ -283,11 +578,104 @@ bool NpcDatabase::importXMLFromOT(const FileName &filename, wxString &error, wxA
 	return true;
 }
 
+bool NpcDatabase::importMissingFromServerLua(const FileName &directory, const FileName &targetXml, wxString &error, wxArrayString &warnings) {
+	if (!directory.DirExists()) {
+		error = "Server data folder does not exist.";
+		return false;
+	}
+
+	std::unordered_set<std::string> missingNames;
+	for (const auto &npcEntry : npcMap) {
+		if (npcEntry.second && npcEntry.second->missing) {
+			missingNames.insert(npcEntry.first);
+		}
+	}
+
+	if (missingNames.empty()) {
+		return true;
+	}
+
+	pugi::xml_document doc;
+	const pugi::xml_parse_result result = doc.load_file(targetXml.GetFullPath().mb_str());
+	if (!result) {
+		error = "Couldn't open file \"" + targetXml.GetFullName() + "\".";
+		return false;
+	}
+
+	pugi::xml_node npcNodes = doc.child("npcs");
+	if (!npcNodes) {
+		error = "Invalid npcs.xml structure.";
+		return false;
+	}
+
+	bool xmlChanged = false;
+	int importedCount = 0;
+
+	try {
+		for (const auto &entry : fs::recursive_directory_iterator(fs::path(nstr(directory.GetFullPath())))) {
+			if (!entry.is_regular_file() || entry.path().extension() != ".lua") {
+				continue;
+			}
+
+			std::unique_ptr<NpcType> parsedNpc(loadFromServerLua(entry.path()));
+			if (!parsedNpc) {
+				continue;
+			}
+
+			const std::string npcKey = as_lower_str(parsedNpc->name);
+			if (!missingNames.contains(npcKey)) {
+				continue;
+			}
+
+			NpcType* currentNpc = (*this)[parsedNpc->name];
+			if (!currentNpc) {
+				continue;
+			}
+
+			NpcBrush* existingBrush = currentNpc->brush;
+			*currentNpc = *parsedNpc;
+			currentNpc->brush = existingBrush;
+			currentNpc->missing = false;
+			currentNpc->standard = true;
+			currentNpc->outfit.name = currentNpc->name;
+
+			if (!hasNpcNodeByName(npcNodes, currentNpc->name)) {
+				appendNpcNode(npcNodes, *currentNpc);
+				xmlChanged = true;
+			}
+
+			missingNames.erase(npcKey);
+			++importedCount;
+
+			if (missingNames.empty()) {
+				break;
+			}
+		}
+	} catch (const std::exception &e) {
+		error = wxString::Format("Failed to scan server data folder: %s", wxString(e.what(), wxConvUTF8));
+		return importedCount > 0;
+	}
+
+	if (xmlChanged) {
+		sortNpcNodesAlphabetically(npcNodes);
+		ensureXmlUtf8Declaration(doc);
+	}
+	if (xmlChanged && !doc.save_file(targetXml.GetFullPath().mb_str(), "\t", pugi::format_default, pugi::encoding_utf8)) {
+		error = "Failed to write updated npcs.xml.";
+		return false;
+	}
+
+	if (importedCount == 0 && error.empty()) {
+		error = "No missing npcs were found in the configured server data folder.";
+	}
+
+	return importedCount > 0;
+}
+
 bool NpcDatabase::saveToXML(const FileName &filename) {
 	pugi::xml_document doc;
 
-	pugi::xml_node decl = doc.prepend_child(pugi::node_declaration);
-	decl.append_attribute("version") = "1.0";
+	ensureXmlUtf8Declaration(doc);
 
 	pugi::xml_node npcNodes = doc.append_child("npcs");
 	for (const auto &npcEntry : npcMap) {
@@ -301,13 +689,14 @@ bool NpcDatabase::saveToXML(const FileName &filename) {
 			const Outfit &outfit = npcType->outfit;
 			npcNode.append_attribute("looktype") = outfit.lookType;
 			npcNode.append_attribute("lookitem") = outfit.lookItem;
-			npcNode.append_attribute("lookaddon") = outfit.lookAddon;
+			npcNode.append_attribute("lookaddons") = outfit.lookAddon;
 			npcNode.append_attribute("lookhead") = outfit.lookHead;
 			npcNode.append_attribute("lookbody") = outfit.lookBody;
 			npcNode.append_attribute("looklegs") = outfit.lookLegs;
 			npcNode.append_attribute("lookfeet") = outfit.lookFeet;
 		}
 	}
+	sortNpcNodesAlphabetically(npcNodes);
 	return doc.save_file(filename.GetFullPath().mb_str(), "\t", pugi::format_default, pugi::encoding_utf8);
 }
 

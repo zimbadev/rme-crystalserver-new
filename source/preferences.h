@@ -114,6 +114,7 @@ protected:
 	// Client info
 	wxChoice* default_version_choice;
 	wxDirPickerCtrl* version_dir_picker;
+	wxDirPickerCtrl* server_data_dir_picker;
 	wxCheckBox* check_sigs_chkbox;
 
 	// Create controls
