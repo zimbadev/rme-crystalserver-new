@@ -20,7 +20,7 @@ Have you found a bug? Please create an issue in our [issue tracker](https://gith
 Other Applications
 ==========
 
-* To host your MMORPG game server, you can use [Crystal Serverary](https://github.com/zimbadev/crystalserver).
+* To host your MMORPG game server, you can use [Crystal Server](https://github.com/zimbadev/crystalserver).
 * To play your MMORPG game, you can use [Game Client](https://github.com/zimbadev/gameclient).
 * To map your MMORPG game, you can use this map editor.
 

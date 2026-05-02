@@ -1141,7 +1141,7 @@ void MapDrawer::BlitItem(int &draw_x, int &draw_y, const Tile* tile, const Item*
 		glBlitSquare(draw_x, draw_y, red, green, 0, alpha / 3 * 2);
 		glEnable(GL_TEXTURE_2D);
 		return;
-	} else if (type.id == ITEM_NOTHING_SPECIAL && !options.ingame) {
+	} else if ((type.id == ITEM_NOTHING_SPECIAL || type.id == ITEM_NOTHING_SPECIAL_2) && !options.ingame) {
 		glDisable(GL_TEXTURE_2D);
 		glBlitSquare(draw_x, draw_y, red, 0, 0, alpha / 3 * 2);
 		glEnable(GL_TEXTURE_2D);
@@ -1238,7 +1238,7 @@ void MapDrawer::BlitItem(int &draw_x, int &draw_y, const Position &pos, const It
 		glBlitSquare(draw_x, draw_y, red, green, 0, alpha / 3 * 2);
 		glEnable(GL_TEXTURE_2D);
 		return;
-	} else if (type.id == ITEM_NOTHING_SPECIAL && !options.ingame) { // Ugly hack yes?
+	} else if ((type.id == ITEM_NOTHING_SPECIAL || type.id == ITEM_NOTHING_SPECIAL_2) && !options.ingame) { // Ugly hack yes? // Beautiful!
 		glDisable(GL_TEXTURE_2D);
 		glBlitSquare(draw_x, draw_y, red, 0, 0, alpha / 3 * 2);
 		glEnable(GL_TEXTURE_2D);
