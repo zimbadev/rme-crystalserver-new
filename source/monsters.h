@@ -55,6 +55,7 @@ public:
 
 	bool loadFromXML(const FileName &filename, bool standard, wxString &error, wxArrayString &warnings);
 	bool importXMLFromOT(const FileName &filename, wxString &error, wxArrayString &warnings);
+	int importMissingFromServerLua(const FileName &directory, const FileName &targetXml, wxString &error, wxArrayString &warnings);
 
 	bool saveToXML(const FileName &filename);
 	wxArrayString getMissingMonsterNames() const;

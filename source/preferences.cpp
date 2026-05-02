@@ -552,6 +552,16 @@ wxNotebookPage* PreferencesWindow::CreateClientPage() {
 	tmp_text->SetToolTip(tooltip);
 	dir_picker->SetToolTip(tooltip);
 
+	wxStaticText* serverDataText = newd wxStaticText(client_list_window, wxID_ANY, wxString("Server data folder:"));
+	client_list_sizer->Add(serverDataText, wxSizerFlags(0).Expand());
+
+	server_data_dir_picker = newd wxDirPickerCtrl(client_list_window, wxID_ANY, wxstr(g_settings.getString(Config::SERVER_DATA_FOLDER)));
+	client_list_sizer->Add(server_data_dir_picker, wxSizerFlags(0).Border(wxRIGHT, 10).Expand());
+
+	const wxString serverDataTooltip = "Folder used to auto-import missing monsters from server Lua files (recursive).";
+	serverDataText->SetToolTip(serverDataTooltip);
+	server_data_dir_picker->SetToolTip(serverDataTooltip);
+
 	// Set the sizers
 	client_list_window->SetSizer(client_list_sizer);
 	client_list_window->FitInside();
@@ -709,6 +719,7 @@ void PreferencesWindow::Apply() {
 	}
 	g_settings.setFloat(Config::SCROLL_SPEED, scroll_mul * scroll_speed_slider->GetValue() / 10.f);
 	g_settings.setFloat(Config::ZOOM_SPEED, zoom_speed_slider->GetValue() / 10.f);
+	g_settings.setString(Config::SERVER_DATA_FOLDER, nstr(server_data_dir_picker->GetPath()));
 
 	ClientAssets::save();
 	ClientAssets::load();
