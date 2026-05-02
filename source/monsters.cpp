@@ -568,10 +568,10 @@ bool MonsterDatabase::importXMLFromOT(const FileName &filename, wxString &error,
 	return true;
 }
 
-int MonsterDatabase::importMissingFromServerLua(const FileName &directory, const FileName &targetXml, wxString &error, wxArrayString &warnings) {
+bool MonsterDatabase::importMissingFromServerLua(const FileName &directory, const FileName &targetXml, wxString &error, wxArrayString &warnings) {
 	if (!directory.DirExists()) {
 		error = "Server data folder does not exist.";
-		return 0;
+		return false;
 	}
 
 	std::unordered_set<std::string> missingNames;
@@ -582,20 +582,20 @@ int MonsterDatabase::importMissingFromServerLua(const FileName &directory, const
 	}
 
 	if (missingNames.empty()) {
-		return 0;
+		return true;
 	}
 
 	pugi::xml_document doc;
 	const pugi::xml_parse_result result = doc.load_file(targetXml.GetFullPath().mb_str());
 	if (!result) {
 		error = "Couldn't open file \"" + targetXml.GetFullName() + "\".";
-		return 0;
+		return false;
 	}
 
 	pugi::xml_node monsterNodes = doc.child("monsters");
 	if (!monsterNodes) {
 		error = "Invalid monsters.xml structure.";
-		return 0;
+		return false;
 	}
 
 	bool xmlChanged = false;
@@ -643,7 +643,7 @@ int MonsterDatabase::importMissingFromServerLua(const FileName &directory, const
 		}
 	} catch (const std::exception &e) {
 		error = wxString::Format("Failed to scan server data folder: %s", wxString(e.what(), wxConvUTF8));
-		return importedCount;
+		return importedCount > 0;
 	}
 
 	if (xmlChanged) {
@@ -652,13 +652,14 @@ int MonsterDatabase::importMissingFromServerLua(const FileName &directory, const
 	}
 	if (xmlChanged && !doc.save_file(targetXml.GetFullPath().mb_str(), "\t", pugi::format_default, pugi::encoding_utf8)) {
 		error = "Failed to write updated monsters.xml.";
+		return false;
 	}
 
 	if (importedCount == 0 && error.empty()) {
 		error = "No missing monsters were found in the configured server data folder.";
 	}
 
-	return importedCount;
+	return importedCount > 0;
 }
 
 bool MonsterDatabase::saveToXML(const FileName &filename) {

@@ -578,10 +578,10 @@ bool NpcDatabase::importXMLFromOT(const FileName &filename, wxString &error, wxA
 	return true;
 }
 
-int NpcDatabase::importMissingFromServerLua(const FileName &directory, const FileName &targetXml, wxString &error, wxArrayString &warnings) {
+bool NpcDatabase::importMissingFromServerLua(const FileName &directory, const FileName &targetXml, wxString &error, wxArrayString &warnings) {
 	if (!directory.DirExists()) {
 		error = "Server data folder does not exist.";
-		return 0;
+		return false;
 	}
 
 	std::unordered_set<std::string> missingNames;
@@ -592,20 +592,20 @@ int NpcDatabase::importMissingFromServerLua(const FileName &directory, const Fil
 	}
 
 	if (missingNames.empty()) {
-		return 0;
+		return true;
 	}
 
 	pugi::xml_document doc;
 	const pugi::xml_parse_result result = doc.load_file(targetXml.GetFullPath().mb_str());
 	if (!result) {
 		error = "Couldn't open file \"" + targetXml.GetFullName() + "\".";
-		return 0;
+		return false;
 	}
 
 	pugi::xml_node npcNodes = doc.child("npcs");
 	if (!npcNodes) {
 		error = "Invalid npcs.xml structure.";
-		return 0;
+		return false;
 	}
 
 	bool xmlChanged = false;
@@ -653,7 +653,7 @@ int NpcDatabase::importMissingFromServerLua(const FileName &directory, const Fil
 		}
 	} catch (const std::exception &e) {
 		error = wxString::Format("Failed to scan server data folder: %s", wxString(e.what(), wxConvUTF8));
-		return importedCount;
+		return importedCount > 0;
 	}
 
 	if (xmlChanged) {
@@ -662,13 +662,14 @@ int NpcDatabase::importMissingFromServerLua(const FileName &directory, const Fil
 	}
 	if (xmlChanged && !doc.save_file(targetXml.GetFullPath().mb_str(), "\t", pugi::format_default, pugi::encoding_utf8)) {
 		error = "Failed to write updated npcs.xml.";
+		return false;
 	}
 
 	if (importedCount == 0 && error.empty()) {
 		error = "No missing npcs were found in the configured server data folder.";
 	}
 
-	return importedCount;
+	return importedCount > 0;
 }
 
 bool NpcDatabase::saveToXML(const FileName &filename) {

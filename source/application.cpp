@@ -578,7 +578,7 @@ bool MainFrame::DoQueryImportCreatures() {
 		if (!serverDataFolder.empty()) {
 			wxString error;
 			wxArrayString warnings;
-			const int importedCount = g_monsters.importMissingFromServerLua(
+			const bool importedAny = g_monsters.importMissingFromServerLua(
 				FileName(wxstr(serverDataFolder)),
 				FileName(wxString("data/creatures/monsters.xml")),
 				error,
@@ -588,7 +588,7 @@ bool MainFrame::DoQueryImportCreatures() {
 			if (!warnings.IsEmpty()) {
 				g_gui.ListDialog("Monster Lua import warnings", warnings);
 			}
-			if (importedCount == 0 && !error.empty()) {
+			if (!importedAny && !error.empty()) {
 				g_gui.PopupDialog("Missing monsters", error, wxOK);
 			}
 		} else {
@@ -624,7 +624,7 @@ bool MainFrame::DoQueryImportCreatures() {
 		if (!serverDataFolder.empty()) {
 			wxString error;
 			wxArrayString warnings;
-			const int importedCount = g_npcs.importMissingFromServerLua(
+			const bool importedAny = g_npcs.importMissingFromServerLua(
 				FileName(wxstr(serverDataFolder)),
 				FileName(wxString("data/creatures/npcs.xml")),
 				error,
@@ -634,7 +634,7 @@ bool MainFrame::DoQueryImportCreatures() {
 			if (!warnings.IsEmpty()) {
 				g_gui.ListDialog("Npc Lua import warnings", warnings);
 			}
-			if (importedCount == 0 && !error.empty()) {
+			if (!importedAny && !error.empty()) {
 				g_gui.PopupDialog("Missing npcs", error, wxOK);
 			}
 		} else {
