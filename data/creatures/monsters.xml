@@ -1527,6 +1527,7 @@
 	<monster name="Tormentor" looktype="245" />
 	<monster name="Tortoise" looktype="197" />
 	<monster name="Training Machine" looktype="1142" />
+	<monster name="Training Monk" looktype="57" />
 	<monster name="Travelling Merchant" looktype="132" lookhead="112" lookbody="109" looklegs="109" lookfeet="95" />
 	<monster name="Tremendous Tyrant" looktype="1396" lookhead="60" lookbody="84" looklegs="40" lookfeet="94" lookaddons="3" />
 	<monster name="Tremor Worm" looktype="295" />

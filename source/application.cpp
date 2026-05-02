@@ -620,27 +620,46 @@ bool MainFrame::DoQueryImportCreatures() {
 	}
 	// Npcs
 	if (g_npcs.hasMissing()) {
-		long ret = g_gui.PopupDialog("Missing npcs", "There are missing npcs in the editor, do you want to load them from an OT npc file?", wxYES | wxNO);
-		if (ret == wxID_YES) {
-			do {
-				wxFileDialog dlg(g_gui.root, "Import npc file", "", "", "*.xml", wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
-				if (dlg.ShowModal() == wxID_OK) {
-					wxArrayString paths;
-					dlg.GetPaths(paths);
-					for (uint32_t i = 0; i < paths.GetCount(); ++i) {
-						wxString error;
-						wxArrayString warnings;
-						bool ok = g_npcs.importXMLFromOT(FileName(paths[i]), error, warnings);
-						if (ok) {
-							g_gui.ListDialog("Npc loader errors", warnings);
-						} else {
-							wxMessageBox("Error OT data file \"" + paths[i] + "\".\n" + error, "Error", wxOK | wxICON_INFORMATION, g_gui.root);
+		const std::string serverDataFolder = g_settings.getString(Config::SERVER_DATA_FOLDER);
+		if (!serverDataFolder.empty()) {
+			wxString error;
+			wxArrayString warnings;
+			const int importedCount = g_npcs.importMissingFromServerLua(
+				FileName(wxstr(serverDataFolder)),
+				FileName(wxString("data/creatures/npcs.xml")),
+				error,
+				warnings
+			);
+
+			if (!warnings.IsEmpty()) {
+				g_gui.ListDialog("Npc Lua import warnings", warnings);
+			}
+			if (importedCount == 0 && !error.empty()) {
+				g_gui.PopupDialog("Missing npcs", error, wxOK);
+			}
+		} else {
+			long ret = g_gui.PopupDialog("Missing npcs", "There are missing npcs in the editor, do you want to load them from an OT npc file?", wxYES | wxNO);
+			if (ret == wxID_YES) {
+				do {
+					wxFileDialog dlg(g_gui.root, "Import npc file", "", "", "*.xml", wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
+					if (dlg.ShowModal() == wxID_OK) {
+						wxArrayString paths;
+						dlg.GetPaths(paths);
+						for (uint32_t i = 0; i < paths.GetCount(); ++i) {
+							wxString error;
+							wxArrayString warnings;
+							bool ok = g_npcs.importXMLFromOT(FileName(paths[i]), error, warnings);
+							if (ok) {
+								g_gui.ListDialog("Npc loader errors", warnings);
+							} else {
+								wxMessageBox("Error OT data file \"" + paths[i] + "\".\n" + error, "Error", wxOK | wxICON_INFORMATION, g_gui.root);
+							}
 						}
+					} else {
+						break;
 					}
-				} else {
-					break;
-				}
-			} while (g_npcs.hasMissing());
+				} while (g_npcs.hasMissing());
+			}
 		}
 
 		ShowMissingNpcs();
