@@ -42,6 +42,7 @@
 	<npc name="A Tainted Soul" looktype="48" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="A Tortured Soul" looktype="48" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="A Vulcongra" looktype="509" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
+	<npc name="A Wandering Soul" looktype="130" lookbody="10" looklegs="10" />
 	<npc name="A Weakened Forest Fury" looktype="569" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="A Wrinkled Bonelord" looktype="17" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="A Wyrm" looktype="291" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
@@ -68,6 +69,7 @@
 	<npc name="Alyxo" looktype="330" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="Amanda" looktype="138" lookitem="0" lookaddon="0" lookhead="96" lookbody="95" looklegs="0" lookfeet="114" />
 	<npc name="Amarie" looktype="159" lookitem="0" lookaddon="0" lookhead="128" lookbody="34" looklegs="28" lookfeet="116" />
+	<npc name="Ambassador Manop" looktype="1816" lookaddons="1" lookfeet="81" />
 	<npc name="Ambassador Of Rathleton" looktype="472" lookitem="0" lookaddon="0" lookhead="19" lookbody="53" looklegs="61" lookfeet="3" />
 	<npc name="Amber" looktype="136" lookitem="0" lookaddon="0" lookhead="59" lookbody="113" looklegs="132" lookfeet="76" />
 	<npc name="Amra" lookType="1537" lookHead="114" lookBody="6" lookLegs="67" lookFeet="49" lookAddons="1" />
@@ -77,6 +79,8 @@
 	<npc name="An Imprisoned Goblin" looktype="61" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="An Old Dragonlord" looktype="39" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="An Orc Guard" looktype="7" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
+	<npc name="An Orchish Ancestor Spirit" looktype="1268" lookhead="82" lookbody="82" looklegs="82" lookfeet="82" />
+	<npc name="Anaztassja Moroia" looktype="312" />
 	<npc name="Anderson" looktype="129" lookitem="0" lookaddon="0" lookhead="79" lookbody="113" looklegs="105" lookfeet="86" />
 	<npc name="Andrew Lyze" looktype="130" lookitem="0" lookaddon="0" lookhead="81" lookbody="21" looklegs="54" lookfeet="94" />
 	<npc name="Anerui" looktype="63" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
@@ -84,6 +88,7 @@
 	<npc name="Angelina" looktype="136" lookitem="0" lookaddon="0" lookhead="57" lookbody="117" looklegs="118" lookfeet="114" />
 	<npc name="Angelo" looktype="145" lookitem="0" lookaddon="0" lookhead="96" lookbody="114" looklegs="120" lookfeet="101" />
 	<npc name="Angus" looktype="128" lookitem="0" lookaddon="0" lookhead="57" lookbody="132" looklegs="114" lookfeet="113" />
+	<npc name="Anna" looktype="1576" lookaddons="2" lookhead="114" lookbody="71" looklegs="71" lookfeet="66" />
 	<npc name="Appaloosa" looktype="140" lookitem="0" lookaddon="0" lookhead="114" lookbody="0" looklegs="114" lookfeet="0" />
 	<npc name="Archery" looktype="683" lookitem="0" lookaddon="0" lookhead="97" lookbody="0" looklegs="96" lookfeet="114" />
 	<npc name="Archery Rook" looktype="683" lookitem="0" lookaddon="0" lookhead="97" lookbody="0" looklegs="96" lookfeet="114" />
@@ -104,9 +109,12 @@
 	<npc name="Asralius" looktype="194" lookitem="0" lookaddon="0" lookhead="114" lookbody="85" looklegs="113" lookfeet="114" />
 	<npc name="Atrad" looktype="152" lookitem="0" lookaddon="0" lookhead="77" lookbody="113" looklegs="132" lookfeet="94" />
 	<npc name="Atur" looktype="1200" lookitem="0" lookaddon="0" lookhead="114" lookbody="78" looklegs="0" lookfeet="3" />
+	<npc name="Augustin" looktype="1316" lookhead="57" lookbody="38" looklegs="21" lookfeet="21" />
 	<npc name="Aurita" looktype="0" lookitem="5811" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="Auron" looktype="508" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="Avar Tar" looktype="73" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
+	<npc name="Avriel" looktype="472" lookhead="78" lookbody="25" looklegs="32" lookfeet="118" />
+	<npc name="Awareness Of The Emperor" looktype="231" />
 	<npc name="Awarness Of The Emperor" looktype="231" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="Azalea" looktype="433" lookitem="0" lookaddon="0" lookhead="0" lookbody="24" looklegs="27" lookfeet="40" />
 	<npc name="Azil" looktype="146" lookitem="0" lookaddon="0" lookhead="95" lookbody="9" looklegs="12" lookfeet="123" />
@@ -143,6 +151,7 @@
 	<npc name="Bonifacius" looktype="128" lookitem="0" lookaddon="0" lookhead="59" lookbody="82" looklegs="97" lookfeet="95" />
 	<npc name="Boozer" looktype="128" lookitem="0" lookaddon="0" lookhead="76" lookbody="20" looklegs="116" lookfeet="76" />
 	<npc name="Borkas" looktype="128" lookitem="0" lookaddon="0" lookhead="77" lookbody="43" looklegs="38" lookfeet="76" />
+	<npc name="Bounac Guard" looktype="1316" lookaddons="2" lookhead="114" lookbody="114" looklegs="129" lookfeet="114" />
 	<npc name="Boveas" looktype="25" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="Bozarn" looktype="128" lookitem="0" lookaddon="0" lookhead="39" lookbody="38" looklegs="95" lookfeet="115" />
 	<npc name="Bozo" looktype="273" lookitem="0" lookaddon="0" lookhead="0" lookbody="77" looklegs="80" lookfeet="79" />
@@ -251,6 +260,7 @@
 	<npc name="Curos" looktype="29" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="Dabui" looktype="129" lookitem="0" lookaddon="0" lookhead="95" lookbody="9" looklegs="27" lookfeet="76" />
 	<npc name="Dagomir" looktype="130" lookitem="0" lookaddon="0" lookhead="0" lookbody="2" looklegs="4" lookfeet="76" />
+	<npc name="Dal the Huntress" looktype="137" lookaddons="3" lookhead="114" lookbody="82" looklegs="82" lookfeet="57" />
 	<npc name="Dalbrect" looktype="129" lookitem="0" lookaddon="0" lookhead="76" lookbody="97" looklegs="67" lookfeet="76" />
 	<npc name="Dallheim" looktype="268" lookitem="0" lookaddon="0" lookhead="76" lookbody="38" looklegs="76" lookfeet="95" />
 	<npc name="Dancing Fairy" looktype="0" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
@@ -277,6 +287,7 @@
 	<npc name="Doug" looktype="128" lookitem="0" lookaddon="0" lookhead="116" lookbody="37" looklegs="116" lookfeet="116" />
 	<npc name="Dove" looktype="136" lookitem="0" lookaddon="0" lookhead="59" lookbody="86" looklegs="106" lookfeet="115" />
 	<npc name="Dr Merlay" looktype="285" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
+	<npc name="Dragon Ancestor Spirit" looktype="1883" />
 	<npc name="Dreadeye" looktype="256" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="Dream Butterfly" looktype="140" lookitem="0" lookaddon="0" lookhead="60" lookbody="24" looklegs="38" lookfeet="0" />
 	<npc name="Dregor" looktype="128" lookitem="0" lookaddon="0" lookhead="97" lookbody="0" looklegs="38" lookfeet="57" />
@@ -319,6 +330,8 @@
 	<npc name="Emma" looktype="139" lookitem="0" lookaddon="0" lookhead="79" lookbody="90" looklegs="52" lookfeet="15" />
 	<npc name="Emperor Kruzak" looktype="66" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="Emperor Rehal" looktype="66" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
+	<npc name="Enpa Rudra" looktype="1816" lookaddons="3" lookfeet="81" />
+	<npc name="Enpa-Deia Pema" looktype="1817" lookaddons="1" lookfeet="81" />
 	<npc name="Eranth" looktype="129" lookitem="0" lookaddon="0" lookhead="97" lookbody="98" looklegs="97" lookfeet="75" />
 	<npc name="Erayo" looktype="152" lookitem="0" lookaddon="0" lookhead="86" lookbody="125" looklegs="86" lookfeet="87" />
 	<npc name="Eremo" looktype="130" lookitem="0" lookaddon="0" lookhead="0" lookbody="109" looklegs="128" lookfeet="128" />
@@ -331,6 +344,7 @@
 	<npc name="Eustacio" looktype="471" lookitem="0" lookaddon="2" lookhead="97" lookbody="110" looklegs="71" lookfeet="116" />
 	<npc name="Eva" looktype="136" lookitem="0" lookaddon="0" lookhead="96" lookbody="98" looklegs="95" lookfeet="0" />
 	<npc name="Evan" looktype="132" lookitem="0" lookaddon="0" lookhead="115" lookbody="107" looklegs="63" lookfeet="114" />
+	<npc name="Evrard" looktype="128" lookhead="117" lookbody="129" looklegs="117" lookfeet="114" />
 	<npc name="Ezean" looktype="339" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="Ezebeth" looktype="140" lookitem="0" lookaddon="0" lookhead="96" lookbody="31" looklegs="34" lookfeet="94" />
 	<npc name="Fa'Hradin" looktype="80" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
@@ -352,11 +366,14 @@
 	<npc name="Fillias" looktype="130" lookitem="0" lookaddon="0" lookhead="59" lookbody="57" looklegs="49" lookfeet="95" />
 	<npc name="Finarfin" looktype="63" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="Fiona" looktype="137" lookitem="0" lookaddon="0" lookhead="115" lookbody="100" looklegs="95" lookfeet="38" />
+	<npc name="Fitzmaurice" looktype="1316" lookaddons="1" lookhead="129" lookbody="114" looklegs="114" lookfeet="114" />
+	<npc name="Flavius" looktype="132" lookaddons="1" lookhead="39" lookbody="44" looklegs="49" lookfeet="76" />
 	<npc name="Flickering Soul" looktype="1219" lookitem="0" lookaddon="0" lookhead="6" lookbody="26" looklegs="26" lookfeet="6" />
 	<npc name="Flint" looktype="134" lookitem="0" lookaddon="0" lookhead="95" lookbody="57" looklegs="76" lookfeet="39" />
 	<npc name="Flora" looktype="148" lookitem="0" lookaddon="0" lookhead="114" lookbody="81" looklegs="20" lookfeet="3" />
 	<npc name="Florentine" looktype="140" lookitem="0" lookaddon="0" lookhead="2" lookbody="91" looklegs="77" lookfeet="2" />
 	<npc name="Frafnar" looktype="160" lookitem="0" lookaddon="0" lookhead="58" lookbody="119" looklegs="81" lookfeet="114" />
+	<npc name="Fral the Butcher" looktype="62" lookhead="78" lookbody="126" looklegs="95" lookfeet="79" />
 	<npc name="Frank The Plank" looktype="128" lookitem="0" lookaddon="0" lookhead="0" lookbody="87" looklegs="108" lookfeet="0" />
 	<npc name="Frans" looktype="0" lookitem="3114" lookaddon="0" lookhead="113" lookbody="113" looklegs="113" lookfeet="115" />
 	<npc name="Frederik" looktype="128" lookitem="0" lookaddon="0" lookhead="76" lookbody="85" looklegs="96" lookfeet="91" />
@@ -452,6 +469,7 @@
 	<npc name="Guide Tiko" looktype="133" lookitem="0" lookaddon="0" lookhead="96" lookbody="78" looklegs="101" lookfeet="116" />
 	<npc name="Gundralph" looktype="9" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="Gurbasch" looktype="66" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
+	<npc name="Gustavo, The Guard" looktype="134" lookhead="95" looklegs="96" lookfeet="116" />
 	<npc name="H.L." looktype="131" lookitem="0" lookaddon="0" lookhead="31" lookbody="114" looklegs="19" lookfeet="114" />
 	<npc name="Haani" looktype="150" lookitem="0" lookaddon="1" lookhead="66" lookbody="93" looklegs="66" lookfeet="19" />
 	<npc name="Habdel" looktype="146" lookitem="0" lookaddon="0" lookhead="95" lookbody="1" looklegs="0" lookfeet="58" />
@@ -475,6 +493,7 @@
 	<npc name="Hawkhurst Ingol" looktype="96" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="Hawkyr" looktype="143" lookitem="0" lookaddon="0" lookhead="97" lookbody="116" looklegs="82" lookfeet="121" />
 	<npc name="Heavenly Messenger" looktype="70" lookitem="0" lookaddon="0" lookhead="20" lookbody="30" looklegs="40" lookfeet="50" />
+	<npc name="Hector The Mentor" looktype="130" lookbody="3" looklegs="20" lookfeet="3" />
 	<npc name="Helor" looktype="134" lookitem="0" lookaddon="0" lookhead="76" lookbody="60" looklegs="114" lookfeet="41" />
 	<npc name="Hemor, The Guard" looktype="70" lookitem="0" lookaddon="0" lookhead="20" lookbody="30" looklegs="40" lookfeet="50" />
 	<npc name="Henricus" looktype="132" lookitem="0" lookaddon="0" lookhead="79" lookbody="0" looklegs="96" lookfeet="0" />
@@ -496,6 +515,7 @@
 	<npc name="Imbul" looktype="128" lookitem="0" lookaddon="0" lookhead="95" lookbody="2" looklegs="63" lookfeet="115" />
 	<npc name="Inigo" looktype="472" lookitem="0" lookaddon="0" lookhead="59" lookbody="114" looklegs="0" lookfeet="94" />
 	<npc name="Inkaef" looktype="146" lookitem="0" lookaddon="0" lookhead="114" lookbody="86" looklegs="0" lookfeet="86" />
+	<npc name="Innkeeper Alphonse" looktype="128" lookhead="132" lookbody="117" looklegs="113" lookfeet="114" />
 	<npc name="Iptar-Sin" looktype="1200" lookitem="0" lookaddon="0" lookhead="114" lookbody="94" looklegs="3" lookfeet="79" />
 	<npc name="Irea" looktype="64" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="Iriana" looktype="264" lookitem="0" lookaddon="0" lookhead="78" lookbody="116" looklegs="95" lookfeet="121" />
@@ -528,6 +548,7 @@
 	<npc name="Jean Claude" looktype="131" lookitem="0" lookaddon="0" lookhead="113" lookbody="113" looklegs="113" lookfeet="115" />
 	<npc name="Jean Pierre" looktype="104" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="Jefrey" looktype="132" lookitem="0" lookaddon="0" lookhead="95" lookbody="63" looklegs="38" lookfeet="82" />
+	<npc name="Jehan the Baker" looktype="128" lookaddons="2" lookhead="126" lookbody="126" looklegs="126" lookfeet="126" />
 	<npc name="Jerom" looktype="132" lookitem="0" lookaddon="0" lookhead="76" lookbody="78" looklegs="78" lookfeet="114" />
 	<npc name="Jeronimo" looktype="132" lookitem="0" lookaddon="0" lookhead="57" lookbody="59" looklegs="3" lookfeet="1" />
 	<npc name="Jessica" looktype="140" lookitem="0" lookaddon="0" lookhead="114" lookbody="16" looklegs="18" lookfeet="33" />
@@ -585,6 +606,7 @@
 	<npc name="Lee'Delle" looktype="140" lookitem="0" lookaddon="0" lookhead="78" lookbody="76" looklegs="72" lookfeet="96" />
 	<npc name="Leeland" looktype="130" lookitem="0" lookaddon="0" lookhead="19" lookbody="53" looklegs="15" lookfeet="95" />
 	<npc name="Legola" looktype="137" lookitem="0" lookaddon="0" lookhead="72" lookbody="68" looklegs="68" lookfeet="95" />
+	<npc name="Lesh the Seer" looktype="154" lookaddons="3" lookhead="114" lookbody="129" looklegs="116" lookfeet="79" />
 	<npc name="Lesser Messenger Of Heaven" looktype="714" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="Liane" looktype="136" lookitem="0" lookaddon="0" lookhead="77" lookbody="98" looklegs="79" lookfeet="114" />
 	<npc name="Lightfoot" looktype="32" lookitem="0" lookaddon="0" lookhead="20" lookbody="30" looklegs="40" lookfeet="50" />
@@ -726,6 +748,7 @@
 	<npc name="Orlan" looktype="133" lookaddons="3" lookhead="20" lookbody="39" looklegs="45" lookfeet="7" />
 	<npc name="Ormuhn" looktype="18" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="Orockle" looktype="0" lookitem="13418" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
+	<npc name="Ortelio" looktype="133" lookbody="9" lookfeet="114" />
 	<npc name="Ortheus" looktype="153" lookitem="0" lookaddon="0" lookhead="40" lookbody="121" looklegs="121" lookfeet="116" />
 	<npc name="Oswald" looktype="128" lookitem="0" lookaddon="0" lookhead="115" lookbody="0" looklegs="67" lookfeet="114" />
 	<npc name="Ottokar" looktype="153" lookitem="0" lookaddon="0" lookhead="132" lookbody="121" looklegs="120" lookfeet="114" />
@@ -768,6 +791,7 @@
 	<npc name="Queen Eloise" looktype="331" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="Quentin" looktype="57" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="Quero" looktype="128" lookitem="0" lookaddon="0" lookhead="55" lookbody="30" looklegs="24" lookfeet="115" />
+	<npc name="Quill" looktype="1848" lookhead="78" lookbody="108" looklegs="39" lookfeet="114" />
 	<npc name="Rabaz" looktype="130" lookitem="0" lookaddon="0" lookhead="39" lookbody="38" looklegs="1" lookfeet="1" />
 	<npc name="Rachel" looktype="136" lookitem="0" lookaddon="0" lookhead="58" lookbody="84" looklegs="86" lookfeet="114" />
 	<npc name="Raffael" looktype="140" lookitem="0" lookaddon="0" lookhead="60" lookbody="24" looklegs="38" lookfeet="0" />
@@ -919,6 +943,7 @@
 	<npc name="The Dream Master" looktype="130" lookitem="0" lookaddon="0" lookhead="19" lookbody="39" looklegs="20" lookfeet="58" />
 	<npc name="The Empress" looktype="1188" lookitem="0" lookaddon="0" lookhead="79" lookbody="0" looklegs="0" lookfeet="3" />
 	<npc name="The First Dragon" looktype="947" lookitem="0" lookaddon="0" lookhead="113" lookbody="117" looklegs="119" lookfeet="80" />
+	<npc name="The Forgemaster" looktype="247" />
 	<npc name="The Gate Keeper" looktype="551" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="The Librarian" looktype="1065" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="The Lootmonger" looktype="1575" lookitem="0" lookaddon="2" lookhead="96" lookbody="101" looklegs="120" lookfeet="120" />
@@ -984,6 +1009,7 @@
 	<npc name="Victor" looktype="134" lookitem="0" lookaddon="0" lookhead="21" lookbody="78" looklegs="38" lookfeet="95" />
 	<npc name="Vigintius" looktype="273" lookitem="0" lookaddon="0" lookhead="94" lookbody="94" looklegs="88" lookfeet="61" />
 	<npc name="Vincent" looktype="128" lookitem="0" lookaddon="0" lookhead="58" lookbody="61" looklegs="25" lookfeet="57" />
+	<npc name="Viola" looktype="138" lookhead="95" lookbody="109" looklegs="94" lookfeet="116" />
 	<npc name="Virgil" looktype="328" lookitem="0" lookaddon="0" lookhead="95" lookbody="114" looklegs="98" lookfeet="97" />
 	<npc name="Vladruc" looktype="68" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="Vulturenose" looktype="96" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
@@ -994,6 +1020,7 @@
 	<npc name="Warbert" looktype="131" lookitem="0" lookaddon="0" lookhead="113" lookbody="113" looklegs="113" lookfeet="115" />
 	<npc name="Weaponmaster" looktype="140" lookitem="0" lookaddon="0" lookhead="60" lookbody="24" looklegs="38" lookfeet="0" />
 	<npc name="Wentworth" looktype="151" lookitem="0" lookaddon="0" lookhead="97" lookbody="19" looklegs="124" lookfeet="115" />
+	<npc name="Wes the Blacksmith" looktype="128" lookaddons="3" lookhead="114" lookbody="95" looklegs="114" lookfeet="114" />
 	<npc name="Wesley" looktype="153" lookitem="0" lookaddon="0" lookhead="58" lookbody="119" looklegs="120" lookfeet="121" />
 	<npc name="Willard" looktype="131" lookitem="0" lookaddon="0" lookhead="58" lookbody="104" looklegs="0" lookfeet="116" />
 	<npc name="Willem" looktype="140" lookitem="0" lookaddon="0" lookhead="60" lookbody="24" looklegs="38" lookfeet="0" />
