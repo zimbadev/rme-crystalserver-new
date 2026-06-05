@@ -38,8 +38,6 @@ jobs:
         include:
           - os: windows-2022
             triplet: x64-windows-static
-            packages: >
-              sccache
     steps:
       - name: Cancel Previous Runs
         if: github.ref != 'refs/heads/main'
@@ -50,15 +48,6 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@main
-
-      - name: CCache
-        uses: hendrikmuhs/ccache-action@main
-        with:
-          max-size: "1G"
-          variant: "sccache"
-          key: ccache-${{ matrix.os }}-${{ matrix.buildtype }}
-          restore-keys: |
-            ccache-${{ matrix.os }}
 
       - name: Restore artifacts and install vcpkg
         id: vcpkg-step
@@ -79,9 +68,12 @@ jobs:
 
       - name: Run CMake
         uses: lukka/run-cmake@main
+        env:
+          SCCACHE_DISABLE: 1
         with:
           configurePreset: ${{ matrix.buildtype }}
           buildPreset: ${{ matrix.buildtype }}
+          configureArguments: '-DOPTIONS_ENABLE_SCCACHE=OFF'
 
       - name: Create and Upload Artifact
         uses: actions/upload-artifact@main
