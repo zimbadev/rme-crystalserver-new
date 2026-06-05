@@ -493,21 +493,10 @@
     <MakeDir Directories="generated" />
   </Target>
   <PropertyGroup>
-    <RunProtoCompile>true</RunProtoCompile>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(GITHUB_WORKSPACE)' != ''">
-    <RunProtoCompile>false</RunProtoCompile>
-  </PropertyGroup>
-  <Target Name="DisplayRunProtoCompileValue" BeforeTargets="ProtoCompile">
-    <Message Text="RunProtoCompile value: $(RunProtoCompile)" Importance="high" />
-  </Target>
-  <PropertyGroup Condition="'$(RunProtoCompile)'=='true'">
-    <ProtocPath>$(ProjectDir)vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc</ProtocPath>
-    <ProtoPath>..\..\$(SourcePath)\protobuf</ProtoPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(RunProtoCompile)'=='false'">
-    <ProtocPath>$(ProjectDir)vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc</ProtocPath>
-    <ProtoPath>$(GITHUB_WORKSPACE)\source\protobuf</ProtoPath>
+    <ProtocPath Condition="'$(GITHUB_WORKSPACE)' != ''">$(GITHUB_WORKSPACE)\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe</ProtocPath>
+    <ProtocPath Condition="'$(GITHUB_WORKSPACE)' == ''">$(ProjectDir)..\..\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe</ProtocPath>
+    <ProtoPath Condition="'$(GITHUB_WORKSPACE)' != ''">$(GITHUB_WORKSPACE)\source\protobuf</ProtoPath>
+    <ProtoPath Condition="'$(GITHUB_WORKSPACE)' == ''">$(ProjectDir)..\..\source\protobuf</ProtoPath>
   </PropertyGroup>
   <ItemGroup>
     <ProtoFiles Include="$(ProtoPath)\*.proto" />
