@@ -1214,7 +1214,9 @@ GameSprite::Image::Image() :
 }
 
 GameSprite::Image::~Image() {
-	unloadGLTexture(0);
+	if (isGLLoaded) {
+		unloadGLTexture(0);
+	}
 }
 
 void GameSprite::Image::createGLTexture(GLuint textureId) {
@@ -1270,6 +1272,9 @@ GameSprite::NormalImage::NormalImage() :
 
 GameSprite::NormalImage::~NormalImage() {
 	m_cachedData = nullptr;
+	if (isGLLoaded) {
+		Image::unloadGLTexture(id);
+	}
 }
 
 void GameSprite::NormalImage::clean(int time) {
