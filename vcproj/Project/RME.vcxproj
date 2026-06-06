@@ -106,24 +106,16 @@
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
     <VcpkgEnableManifest>true</VcpkgEnableManifest>
+    <VcpkgManifestRoot>$(ProjectDir)..\..\</VcpkgManifestRoot>
+    <VcpkgRoot Condition="'$(VcpkgRoot)' == '' and '$(VCPKG_ROOT)' != ''">$(VCPKG_ROOT)</VcpkgRoot>
+    <VcpkgInstalledDir>$(ProjectDir)..\..\vcpkg_installed</VcpkgInstalledDir>
+    <VcpkgTriplet>x64-windows</VcpkgTriplet>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <VcpkgInstalledDir>$(ProjectDir)..\..\vcpkg_installed</VcpkgInstalledDir>
-    <VcpkgTriplet>x64-windows</VcpkgTriplet>
     <VcpkgConfiguration>Release</VcpkgConfiguration>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Vcpkg">
-    <VcpkgInstalledDir>$(ProjectDir)..\..\vcpkg_installed</VcpkgInstalledDir>
-    <VcpkgTriplet>x64-windows</VcpkgTriplet>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <VcpkgInstalledDir>$(ProjectDir)..\..\vcpkg_installed</VcpkgInstalledDir>
-    <VcpkgTriplet>x64-windows</VcpkgTriplet>
     <VcpkgConfiguration>Release</VcpkgConfiguration>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Vcpkg">
-    <VcpkgInstalledDir>$(ProjectDir)..\..\vcpkg_installed</VcpkgInstalledDir>
-    <VcpkgTriplet>x64-windows</VcpkgTriplet>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -512,35 +504,26 @@
   <ItemGroup>
     <ProtoFiles Include="$(ProtoPath)\*.proto" />
   </ItemGroup>
-  <Target Name="ProtoCompile" AfterTargets="VcpkgInstallManifestDependencies" BeforeTargets="PrepareForBuild">
+  <Target Name="ProtoCompile" DependsOnTargets="VcpkgInstallManifestDependencies" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ProtocPath />
     </PropertyGroup>
     <MakeDir Directories="$(GeneratedDir)" />
-    <PropertyGroup Condition="'$(GITHUB_WORKSPACE)' != '' and Exists('$(GITHUB_WORKSPACE)\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe')">
+    <PropertyGroup Condition="Exists('$(VcpkgInstalledDir)\$(VcpkgTriplet)\tools\protobuf\protoc.exe')">
+      <ProtocPath>$(VcpkgInstalledDir)\$(VcpkgTriplet)\tools\protobuf\protoc.exe</ProtocPath>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(ProtocPath)' == '' and Exists('$(VcpkgInstalledDir)\$(VcpkgTriplet)\manual-tools\protobuf\protoc.exe')">
+      <ProtocPath>$(VcpkgInstalledDir)\$(VcpkgTriplet)\manual-tools\protobuf\protoc.exe</ProtocPath>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(ProtocPath)' == '' and '$(GITHUB_WORKSPACE)' != '' and Exists('$(GITHUB_WORKSPACE)\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe')">
       <ProtocPath>$(GITHUB_WORKSPACE)\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe</ProtocPath>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(ProtocPath)' == '' and '$(GITHUB_WORKSPACE)' != '' and Exists('$(GITHUB_WORKSPACE)\vcpkg_installed\$(VcpkgTriplet)\manual-tools\protobuf\protoc.exe')">
-      <ProtocPath>$(GITHUB_WORKSPACE)\vcpkg_installed\$(VcpkgTriplet)\manual-tools\protobuf\protoc.exe</ProtocPath>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(ProtocPath)' == '' and '$(VcpkgManifestRoot)' != '' and Exists('$(VcpkgManifestRoot)vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe')">
-      <ProtocPath>$(VcpkgManifestRoot)vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe</ProtocPath>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(ProtocPath)' == '' and '$(VcpkgManifestRoot)' != '' and Exists('$(VcpkgManifestRoot)vcpkg_installed\$(VcpkgTriplet)\manual-tools\protobuf\protoc.exe')">
-      <ProtocPath>$(VcpkgManifestRoot)vcpkg_installed\$(VcpkgTriplet)\manual-tools\protobuf\protoc.exe</ProtocPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(ProtocPath)' == '' and '$(GITHUB_WORKSPACE)' != '' and Exists('$(GITHUB_WORKSPACE)\vcpkg\installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe')">
       <ProtocPath>$(GITHUB_WORKSPACE)\vcpkg\installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe</ProtocPath>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(ProtocPath)' == '' and Exists('$(ProjectDir)..\..\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe')">
-      <ProtocPath>$(ProjectDir)..\..\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe</ProtocPath>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(ProtocPath)' == '' and Exists('$(ProjectDir)..\..\vcpkg_installed\$(VcpkgTriplet)\manual-tools\protobuf\protoc.exe')">
-      <ProtocPath>$(ProjectDir)..\..\vcpkg_installed\$(VcpkgTriplet)\manual-tools\protobuf\protoc.exe</ProtocPath>
-    </PropertyGroup>
     <Exec Condition="'$(ProtocPath)' != '' and Exists('$(ProtocPath)')" Command="&quot;$(ProtocPath)&quot; --proto_path=&quot;$(ProtoPath)&quot; --cpp_out=&quot;$(GeneratedDir)&quot; &quot;%(ProtoFiles.Identity)&quot;" />
     <Warning Condition="'$(ProtocPath)' == '' or !Exists('$(ProtocPath)')" Text="protoc.exe was not found. Using committed generated protobuf sources from $(GeneratedDir)." />
-    <Error Condition="('$(ProtocPath)' == '' or !Exists('$(ProtocPath)')) and !Exists('$(GeneratedDir)\appearances.pb.cc')" Text="protobuf compiler (protoc.exe) was not found and no committed generated sources exist. Expected protoc at $(GITHUB_WORKSPACE)\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe or $(ProjectDir)..\..\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe. Ensure protobuf is listed in vcpkg.json and dependencies are installed." />
+    <Error Condition="('$(ProtocPath)' == '' or !Exists('$(ProtocPath)')) and !Exists('$(GeneratedDir)\appearances.pb.cc')" Text="protobuf compiler (protoc.exe) was not found and no committed generated sources exist. Expected protoc at $(VcpkgInstalledDir)\$(VcpkgTriplet)\tools\protobuf\protoc.exe. On first build, ensure VCPKG_ROOT is set and vcpkg is integrated (vcpkg integrate install); Visual Studio will install dependencies from vcpkg.json automatically." />
   </Target>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
