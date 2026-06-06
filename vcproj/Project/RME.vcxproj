@@ -489,26 +489,28 @@
   <ItemGroup>
     <ResourceCompile Include="rme.rc" />
   </ItemGroup>
-  <Target Name="EnsureGeneratedDirectoryExists" BeforeTargets="ProtoCompile">
-    <MakeDir Directories="generated" />
-  </Target>
   <PropertyGroup>
     <ProtocPath Condition="'$(GITHUB_WORKSPACE)' != ''">$(GITHUB_WORKSPACE)\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe</ProtocPath>
     <ProtocPath Condition="'$(GITHUB_WORKSPACE)' == ''">$(ProjectDir)..\..\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe</ProtocPath>
     <ProtoPath Condition="'$(GITHUB_WORKSPACE)' != ''">$(GITHUB_WORKSPACE)\source\protobuf</ProtoPath>
     <ProtoPath Condition="'$(GITHUB_WORKSPACE)' == ''">$(ProjectDir)..\..\source\protobuf</ProtoPath>
+    <GeneratedDir Condition="'$(GITHUB_WORKSPACE)' != ''">$(GITHUB_WORKSPACE)\vcproj\Project\generated</GeneratedDir>
+    <GeneratedDir Condition="'$(GITHUB_WORKSPACE)' == ''">$(ProjectDir)generated</GeneratedDir>
   </PropertyGroup>
+  <Target Name="EnsureGeneratedDirectoryExists" BeforeTargets="ProtoCompile">
+    <MakeDir Directories="$(GeneratedDir)" />
+  </Target>
   <ItemGroup>
     <ProtoFiles Include="$(ProtoPath)\*.proto" />
   </ItemGroup>
-  <Target Name="ProtoCompile" BeforeTargets="PrepareForBuild" DependsOnTargets="VcpkgInstallManifestDependencies">
-    <Exec Command="$(ProtocPath) --proto_path=$(ProtoPath) --cpp_out=generated %(ProtoFiles.Identity)" />
+  <Target Name="ProtoCompile" BeforeTargets="PrepareForBuild" DependsOnTargets="VcpkgInstallManifestDependencies;EnsureGeneratedDirectoryExists">
+    <Exec Command="$(ProtocPath) --proto_path=$(ProtoPath) --cpp_out=$(GeneratedDir) %(ProtoFiles.Identity)" />
     <ItemGroup>
-      <ClCompile Include="generated\%(ProtoFiles.Filename).pb.cc">
+      <ClCompile Include="$(GeneratedDir)\%(ProtoFiles.Filename).pb.cc">
         <IncludeInUnityFile>false</IncludeInUnityFile>
         <PrecompiledHeader>NotUsing</PrecompiledHeader>
       </ClCompile>
-      <ClInclude Include="generated\%(ProtoFiles.Filename).pb.h">
+      <ClInclude Include="$(GeneratedDir)\%(ProtoFiles.Filename).pb.h">
         <IncludeInUnityFile>false</IncludeInUnityFile>
       </ClInclude>
     </ItemGroup>
