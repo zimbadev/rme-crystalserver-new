@@ -485,6 +485,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\..\source\pngfiles.cpp" />
+    <ClCompile Include="generated\appearances.pb.cc">
+      <IncludeInUnityFile>false</IncludeInUnityFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClInclude Include="generated\appearances.pb.h">
+      <IncludeInUnityFile>false</IncludeInUnityFile>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="rme.rc" />
@@ -502,11 +509,17 @@
       <ProtocPath />
     </PropertyGroup>
     <MakeDir Directories="$(GeneratedDir)" />
-    <PropertyGroup Condition="Exists('$(VcpkgManifestRoot)vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe')">
+    <PropertyGroup Condition="'$(GITHUB_WORKSPACE)' != '' and Exists('$(GITHUB_WORKSPACE)\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe')">
+      <ProtocPath>$(GITHUB_WORKSPACE)\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe</ProtocPath>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(ProtocPath)' == '' and '$(GITHUB_WORKSPACE)' != '' and Exists('$(GITHUB_WORKSPACE)\vcpkg_installed\$(VcpkgTriplet)\manual-tools\protobuf\protoc.exe')">
+      <ProtocPath>$(GITHUB_WORKSPACE)\vcpkg_installed\$(VcpkgTriplet)\manual-tools\protobuf\protoc.exe</ProtocPath>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(ProtocPath)' == '' and '$(VcpkgManifestRoot)' != '' and Exists('$(VcpkgManifestRoot)vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe')">
       <ProtocPath>$(VcpkgManifestRoot)vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe</ProtocPath>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(ProtocPath)' == '' and '$(GITHUB_WORKSPACE)' != '' and Exists('$(GITHUB_WORKSPACE)\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe')">
-      <ProtocPath>$(GITHUB_WORKSPACE)\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe</ProtocPath>
+    <PropertyGroup Condition="'$(ProtocPath)' == '' and '$(VcpkgManifestRoot)' != '' and Exists('$(VcpkgManifestRoot)vcpkg_installed\$(VcpkgTriplet)\manual-tools\protobuf\protoc.exe')">
+      <ProtocPath>$(VcpkgManifestRoot)vcpkg_installed\$(VcpkgTriplet)\manual-tools\protobuf\protoc.exe</ProtocPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(ProtocPath)' == '' and '$(GITHUB_WORKSPACE)' != '' and Exists('$(GITHUB_WORKSPACE)\vcpkg\installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe')">
       <ProtocPath>$(GITHUB_WORKSPACE)\vcpkg\installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe</ProtocPath>
@@ -514,17 +527,12 @@
     <PropertyGroup Condition="'$(ProtocPath)' == '' and Exists('$(ProjectDir)..\..\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe')">
       <ProtocPath>$(ProjectDir)..\..\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe</ProtocPath>
     </PropertyGroup>
-    <Error Condition="'$(ProtocPath)' == '' or !Exists('$(ProtocPath)')" Text="protobuf compiler (protoc.exe) was not found. Install the protobuf package via vcpkg manifest before building." />
-    <Exec Command="&quot;$(ProtocPath)&quot; --proto_path=&quot;$(ProtoPath)&quot; --cpp_out=&quot;$(GeneratedDir)&quot; &quot;%(ProtoFiles.Identity)&quot;" />
-    <ItemGroup>
-      <ClCompile Include="$(GeneratedDir)\%(ProtoFiles.Filename).pb.cc">
-        <IncludeInUnityFile>false</IncludeInUnityFile>
-        <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      </ClCompile>
-      <ClInclude Include="$(GeneratedDir)\%(ProtoFiles.Filename).pb.h">
-        <IncludeInUnityFile>false</IncludeInUnityFile>
-      </ClInclude>
-    </ItemGroup>
+    <PropertyGroup Condition="'$(ProtocPath)' == '' and Exists('$(ProjectDir)..\..\vcpkg_installed\$(VcpkgTriplet)\manual-tools\protobuf\protoc.exe')">
+      <ProtocPath>$(ProjectDir)..\..\vcpkg_installed\$(VcpkgTriplet)\manual-tools\protobuf\protoc.exe</ProtocPath>
+    </PropertyGroup>
+    <Exec Condition="'$(ProtocPath)' != '' and Exists('$(ProtocPath)')" Command="&quot;$(ProtocPath)&quot; --proto_path=&quot;$(ProtoPath)&quot; --cpp_out=&quot;$(GeneratedDir)&quot; &quot;%(ProtoFiles.Identity)&quot;" />
+    <Warning Condition="'$(ProtocPath)' == '' or !Exists('$(ProtocPath)')" Text="protoc.exe was not found. Using committed generated protobuf sources from $(GeneratedDir)." />
+    <Error Condition="('$(ProtocPath)' == '' or !Exists('$(ProtocPath)')) and !Exists('$(GeneratedDir)\appearances.pb.cc')" Text="protobuf compiler (protoc.exe) was not found and no committed generated sources exist. Expected protoc at $(GITHUB_WORKSPACE)\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe or $(ProjectDir)..\..\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe. Ensure protobuf is listed in vcpkg.json and dependencies are installed." />
   </Target>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

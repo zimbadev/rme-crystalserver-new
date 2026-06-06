@@ -56,6 +56,10 @@ jobs:
           ./bootstrap-vcpkg.bat
           ./vcpkg integrate install
 
+      - name: Install vcpkg manifest dependencies
+        run: |
+          & "$env:VCPKG_ROOT\vcpkg.exe" install --triplet x64-windows --x-manifest-root="$env:GITHUB_WORKSPACE"
+
       - name: Print useful paths
         run: |
           Write-Host "Workspace: $env:GITHUB_WORKSPACE"
@@ -65,7 +69,8 @@ jobs:
       - name: Build project
         env:
           GITHUB_WORKSPACE: ${{ github.workspace }}
-        run: msbuild.exe /p:VcpkgEnableManifest=true /p:Configuration=Debug /p:Platform=x64 /p:GITHUB_WORKSPACE="$env:GITHUB_WORKSPACE" vcproj/RME.sln
+          VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+        run: msbuild.exe /p:VcpkgEnableManifest=true /p:VCPKG_ROOT="$env:VCPKG_ROOT" /p:Configuration=Debug /p:Platform=x64 /p:GITHUB_WORKSPACE="$env:GITHUB_WORKSPACE" vcproj/RME.sln
 
       - name: Upload artifacts
         uses: actions/upload-artifact@main
