@@ -7,10 +7,14 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - "source/**"
+      - "vcproj/**"
+      - "vcpkg.json"
   merge_group:
   push:
     paths:
       - "source/**"
+      - "vcproj/**"
+      - "vcpkg.json"
     branches:
       - main
 
