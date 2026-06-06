@@ -29,6 +29,8 @@ world
 *.vs
 
 vcproj/generated/
+!vcproj/Project/generated/
+!vcproj/Project/generated/**
 vcproj/ipch/
 vcproj/Beta Release/
 vcproj/Debug/
