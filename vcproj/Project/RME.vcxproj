@@ -490,21 +490,32 @@
     <ResourceCompile Include="rme.rc" />
   </ItemGroup>
   <PropertyGroup>
-    <ProtocPath Condition="'$(GITHUB_WORKSPACE)' != ''">$(GITHUB_WORKSPACE)\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe</ProtocPath>
-    <ProtocPath Condition="'$(GITHUB_WORKSPACE)' == ''">$(ProjectDir)..\..\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe</ProtocPath>
+    <GeneratedDir>$(ProjectDir)generated</GeneratedDir>
     <ProtoPath Condition="'$(GITHUB_WORKSPACE)' != ''">$(GITHUB_WORKSPACE)\source\protobuf</ProtoPath>
     <ProtoPath Condition="'$(GITHUB_WORKSPACE)' == ''">$(ProjectDir)..\..\source\protobuf</ProtoPath>
-    <GeneratedDir Condition="'$(GITHUB_WORKSPACE)' != ''">$(GITHUB_WORKSPACE)\vcproj\Project\generated</GeneratedDir>
-    <GeneratedDir Condition="'$(GITHUB_WORKSPACE)' == ''">$(ProjectDir)generated</GeneratedDir>
   </PropertyGroup>
-  <Target Name="EnsureGeneratedDirectoryExists" BeforeTargets="ProtoCompile">
-    <MakeDir Directories="$(GeneratedDir)" />
-  </Target>
   <ItemGroup>
     <ProtoFiles Include="$(ProtoPath)\*.proto" />
   </ItemGroup>
-  <Target Name="ProtoCompile" BeforeTargets="PrepareForBuild" DependsOnTargets="VcpkgInstallManifestDependencies;EnsureGeneratedDirectoryExists">
-    <Exec Command="$(ProtocPath) --proto_path=$(ProtoPath) --cpp_out=$(GeneratedDir) %(ProtoFiles.Identity)" />
+  <Target Name="ProtoCompile" AfterTargets="VcpkgInstallManifestDependencies" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ProtocPath />
+    </PropertyGroup>
+    <MakeDir Directories="$(GeneratedDir)" />
+    <PropertyGroup Condition="Exists('$(VcpkgManifestRoot)vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe')">
+      <ProtocPath>$(VcpkgManifestRoot)vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe</ProtocPath>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(ProtocPath)' == '' and '$(GITHUB_WORKSPACE)' != '' and Exists('$(GITHUB_WORKSPACE)\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe')">
+      <ProtocPath>$(GITHUB_WORKSPACE)\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe</ProtocPath>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(ProtocPath)' == '' and '$(GITHUB_WORKSPACE)' != '' and Exists('$(GITHUB_WORKSPACE)\vcpkg\installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe')">
+      <ProtocPath>$(GITHUB_WORKSPACE)\vcpkg\installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe</ProtocPath>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(ProtocPath)' == '' and Exists('$(ProjectDir)..\..\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe')">
+      <ProtocPath>$(ProjectDir)..\..\vcpkg_installed\$(VcpkgTriplet)\tools\protobuf\protoc.exe</ProtocPath>
+    </PropertyGroup>
+    <Error Condition="'$(ProtocPath)' == '' or !Exists('$(ProtocPath)')" Text="protobuf compiler (protoc.exe) was not found. Install the protobuf package via vcpkg manifest before building." />
+    <Exec Command="&quot;$(ProtocPath)&quot; --proto_path=&quot;$(ProtoPath)&quot; --cpp_out=&quot;$(GeneratedDir)&quot; &quot;%(ProtoFiles.Identity)&quot;" />
     <ItemGroup>
       <ClCompile Include="$(GeneratedDir)\%(ProtoFiles.Filename).pb.cc">
         <IncludeInUnityFile>false</IncludeInUnityFile>
