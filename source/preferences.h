@@ -116,6 +116,7 @@ protected:
 	wxDirPickerCtrl* version_dir_picker;
 	wxDirPickerCtrl* server_data_dir_picker;
 	wxCheckBox* check_sigs_chkbox;
+	wxString initial_client_path;
 
 	// Create controls
 	wxChoice* AddPaletteStyleChoice(wxWindow* parent, wxSizer* sizer, const wxString &short_description, const wxString &description, const std::string &setting);
