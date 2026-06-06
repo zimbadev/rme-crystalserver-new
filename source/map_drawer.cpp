@@ -2065,20 +2065,20 @@ std::string MapDrawer::FormatPerformanceStats() const {
 }
 
 namespace {
-int MeasureBitmapTextWidth(const std::string &text, void* font) {
-	int width = 0;
-	for (const char &c : text) {
-		width += glutBitmapWidth(font, c);
+	int MeasureBitmapTextWidth(const std::string &text, void* font) {
+		int width = 0;
+		for (const char &c : text) {
+			width += glutBitmapWidth(font, c);
+		}
+		return width;
 	}
-	return width;
-}
 
-void DrawBitmapText(int x, int y, const std::string &text, void* font) {
-	glRasterPos2i(x, y);
-	for (const char &c : text) {
-		glutBitmapCharacter(font, c);
+	void DrawBitmapText(int x, int y, const std::string &text, void* font) {
+		glRasterPos2i(x, y);
+		for (const char &c : text) {
+			glutBitmapCharacter(font, c);
+		}
 	}
-}
 } // namespace
 
 void MapDrawer::DrawPerformanceStats() {
