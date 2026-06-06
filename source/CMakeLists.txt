@@ -233,6 +233,7 @@ target_link_libraries(${PROJECT_NAME}
 	protobuf
 
 	$<$<PLATFORM_ID:Linux>:xcb>
+	$<$<PLATFORM_ID:Windows>:psapi>
 )
 
 ## Link compilation files to build/bin folder, else link to the main dir
