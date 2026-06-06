@@ -252,6 +252,9 @@ bool GUI::loadMapWindow(wxString &error, wxArrayString &warnings, bool force /* 
 	DestroyPalettes();
 	DestroyMinimap();
 
+	ClientAssets::setLoaded(false);
+	m_appearancesPtr.reset();
+
 	g_spriteAppearances.terminate();
 
 	// Destroy the previous window

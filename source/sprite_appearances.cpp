@@ -29,6 +29,10 @@ namespace fs = std::filesystem;
 SpriteAppearances g_spriteAppearances;
 
 void SpriteAppearances::init() {
+	sprites.clear();
+	sheets.clear();
+	spritesCount = 0;
+	appearanceFile.clear();
 	// in tibia 12.81 there is currently 3482 sheets
 	sheets.reserve(4000);
 }
@@ -180,6 +184,8 @@ bool SpriteAppearances::loadSpriteSheet(const SpriteSheetPtr &sheet) {
 void SpriteAppearances::unload() {
 	spritesCount = 0;
 	sheets.clear();
+	sprites.clear();
+	appearanceFile.clear();
 }
 
 SpriteSheetPtr SpriteAppearances::getSheetBySpriteId(int id, bool load /* = true */) {

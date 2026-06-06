@@ -545,6 +545,7 @@ wxNotebookPage* PreferencesWindow::CreateClientPage() {
 
 	wxDirPickerCtrl* dir_picker = newd wxDirPickerCtrl(client_list_window, wxID_ANY, ClientAssets::getPath());
 	version_dir_picker = dir_picker;
+	initial_client_path = ClientAssets::getPath();
 	client_list_sizer->Add(dir_picker, wxSizerFlags(0).Border(wxRIGHT, 10).Expand());
 
 	wxString tooltip;
@@ -721,6 +722,21 @@ void PreferencesWindow::Apply() {
 	g_settings.setFloat(Config::ZOOM_SPEED, zoom_speed_slider->GetValue() / 10.f);
 	g_settings.setString(Config::SERVER_DATA_FOLDER, nstr(server_data_dir_picker->GetPath()));
 
+	const wxString newClientPath = version_dir_picker->GetPath();
+	if (!newClientPath.IsEmpty()) {
+		ClientAssets::setPath(newClientPath);
+	}
+
+	wxFileName previousClientPath;
+	previousClientPath.Assign(initial_client_path);
+	previousClientPath.Normalize(wxPATH_NORM_ALL);
+
+	wxFileName normalizedClientPath;
+	normalizedClientPath.Assign(newClientPath);
+	normalizedClientPath.Normalize(wxPATH_NORM_ALL);
+
+	const bool clientPathChanged = !newClientPath.IsEmpty() && normalizedClientPath.GetFullPath() != previousClientPath.GetFullPath();
+
 	ClientAssets::save();
 	ClientAssets::load();
 
@@ -730,16 +746,21 @@ void PreferencesWindow::Apply() {
 		g_gui.PopupDialog(this, "Notice", "You must restart the editor for the changes to take effect.", wxOK);
 	}
 
-	if (!palette_update_needed) {
-		// update palette icons
-		g_gui.RebuildPalettes();
-	} else {
-		// change palette structure
+	if (clientPathChanged || palette_update_needed) {
 		wxString error;
 		wxArrayString warnings;
-		if (!g_gui.loadMapWindow(error, warnings)) {
-			g_gui.PopupDialog("Error", error, wxOK);
+		if (!g_gui.loadMapWindow(error, warnings, true)) {
+			g_gui.PopupDialog(this, "Error", error, wxOK);
 			g_gui.ListDialog("Warnings", warnings);
+		} else {
+			if (!warnings.empty()) {
+				g_gui.ListDialog("Warnings", warnings);
+			}
+			initial_client_path = ClientAssets::getPath();
+			g_gui.RefreshPalettes();
+			g_gui.RefreshView();
 		}
+	} else {
+		g_gui.RebuildPalettes();
 	}
 }
