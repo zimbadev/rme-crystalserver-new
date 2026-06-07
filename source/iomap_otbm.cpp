@@ -5345,7 +5345,7 @@ bool IOMapOTBM::loadSpawnsMonster(Map &map, pugi::xml_document &doc) {
 		if (!tile) {
 			TileLocation* tileLocation = map.createTileL(spawnPosition);
 			tile = map.allocator(tileLocation);
-			map.setTile( tile);
+			map.setTile(tile);
 		}
 
 		tile->spawnMonster = spawnMonster;
@@ -5619,7 +5619,7 @@ bool IOMapOTBM::loadSpawnsNpc(Map &map, pugi::xml_document &doc) {
 		if (!spawnTile) {
 			TileLocation* tileLocation = map.createTileL(spawnPosition);
 			spawnTile = map.allocator(tileLocation);
-			map.setTile( spawnTile);
+			map.setTile(spawnTile);
 		}
 
 		spawnTile->spawnNpc = spawnNpc;
@@ -6758,197 +6758,197 @@ bool IOMapOTBM::saveCyclopediaMapData(Map &map, const FileName &dir, const Cyclo
 	using namespace clienteditor::protobuf::mapdata;
 
 	try {
-	auto reportProgress = [&](const int32_t done, const std::string &message = std::string()) {
-		if (!progress) {
-			return true;
+		auto reportProgress = [&](const int32_t done, const std::string &message = std::string()) {
+			if (!progress) {
+				return true;
+			}
+			return progress(std::max<int32_t>(0, std::min<int32_t>(99, done)), message);
+		};
+
+		if (!reportProgress(0, "Preparing cyclopedia export... [|]")) {
+			return false;
 		}
-		return progress(std::max<int32_t>(0, std::min<int32_t>(99, done)), message);
-	};
 
-	if (!reportProgress(0, "Preparing cyclopedia export... [|]")) {
-		return false;
-	}
+		const std::filesystem::path requestedOutputPath = nstr(dir.GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME));
+		const std::filesystem::path basePath = resolveCyclopediaCatalogBasePath(requestedOutputPath);
+		const std::filesystem::path backupRootBasePath = basePath / "bkps";
+		std::error_code ec;
+		std::filesystem::create_directories(basePath, ec);
+		const std::filesystem::path backupRootPath = createCyclopediaBackupRunPath(backupRootBasePath, "export");
+		if (backupRootPath.empty()) {
+			warning("Failed to create cyclopedia backup snapshot directory.");
+			return false;
+		}
 
-	const std::filesystem::path requestedOutputPath = nstr(dir.GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME));
-	const std::filesystem::path basePath = resolveCyclopediaCatalogBasePath(requestedOutputPath);
-	const std::filesystem::path backupRootBasePath = basePath / "bkps";
-	std::error_code ec;
-	std::filesystem::create_directories(basePath, ec);
-	const std::filesystem::path backupRootPath = createCyclopediaBackupRunPath(backupRootBasePath, "export");
-	if (backupRootPath.empty()) {
-		warning("Failed to create cyclopedia backup snapshot directory.");
-		return false;
-	}
+		CyclopediaCatalogFiles outputCatalogFiles;
+		loadCyclopediaCatalogFiles(basePath, outputCatalogFiles);
 
-	CyclopediaCatalogFiles outputCatalogFiles;
-	loadCyclopediaCatalogFiles(basePath, outputCatalogFiles);
+		const wxString clientAssetsRoot = ClientAssets::getPath();
+		const std::filesystem::path clientAssetsPath = clientAssetsRoot.empty() ? std::filesystem::path() : resolveCyclopediaCatalogBasePath(std::filesystem::path(nstr(clientAssetsRoot)));
+		CyclopediaCatalogFiles sourceCatalogFiles;
+		if (!clientAssetsPath.empty()) {
+			loadCyclopediaCatalogFiles(clientAssetsPath, sourceCatalogFiles);
+		}
 
-	const wxString clientAssetsRoot = ClientAssets::getPath();
-	const std::filesystem::path clientAssetsPath = clientAssetsRoot.empty() ? std::filesystem::path() : resolveCyclopediaCatalogBasePath(std::filesystem::path(nstr(clientAssetsRoot)));
-	CyclopediaCatalogFiles sourceCatalogFiles;
-	if (!clientAssetsPath.empty()) {
-		loadCyclopediaCatalogFiles(clientAssetsPath, sourceCatalogFiles);
-	}
+		std::string mapDataTemplateFileName = !outputCatalogFiles.mapFileName.empty() ? outputCatalogFiles.mapFileName : getCyclopediaMapDataFilename(map);
+		if (mapDataTemplateFileName == getCyclopediaMapDataFilename(map) && !sourceCatalogFiles.mapFileName.empty()) {
+			mapDataTemplateFileName = sourceCatalogFiles.mapFileName;
+		}
 
-	std::string mapDataTemplateFileName = !outputCatalogFiles.mapFileName.empty() ? outputCatalogFiles.mapFileName : getCyclopediaMapDataFilename(map);
-	if (mapDataTemplateFileName == getCyclopediaMapDataFilename(map) && !sourceCatalogFiles.mapFileName.empty()) {
-		mapDataTemplateFileName = sourceCatalogFiles.mapFileName;
-	}
+		std::string mapDataBuffer;
+		std::vector<std::pair<std::string, std::vector<uint8_t>>> assets;
+		if (!serializeCyclopediaMapData(
+				map, mapDataBuffer, assets, [&reportProgress](const int32_t done, const std::string &message) {
+					return reportProgress(std::min<int32_t>(95, done), message);
+				},
+				satellitePixelsPerSquare
+			)) {
+			return false;
+		}
 
-	std::string mapDataBuffer;
-	std::vector<std::pair<std::string, std::vector<uint8_t>>> assets;
-	if (!serializeCyclopediaMapData(
-			map, mapDataBuffer, assets, [&reportProgress](const int32_t done, const std::string &message) {
-				return reportProgress(std::min<int32_t>(95, done), message);
-			},
-			satellitePixelsPerSquare
-		)) {
-		return false;
-	}
-
-	MapData templateMapData;
-	bool hasTemplateMapData = false;
-	std::filesystem::path templateMapDataBasePath;
-	if (!mapDataTemplateFileName.empty()) {
-		hasTemplateMapData = loadCyclopediaMapDataTemplate(basePath / mapDataTemplateFileName, templateMapData);
+		MapData templateMapData;
+		bool hasTemplateMapData = false;
+		std::filesystem::path templateMapDataBasePath;
+		if (!mapDataTemplateFileName.empty()) {
+			hasTemplateMapData = loadCyclopediaMapDataTemplate(basePath / mapDataTemplateFileName, templateMapData);
+			if (hasTemplateMapData) {
+				templateMapDataBasePath = basePath;
+			}
+		}
+		if (!hasTemplateMapData && !sourceCatalogFiles.mapFileName.empty() && !clientAssetsPath.empty()) {
+			hasTemplateMapData = loadCyclopediaMapDataTemplate(clientAssetsPath / sourceCatalogFiles.mapFileName, templateMapData);
+			if (hasTemplateMapData) {
+				templateMapDataBasePath = clientAssetsPath;
+			}
+		}
 		if (hasTemplateMapData) {
-			templateMapDataBasePath = basePath;
+			std::string mergedMapDataBuffer;
+			if (mergeCyclopediaTemplateMapData(templateMapData, mapDataBuffer, mergedMapDataBuffer)) {
+				mapDataBuffer = std::move(mergedMapDataBuffer);
+				if (!restoreCyclopediaMapAssets(basePath, backupRootPath, templateMapDataBasePath, templateMapData, true)) {
+					warning("Failed to restore preserved cyclopedia subarea asset files.");
+					return false;
+				}
+			} else {
+				warning("Failed to merge template mapdata protobuf content.");
+			}
 		}
-	}
-	if (!hasTemplateMapData && !sourceCatalogFiles.mapFileName.empty() && !clientAssetsPath.empty()) {
-		hasTemplateMapData = loadCyclopediaMapDataTemplate(clientAssetsPath / sourceCatalogFiles.mapFileName, templateMapData);
-		if (hasTemplateMapData) {
-			templateMapDataBasePath = clientAssetsPath;
+
+		const std::string mapDataFileName = buildCatalogDataFilename("map", mapDataBuffer);
+		std::unordered_set<std::string> assetFileNames;
+		std::unordered_set<std::string> assetReplacementKeys;
+		collectCyclopediaAssetBackupKeys(assets, assetFileNames, assetReplacementKeys);
+		if (!reportProgress(96, "Writing map protobuf... [|]")) {
+			return false;
 		}
-	}
-	if (hasTemplateMapData) {
-		std::string mergedMapDataBuffer;
-		if (mergeCyclopediaTemplateMapData(templateMapData, mapDataBuffer, mergedMapDataBuffer)) {
-			mapDataBuffer = std::move(mergedMapDataBuffer);
-			if (!restoreCyclopediaMapAssets(basePath, backupRootPath, templateMapDataBasePath, templateMapData, true)) {
-				warning("Failed to restore preserved cyclopedia subarea asset files.");
+		const std::filesystem::path mapDataPath = basePath / mapDataFileName;
+		if (!mapDataPath.parent_path().empty()) {
+			std::filesystem::create_directories(mapDataPath.parent_path(), ec);
+		}
+		if (!backupMapAssetsFromPreviousMapData(basePath, backupRootPath, outputCatalogFiles.mapFileName, mapDataFileName, assetFileNames)) {
+			warning("Failed to backup previous cyclopedia map asset files.");
+			return false;
+		}
+		if (!backupCatalogFileIfReplaced(basePath, backupRootPath, outputCatalogFiles.mapFileName, mapDataFileName)) {
+			warning("Failed to backup previous cyclopedia mapdata protobuf file.");
+			return false;
+		}
+		if (!backupStaleCatalogDataFiles(basePath, backupRootPath, "map", mapDataFileName)) {
+			warning("Failed to backup stale cyclopedia mapdata protobuf files.");
+			return false;
+		}
+		if (!backupStaleCyclopediaAssetFiles(basePath, backupRootPath, assetFileNames, assetReplacementKeys)) {
+			warning("Failed to backup stale cyclopedia asset files.");
+			return false;
+		}
+		if (!backupFileIfExists(mapDataPath, basePath, backupRootPath)) {
+			warning("Failed to create backup for cyclopedia mapdata protobuf file.");
+			return false;
+		}
+		if (!writeBinaryFile(mapDataPath, mapDataBuffer)) {
+			warning("Failed to save cyclopedia mapdata protobuf file.");
+			return false;
+		}
+
+		const int totalAssets = std::max<int>(1, static_cast<int>(assets.size()));
+		int writtenAssets = 0;
+		for (const auto &[relativePath, fileBytes] : assets) {
+			const std::filesystem::path targetPath = basePath / relativePath;
+			const std::filesystem::path targetDir = targetPath.parent_path();
+			if (!targetDir.empty()) {
+				std::filesystem::create_directories(targetDir, ec);
+			}
+			if (!backupFileIfExists(targetPath, basePath, backupRootPath)) {
+				warning("Failed to create backup for cyclopedia asset file.");
 				return false;
 			}
-		} else {
-			warning("Failed to merge template mapdata protobuf content.");
-		}
-	}
 
-	const std::string mapDataFileName = buildCatalogDataFilename("map", mapDataBuffer);
-	std::unordered_set<std::string> assetFileNames;
-	std::unordered_set<std::string> assetReplacementKeys;
-	collectCyclopediaAssetBackupKeys(assets, assetFileNames, assetReplacementKeys);
-	if (!reportProgress(96, "Writing map protobuf... [|]")) {
-		return false;
-	}
-	const std::filesystem::path mapDataPath = basePath / mapDataFileName;
-	if (!mapDataPath.parent_path().empty()) {
-		std::filesystem::create_directories(mapDataPath.parent_path(), ec);
-	}
-	if (!backupMapAssetsFromPreviousMapData(basePath, backupRootPath, outputCatalogFiles.mapFileName, mapDataFileName, assetFileNames)) {
-		warning("Failed to backup previous cyclopedia map asset files.");
-		return false;
-	}
-	if (!backupCatalogFileIfReplaced(basePath, backupRootPath, outputCatalogFiles.mapFileName, mapDataFileName)) {
-		warning("Failed to backup previous cyclopedia mapdata protobuf file.");
-		return false;
-	}
-	if (!backupStaleCatalogDataFiles(basePath, backupRootPath, "map", mapDataFileName)) {
-		warning("Failed to backup stale cyclopedia mapdata protobuf files.");
-		return false;
-	}
-	if (!backupStaleCyclopediaAssetFiles(basePath, backupRootPath, assetFileNames, assetReplacementKeys)) {
-		warning("Failed to backup stale cyclopedia asset files.");
-		return false;
-	}
-	if (!backupFileIfExists(mapDataPath, basePath, backupRootPath)) {
-		warning("Failed to create backup for cyclopedia mapdata protobuf file.");
-		return false;
-	}
-	if (!writeBinaryFile(mapDataPath, mapDataBuffer)) {
-		warning("Failed to save cyclopedia mapdata protobuf file.");
-		return false;
-	}
+			if (!writeBinaryFile(targetPath, fileBytes)) {
+				warning("Failed to save cyclopedia asset file.");
+				return false;
+			}
 
-	const int totalAssets = std::max<int>(1, static_cast<int>(assets.size()));
-	int writtenAssets = 0;
-	for (const auto &[relativePath, fileBytes] : assets) {
-		const std::filesystem::path targetPath = basePath / relativePath;
-		const std::filesystem::path targetDir = targetPath.parent_path();
-		if (!targetDir.empty()) {
-			std::filesystem::create_directories(targetDir, ec);
+			++writtenAssets;
+			const int32_t done = 96 + static_cast<int32_t>((writtenAssets * 3LL) / totalAssets);
+			const char spinner = CyclopediaProgressSpinner[writtenAssets % CyclopediaProgressSpinner.size()];
+			if (!reportProgress(done, std::format("Writing assets... ({}/{}) [{}]", writtenAssets, totalAssets, spinner))) {
+				return false;
+			}
 		}
-		if (!backupFileIfExists(targetPath, basePath, backupRootPath)) {
-			warning("Failed to create backup for cyclopedia asset file.");
+
+		MapData writtenMapData;
+		if (!writtenMapData.ParseFromString(mapDataBuffer)) {
+			warning("Failed to validate written cyclopedia mapdata protobuf content.");
+			return false;
+		}
+		if (!restoreCyclopediaMapAssets(basePath, backupRootPath, templateMapDataBasePath, writtenMapData, false)) {
+			warning("Failed to restore referenced cyclopedia map asset files.");
 			return false;
 		}
 
-		if (!writeBinaryFile(targetPath, fileBytes)) {
-			warning("Failed to save cyclopedia asset file.");
-			return false;
-		}
-
-		++writtenAssets;
-		const int32_t done = 96 + static_cast<int32_t>((writtenAssets * 3LL) / totalAssets);
-		const char spinner = CyclopediaProgressSpinner[writtenAssets % CyclopediaProgressSpinner.size()];
-		if (!reportProgress(done, std::format("Writing assets... ({}/{}) [{}]", writtenAssets, totalAssets, spinner))) {
-			return false;
-		}
-	}
-
-	MapData writtenMapData;
-	if (!writtenMapData.ParseFromString(mapDataBuffer)) {
-		warning("Failed to validate written cyclopedia mapdata protobuf content.");
-		return false;
-	}
-	if (!restoreCyclopediaMapAssets(basePath, backupRootPath, templateMapDataBasePath, writtenMapData, false)) {
-		warning("Failed to restore referenced cyclopedia map asset files.");
-		return false;
-	}
-
-	std::string staticMapDataFileName = outputCatalogFiles.staticMapDataFileName;
-	if (staticMapDataFileName.empty()) {
-		staticMapDataFileName = sourceCatalogFiles.staticMapDataFileName;
-		if (!staticMapDataFileName.empty() && !clientAssetsPath.empty()) {
-			const std::filesystem::path sourceStaticMapDataPath = clientAssetsPath / sourceCatalogFiles.staticMapDataFileName;
-			const std::filesystem::path targetStaticMapDataPath = basePath / staticMapDataFileName;
-			if (std::filesystem::exists(sourceStaticMapDataPath)) {
-				bool samePath = false;
-				std::error_code compareEc;
-				samePath = std::filesystem::equivalent(sourceStaticMapDataPath, targetStaticMapDataPath, compareEc);
-				if (!samePath) {
-					if (!targetStaticMapDataPath.parent_path().empty()) {
-						std::filesystem::create_directories(targetStaticMapDataPath.parent_path(), ec);
-					}
-					if (!backupFileIfExists(targetStaticMapDataPath, basePath, backupRootPath)) {
-						warning("Failed to create backup for staticmapdata file.");
-						return false;
-					}
-					ec.clear();
-					std::filesystem::copy_file(sourceStaticMapDataPath, targetStaticMapDataPath, std::filesystem::copy_options::overwrite_existing, ec);
-					if (ec) {
-						warning("Failed to copy staticmapdata file.");
-						return false;
+		std::string staticMapDataFileName = outputCatalogFiles.staticMapDataFileName;
+		if (staticMapDataFileName.empty()) {
+			staticMapDataFileName = sourceCatalogFiles.staticMapDataFileName;
+			if (!staticMapDataFileName.empty() && !clientAssetsPath.empty()) {
+				const std::filesystem::path sourceStaticMapDataPath = clientAssetsPath / sourceCatalogFiles.staticMapDataFileName;
+				const std::filesystem::path targetStaticMapDataPath = basePath / staticMapDataFileName;
+				if (std::filesystem::exists(sourceStaticMapDataPath)) {
+					bool samePath = false;
+					std::error_code compareEc;
+					samePath = std::filesystem::equivalent(sourceStaticMapDataPath, targetStaticMapDataPath, compareEc);
+					if (!samePath) {
+						if (!targetStaticMapDataPath.parent_path().empty()) {
+							std::filesystem::create_directories(targetStaticMapDataPath.parent_path(), ec);
+						}
+						if (!backupFileIfExists(targetStaticMapDataPath, basePath, backupRootPath)) {
+							warning("Failed to create backup for staticmapdata file.");
+							return false;
+						}
+						ec.clear();
+						std::filesystem::copy_file(sourceStaticMapDataPath, targetStaticMapDataPath, std::filesystem::copy_options::overwrite_existing, ec);
+						if (ec) {
+							warning("Failed to copy staticmapdata file.");
+							return false;
+						}
 					}
 				}
 			}
 		}
-	}
 
-	CyclopediaCatalogFiles updatedCatalogFiles = outputCatalogFiles;
-	updatedCatalogFiles.mapFileName = mapDataFileName;
-	if (!staticMapDataFileName.empty()) {
-		updatedCatalogFiles.staticMapDataFileName = staticMapDataFileName;
-	}
-	if (!updateCyclopediaCatalogFiles(basePath, updatedCatalogFiles, backupRootPath)) {
-		warning("Failed to update catalog-content.json for cyclopedia map export.");
-		return false;
-	}
+		CyclopediaCatalogFiles updatedCatalogFiles = outputCatalogFiles;
+		updatedCatalogFiles.mapFileName = mapDataFileName;
+		if (!staticMapDataFileName.empty()) {
+			updatedCatalogFiles.staticMapDataFileName = staticMapDataFileName;
+		}
+		if (!updateCyclopediaCatalogFiles(basePath, updatedCatalogFiles, backupRootPath)) {
+			warning("Failed to update catalog-content.json for cyclopedia map export.");
+			return false;
+		}
 
-	if (!reportProgress(99, "Cyclopedia export completed. [|]")) {
-		return false;
-	}
-	return true;
+		if (!reportProgress(99, "Cyclopedia export completed. [|]")) {
+			return false;
+		}
+		return true;
 	} catch (const std::exception &exception) {
 		spdlog::error("[saveCyclopediaMapData] - {}", exception.what());
 		warning("Cyclopedia export failed: %s", exception.what());
