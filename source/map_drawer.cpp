@@ -31,7 +31,6 @@
 	#include <sstream>
 #endif
 
-#include <format>
 #include <thread>
 
 #include "editor.h"
@@ -2061,7 +2060,7 @@ void MapDrawer::UpdateCPUUsage() {
 }
 
 std::string MapDrawer::FormatPerformanceStats() const {
-	return std::format("{:.1f} FPS  ·  {:.1f}% CPU  ·  {} MB RAM", current_fps, current_cpu, current_ram);
+	return fmt::format("{:.1f} FPS  ·  {:.1f}% CPU  ·  {} MB RAM", current_fps, current_cpu, current_ram);
 }
 
 namespace {
