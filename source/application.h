@@ -72,6 +72,8 @@ public:
 	bool DoQuerySaveTileset(bool doclose = true);
 	void ShowMissingMonsters();
 	void ShowMissingNpcs();
+	bool ImportMonstersFromServerData(bool interactive = true);
+	bool ImportNpcsFromServerData(bool interactive = true);
 	bool DoQueryImportCreatures();
 	bool LoadMap(FileName name);
 

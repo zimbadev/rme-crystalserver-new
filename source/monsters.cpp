@@ -146,6 +146,27 @@ namespace {
 		}
 	}
 
+	void upsertMonsterNode(pugi::xml_node &monsterNodes, const MonsterType &monsterType) {
+		const std::string lowerName = as_lower_str(monsterType.name);
+		for (pugi::xml_node monsterNode = monsterNodes.child("monster"); monsterNode; monsterNode = monsterNode.next_sibling("monster")) {
+			const pugi::xml_attribute nameAttribute = monsterNode.attribute("name");
+			if (nameAttribute && as_lower_str(nameAttribute.as_string()) == lowerName) {
+				monsterNodes.remove_child(monsterNode);
+				break;
+			}
+		}
+		appendMonsterNode(monsterNodes, monsterType);
+	}
+
+	void registerMonsterBrush(MonsterType* monsterType) {
+		if (!monsterType->brush) {
+			monsterType->brush = newd MonsterBrush(monsterType);
+			g_brushes.addBrush(monsterType->brush);
+		}
+		monsterType->in_other_tileset = true;
+		monsterType->brush->flagAsVisible();
+	}
+
 	void ensureXmlUtf8Declaration(pugi::xml_document &doc) {
 		pugi::xml_node decl;
 		for (pugi::xml_node node = doc.first_child(); node; node = node.next_sibling()) {
@@ -657,6 +678,112 @@ bool MonsterDatabase::importMissingFromServerLua(const FileName &directory, cons
 
 	if (importedCount == 0 && error.empty()) {
 		error = "No missing monsters were found in the configured server data folder.";
+	}
+
+	return importedCount > 0;
+}
+
+bool MonsterDatabase::importFromServerLua(const FileName &directory, const FileName &targetXml, wxString &error, wxArrayString &warnings) {
+	if (!directory.DirExists()) {
+		error = "Server data folder does not exist.";
+		return false;
+	}
+
+	pugi::xml_document doc;
+	const pugi::xml_parse_result result = doc.load_file(targetXml.GetFullPath().mb_str());
+	if (!result) {
+		error = "Couldn't open file \"" + targetXml.GetFullName() + "\".";
+		return false;
+	}
+
+	pugi::xml_node monsterNodes = doc.child("monsters");
+	if (!monsterNodes) {
+		error = "Invalid monsters.xml structure.";
+		return false;
+	}
+
+	bool xmlChanged = false;
+	int importedCount = 0;
+
+	std::vector<fs::path> luaFiles;
+	try {
+		for (const auto &entry : fs::recursive_directory_iterator(fs::path(nstr(directory.GetFullPath())))) {
+			if (entry.is_regular_file() && entry.path().extension() == ".lua") {
+				luaFiles.push_back(entry.path());
+			}
+		}
+	} catch (const std::exception &e) {
+		error = wxString::Format("Failed to scan server data folder: %s", wxString(e.what(), wxConvUTF8));
+		return false;
+	}
+
+	struct LoadBarGuard {
+		~LoadBarGuard() {
+			g_gui.DestroyLoadBar();
+		}
+	} loadBarGuard;
+	g_gui.CreateLoadBar("Importing monsters from server...");
+
+	const size_t totalFiles = luaFiles.size();
+	try {
+		for (size_t fileIndex = 0; fileIndex < totalFiles; ++fileIndex) {
+			const fs::path &filePath = luaFiles[fileIndex];
+
+			if (totalFiles > 0) {
+				g_gui.SetLoadDone(
+					static_cast<int>(100.0 * (fileIndex + 1) / totalFiles),
+					wxString::Format("Importing monsters... (%zu/%zu)", fileIndex + 1, totalFiles)
+				);
+			}
+
+			std::unique_ptr<MonsterType> parsedMonster(loadFromServerLua(filePath));
+			if (!parsedMonster) {
+				continue;
+			}
+
+			MonsterType* currentMonster = (*this)[parsedMonster->name];
+			if (currentMonster) {
+				MonsterBrush* existingBrush = currentMonster->brush;
+				const bool wasInOtherTileset = currentMonster->in_other_tileset;
+				*currentMonster = *parsedMonster;
+				currentMonster->brush = existingBrush;
+				currentMonster->in_other_tileset = wasInOtherTileset;
+				currentMonster->missing = false;
+				currentMonster->standard = true;
+				currentMonster->outfit.name = currentMonster->name;
+				if (currentMonster->brush) {
+					currentMonster->in_other_tileset = true;
+					currentMonster->brush->flagAsVisible();
+				}
+			} else {
+				currentMonster = parsedMonster.release();
+				currentMonster->missing = false;
+				currentMonster->standard = true;
+				currentMonster->outfit.name = currentMonster->name;
+				monster_map[as_lower_str(currentMonster->name)] = currentMonster;
+				registerMonsterBrush(currentMonster);
+			}
+
+			upsertMonsterNode(monsterNodes, *currentMonster);
+			xmlChanged = true;
+			++importedCount;
+		}
+	} catch (const std::exception &e) {
+		error = wxString::Format("Failed to scan server data folder: %s", wxString(e.what(), wxConvUTF8));
+		return importedCount > 0;
+	}
+
+	if (xmlChanged) {
+		sortMonsterNodesAlphabetically(monsterNodes);
+		ensureXmlUtf8Declaration(doc);
+	}
+	if (xmlChanged && !doc.save_file(targetXml.GetFullPath().mb_str(), "\t", pugi::format_default, pugi::encoding_utf8)) {
+		error = "Failed to write updated monsters.xml.";
+		return false;
+	}
+
+	if (importedCount == 0 && error.empty()) {
+		error = "No monsters were found in the configured server data folder.";
 	}
 
 	return importedCount > 0;
