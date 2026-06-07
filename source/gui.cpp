@@ -1083,14 +1083,14 @@ void GUI::RefreshView() {
 	}
 }
 
-void GUI::CreateLoadBar(wxString message, bool canCancel /* = false */) {
+void GUI::CreateLoadBar(wxString message, bool canCancel /* = false */, wxString title /* = "Loading" */) {
 	progressText = message;
 
 	progressFrom = 0;
 	progressTo = 100;
 	currentProgress = -1;
 
-	progressBar = newd wxGenericProgressDialog("Loading", progressText + " (0%)", 100, root, wxPD_APP_MODAL | wxPD_SMOOTH | (canCancel ? wxPD_CAN_ABORT : 0));
+	progressBar = newd wxGenericProgressDialog(title, progressText + " (0%)", 100, root, wxPD_APP_MODAL | (canCancel ? wxPD_CAN_ABORT : 0));
 	progressBar->SetSize(280, -1);
 	progressBar->Show(true);
 
@@ -1112,8 +1112,6 @@ bool GUI::SetLoadDone(int32_t done, const wxString &newMessage) {
 	if (done == 100) {
 		DestroyLoadBar();
 		return true;
-	} else if (done == currentProgress) {
-		return true;
 	}
 
 	if (!newMessage.empty()) {
@@ -1125,12 +1123,14 @@ bool GUI::SetLoadDone(int32_t done, const wxString &newMessage) {
 
 	bool skip = false;
 	if (progressBar) {
-		progressBar->Update(
-			newProgress,
-			wxString::Format("%s (%d%%)", progressText, newProgress),
-			&skip
-		);
-		currentProgress = newProgress;
+		if (newProgress != currentProgress || !newMessage.empty()) {
+			progressBar->Update(
+				newProgress,
+				wxString::Format("%s (%d%%)", progressText, newProgress),
+				&skip
+			);
+			currentProgress = newProgress;
+		}
 	}
 
 	for (int32_t index = 0; index < tabbook->GetTabCount(); ++index) {

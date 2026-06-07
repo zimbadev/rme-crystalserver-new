@@ -43,6 +43,7 @@ protected:
 
 	// General
 	wxCheckBox* always_make_backup_chkbox;
+	wxCheckBox* optimized_map_save_chkbox;
 	wxCheckBox* create_on_startup_chkbox;
 	wxCheckBox* update_check_on_startup_chkbox;
 	wxCheckBox* only_one_instance_chkbox;

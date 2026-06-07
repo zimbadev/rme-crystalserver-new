@@ -77,6 +77,10 @@ wxNotebookPage* PreferencesWindow::CreateGeneralPage() {
 	always_make_backup_chkbox->SetValue(g_settings.getInteger(Config::ALWAYS_MAKE_BACKUP) == 1);
 	sizer->Add(always_make_backup_chkbox, 0, wxLEFT | wxTOP, 5);
 
+	optimized_map_save_chkbox = newd wxCheckBox(general_page, wxID_ANY, "Save compressed map");
+	optimized_map_save_chkbox->SetValue(g_settings.getInteger(Config::OPTIMIZED_MAP_SAVE) == 1);
+	sizer->Add(optimized_map_save_chkbox, 0, wxLEFT | wxTOP, 5);
+
 	update_check_on_startup_chkbox = newd wxCheckBox(general_page, wxID_ANY, "Check for updates on startup");
 	update_check_on_startup_chkbox->SetValue(g_settings.getInteger(Config::USE_UPDATER) == 1);
 	sizer->Add(update_check_on_startup_chkbox, 0, wxLEFT | wxTOP, 5);
@@ -619,6 +623,7 @@ void PreferencesWindow::Apply() {
 	// General
 	g_settings.setInteger(Config::WELCOME_DIALOG, show_welcome_dialog_chkbox->GetValue());
 	g_settings.setInteger(Config::ALWAYS_MAKE_BACKUP, always_make_backup_chkbox->GetValue());
+	g_settings.setInteger(Config::OPTIMIZED_MAP_SAVE, optimized_map_save_chkbox->GetValue());
 	g_settings.setInteger(Config::USE_UPDATER, update_check_on_startup_chkbox->GetValue());
 	g_settings.setInteger(Config::ONLY_ONE_INSTANCE, only_one_instance_chkbox->GetValue());
 	g_settings.setInteger(Config::UNDO_SIZE, undo_size_spin->GetValue());

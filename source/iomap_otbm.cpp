@@ -17,6 +17,13 @@
 
 #include "main.h"
 
+#include <algorithm>
+#include <atomic>
+#include <chrono>
+#include <thread>
+#include <vector>
+#include <zlib.h>
+
 #include "iomap_otbm.h"
 
 #include "settings.h"
@@ -34,6 +41,180 @@
 
 typedef uint8_t attribute_t;
 typedef uint32_t flags_t;
+
+namespace {
+	bool saveMapXmlFile(pugi::xml_document &doc, const wxString &filepath) {
+		if (g_settings.getBoolean(Config::OPTIMIZED_MAP_SAVE)) {
+			return doc.save_file(filepath.wc_str(), "", pugi::format_raw, pugi::encoding_utf8);
+		}
+		return doc.save_file(filepath.wc_str(), "\t", pugi::format_default, pugi::encoding_utf8);
+	}
+
+	bool compareTilesForSave(Tile* a, Tile* b) {
+		const Position &pa = a->getPosition();
+		const Position &pb = b->getPosition();
+		if (pa.z != pb.z) {
+			return pa.z < pb.z;
+		}
+		if (pa.y != pb.y) {
+			return pa.y < pb.y;
+		}
+		return pa.x < pb.x;
+	}
+
+	void yieldUI() {
+		if (wxTheApp) {
+			wxTheApp->Yield(true);
+		}
+	}
+
+	void waitForBackgroundTask(std::thread &worker, std::atomic<bool> &finished, const wxString &message, int progressValue) {
+		while (!finished.load(std::memory_order_acquire)) {
+			g_gui.SetLoadDone(progressValue, message);
+			yieldUI();
+			std::this_thread::sleep_for(std::chrono::milliseconds(16));
+		}
+		if (worker.joinable()) {
+			worker.join();
+		}
+	}
+
+	bool isGzipFile(const std::string &path) {
+		FILE* file = fopen(path.c_str(), "rb");
+		if (!file) {
+			return false;
+		}
+
+		uint8_t header[2] = { 0, 0 };
+		const size_t read = fread(header, 1, 2, file);
+		fclose(file);
+		return read == 2 && header[0] == 0x1f && header[1] == 0x8b;
+	}
+
+	bool gzipDecompressFileCore(const std::string &path, std::vector<uint8_t> &out) {
+		gzFile gz = gzopen(path.c_str(), "rb");
+		if (!gz) {
+			return false;
+		}
+
+		out.clear();
+		out.reserve(64 * 1024 * 1024);
+
+		uint8_t buffer[65536];
+		while (true) {
+			const int bytesRead = gzread(gz, buffer, sizeof(buffer));
+			if (bytesRead < 0) {
+				gzclose(gz);
+				return false;
+			}
+			if (bytesRead == 0) {
+				break;
+			}
+			out.insert(out.end(), buffer, buffer + bytesRead);
+		}
+		return gzclose(gz) == Z_OK;
+	}
+
+	bool gzipDecompressFile(const std::string &path, std::vector<uint8_t> &out, int progressFrom, int progressTo) {
+		if (progressFrom >= progressTo) {
+			return gzipDecompressFileCore(path, out);
+		}
+
+		std::atomic<bool> finished { false };
+		bool success = false;
+		std::thread worker([&]() {
+			success = gzipDecompressFileCore(path, out);
+			finished.store(true, std::memory_order_release);
+		});
+
+		int progress = progressFrom;
+		g_gui.SetLoadDone(progress, "Decompressing map...");
+		while (!finished.load(std::memory_order_acquire)) {
+			progress = std::min(progressTo, progress + 1);
+			g_gui.SetLoadDone(progress, "Decompressing map...");
+			yieldUI();
+			std::this_thread::sleep_for(std::chrono::milliseconds(32));
+		}
+		if (worker.joinable()) {
+			worker.join();
+		}
+		return success;
+	}
+
+	bool gzipCompressFileCore(const std::string &inputPath, const std::string &outputPath, std::atomic<long> &processedBytes) {
+		FILE* input = fopen(inputPath.c_str(), "rb");
+		if (!input) {
+			return false;
+		}
+
+		gzFile gz = gzopen(outputPath.c_str(), "wb6");
+		if (!gz) {
+			fclose(input);
+			return false;
+		}
+
+		uint8_t buffer[65536];
+		long processed = 0;
+		size_t bytesRead = 0;
+		while ((bytesRead = fread(buffer, 1, sizeof(buffer), input)) > 0) {
+			if (gzwrite(gz, buffer, static_cast<unsigned>(bytesRead)) != static_cast<int>(bytesRead)) {
+				fclose(input);
+				gzclose(gz);
+				return false;
+			}
+
+			processed += static_cast<long>(bytesRead);
+			processedBytes.store(processed, std::memory_order_relaxed);
+		}
+
+		const bool readOk = ferror(input) == 0;
+		fclose(input);
+		if (!readOk) {
+			gzclose(gz);
+			return false;
+		}
+		return gzclose(gz) == Z_OK;
+	}
+
+	bool gzipCompressFile(const std::string &inputPath, const std::string &outputPath, int progressFrom, int progressTo) {
+		FILE* input = fopen(inputPath.c_str(), "rb");
+		if (!input) {
+			return false;
+		}
+
+		if (fseek(input, 0, SEEK_END) != 0) {
+			fclose(input);
+			return false;
+		}
+		const long totalSize = ftell(input);
+		fclose(input);
+		if (totalSize <= 0) {
+			return false;
+		}
+
+		std::atomic<long> processedBytes { 0 };
+		std::atomic<bool> finished { false };
+		bool success = false;
+
+		std::thread worker([&]() {
+			success = gzipCompressFileCore(inputPath, outputPath, processedBytes);
+			finished.store(true, std::memory_order_release);
+		});
+
+		g_gui.SetLoadDone(progressFrom, "Compressing map...");
+		while (!finished.load(std::memory_order_acquire)) {
+			const long processed = processedBytes.load(std::memory_order_relaxed);
+			const int progress = progressFrom + static_cast<int>((processed * (progressTo - progressFrom)) / totalSize);
+			g_gui.SetLoadDone(std::min(progressTo, progress), "Compressing map...");
+			yieldUI();
+			std::this_thread::sleep_for(std::chrono::milliseconds(16));
+		}
+		if (worker.joinable()) {
+			worker.join();
+		}
+		return success;
+	}
+} // namespace
 
 // H4X
 void reform(Map* map, Tile* tile, Item* item) {
@@ -436,8 +617,17 @@ bool IOMapOTBM::getVersionInfo(const FileName &filename, MapVersion &out_ver) {
 	}
 #endif
 
-	// Just open a disk-based read handle
-	DiskNodeFileReadHandle f(nstr(filename.GetFullPath()), StringVector(1, "OTBM"));
+	const std::string fullPath = nstr(filename.GetFullPath());
+	std::vector<uint8_t> gzipBuffer;
+	if (isGzipFile(fullPath)) {
+		if (!gzipDecompressFile(fullPath, gzipBuffer, 0, 0) || gzipBuffer.size() < 5) {
+			return false;
+		}
+		MemoryNodeFileReadHandle f(gzipBuffer.data() + 4, gzipBuffer.size() - 4);
+		return getVersionInfo(&f, out_ver);
+	}
+
+	DiskNodeFileReadHandle f(fullPath, StringVector(1, "OTBM"));
 	if (!f.isOk()) {
 		return false;
 	}
@@ -619,14 +809,31 @@ bool IOMapOTBM::loadMap(Map &map, const FileName &filename) {
 	}
 #endif
 
-	DiskNodeFileReadHandle f(nstr(filename.GetFullPath()), StringVector(1, "OTBM"));
-	if (!f.isOk()) {
-		error(("Couldn't open file for reading\nThe error reported was: " + wxstr(f.getErrorMessage())).wc_str());
-		return false;
-	}
+	const std::string fullPath = nstr(filename.GetFullPath());
+	std::vector<uint8_t> gzipBuffer;
+	if (isGzipFile(fullPath)) {
+		g_gui.SetLoadDone(0, "Decompressing map...");
+		if (!gzipDecompressFile(fullPath, gzipBuffer, 0, 35) || gzipBuffer.size() < 5) {
+			error("Could not decompress gzip map file.");
+			return false;
+		}
 
-	if (!loadMap(map, f)) {
-		return false;
+		g_gui.SetLoadDone(35, "Loading OTBM map...");
+
+		MemoryNodeFileReadHandle f(gzipBuffer.data() + 4, gzipBuffer.size() - 4);
+		if (!loadMap(map, f)) {
+			return false;
+		}
+	} else {
+		DiskNodeFileReadHandle f(fullPath, StringVector(1, "OTBM"));
+		if (!f.isOk()) {
+			error(("Couldn't open file for reading\nThe error reported was: " + wxstr(f.getErrorMessage())).wc_str());
+			return false;
+		}
+
+		if (!loadMap(map, f)) {
+			return false;
+		}
 	}
 
 	// Read auxilliary files
@@ -1554,31 +1761,56 @@ bool IOMapOTBM::saveMap(Map &map, const FileName &identifier) {
 	}
 #endif
 
-	DiskNodeFileWriteHandle f(
-		nstr(identifier.GetFullPath()),
-		(g_settings.getInteger(Config::SAVE_WITH_OTB_MAGIC_NUMBER) ? "OTBM" : std::string(4, '\0'))
-	);
+	const bool optimized_save = g_settings.getBoolean(Config::OPTIMIZED_MAP_SAVE);
+	const std::string fullPath = nstr(identifier.GetFullPath());
+	const std::string otbmWritePath = optimized_save ? fullPath + ".rme-tmp" : fullPath;
 
-	if (!f.isOk()) {
-		error("Can not open file %s for writing", (const char*)identifier.GetFullPath().mb_str(wxConvUTF8));
-		return false;
+	g_gui.SetLoadDone(1, "Saving OTBM map...");
+	yieldUI();
+
+	{
+		DiskNodeFileWriteHandle f(
+			otbmWritePath,
+			(g_settings.getInteger(Config::SAVE_WITH_OTB_MAGIC_NUMBER) ? "OTBM" : std::string(4, '\0'))
+		);
+
+		if (!f.isOk()) {
+			error("Can not open file %s for writing", (const char*)identifier.GetFullPath().mb_str(wxConvUTF8));
+			return false;
+		}
+
+		if (!saveMap(map, f)) {
+			if (optimized_save) {
+				std::remove(otbmWritePath.c_str());
+			}
+			return false;
+		}
+
+		f.close();
 	}
 
-	if (!saveMap(map, f)) {
-		return false;
-	}
-
-	g_gui.SetLoadDone(99, "Saving monster spawns...");
+	g_gui.SetLoadDone(82, "Saving monster spawns...");
 	saveSpawns(map, identifier);
 
-	g_gui.SetLoadDone(99, "Saving houses...");
+	g_gui.SetLoadDone(84, "Saving houses...");
 	saveHouses(map, identifier);
 
-	g_gui.SetLoadDone(99, "Saving zones...");
+	g_gui.SetLoadDone(86, "Saving zones...");
 	saveZones(map, identifier);
 
-	g_gui.SetLoadDone(99, "Saving npcs spawns...");
+	g_gui.SetLoadDone(88, "Saving npcs spawns...");
 	saveSpawnsNpc(map, identifier);
+
+	if (optimized_save) {
+		if (!gzipCompressFile(otbmWritePath, fullPath, 88, 99)) {
+			std::remove(otbmWritePath.c_str());
+			error("Could not compress map file.");
+			return false;
+		}
+		std::remove(otbmWritePath.c_str());
+		g_gui.SetLoadDone(100);
+	}
+
 	return true;
 }
 
@@ -1638,24 +1870,45 @@ bool IOMapOTBM::saveMap(Map &map, NodeFileWriteHandle &f) {
 			bool first = true;
 
 			int local_x = -1, local_y = -1, local_z = -1;
+			const bool optimized_save = g_settings.getBoolean(Config::OPTIMIZED_MAP_SAVE);
 
-			MapIterator map_iterator = map.begin();
-			while (map_iterator != map.end()) {
-				// Update progressbar
-				++tiles_saved;
-				if (tiles_saved % 8192 == 0) {
-					g_gui.SetLoadDone(int(tiles_saved / double(map.getTileCount()) * 100.0));
+			std::vector<Tile*> tiles_to_save;
+			if (optimized_save) {
+				g_gui.SetLoadDone(2, "Preparing tiles...");
+				yieldUI();
+
+				const uint32_t total_tiles = map.getTileCount();
+				tiles_to_save.reserve(total_tiles);
+				uint32_t tiles_collected = 0;
+				for (MapIterator map_iterator = map.begin(); map_iterator != map.end(); ++map_iterator) {
+					Tile* save_tile = (*map_iterator)->get();
+					if (save_tile && save_tile->size() > 0) {
+						tiles_to_save.push_back(save_tile);
+					}
+
+					++tiles_collected;
+					if (tiles_collected % 32768 == 0) {
+						const int progress = 2 + static_cast<int>(tiles_collected * 6.0 / std::max<uint32_t>(1, total_tiles));
+						g_gui.SetLoadDone(std::min(8, progress), "Preparing tiles...");
+						yieldUI();
+					}
 				}
 
-				// Get tile
-				Tile* save_tile = (*map_iterator)->get();
+				g_gui.SetLoadDone(8, "Sorting tiles...");
+				yieldUI();
 
-				// Is it an empty tile that we can skip? (Leftovers...)
-				if (!save_tile || save_tile->size() == 0) {
-					++map_iterator;
-					continue;
-				}
+				std::atomic<bool> sortFinished { false };
+				std::thread sortThread([&tiles_to_save, &sortFinished]() {
+					std::sort(tiles_to_save.begin(), tiles_to_save.end(), compareTilesForSave);
+					sortFinished.store(true, std::memory_order_release);
+				});
+				waitForBackgroundTask(sortThread, sortFinished, "Sorting tiles...", 9);
 
+				g_gui.SetLoadDone(10, "Saving tiles...");
+				yieldUI();
+			}
+
+			auto saveTile = [&](Tile* save_tile) {
 				const Position &pos = save_tile->getPosition();
 
 				// Decide if newd node should be created
@@ -1730,7 +1983,44 @@ bool IOMapOTBM::saveMap(Map &map, NodeFileWriteHandle &f) {
 				}
 
 				f.endNode();
-				++map_iterator;
+			};
+
+			const int tileProgressStart = optimized_save ? 10 : 0;
+			const int tileProgressCap = optimized_save ? 80 : 99;
+			const uint32_t tiles_to_write = optimized_save ? static_cast<uint32_t>(tiles_to_save.size()) : map.getTileCount();
+			if (optimized_save) {
+				for (Tile* save_tile : tiles_to_save) {
+					++tiles_saved;
+					if (tiles_saved % 2048 == 0) {
+						const int progress = tileProgressStart + static_cast<int>(tiles_saved / double(std::max<uint32_t>(1, tiles_to_write)) * (tileProgressCap - tileProgressStart));
+						g_gui.SetLoadDone(std::min(tileProgressCap, progress), "Saving tiles...");
+						yieldUI();
+					}
+					saveTile(save_tile);
+				}
+			} else {
+				MapIterator map_iterator = map.begin();
+				while (map_iterator != map.end()) {
+					// Update progressbar
+					++tiles_saved;
+					if (tiles_saved % 2048 == 0) {
+						const int progress = tileProgressStart + static_cast<int>(tiles_saved / double(std::max<uint32_t>(1, tiles_to_write)) * (tileProgressCap - tileProgressStart));
+						g_gui.SetLoadDone(std::min(tileProgressCap, progress), "Saving tiles...");
+						yieldUI();
+					}
+
+					// Get tile
+					Tile* save_tile = (*map_iterator)->get();
+
+					// Is it an empty tile that we can skip? (Leftovers...)
+					if (!save_tile || save_tile->size() == 0) {
+						++map_iterator;
+						continue;
+					}
+
+					saveTile(save_tile);
+					++map_iterator;
+				}
 			}
 
 			// Only close the last node if one has actually been created
@@ -1785,7 +2075,7 @@ bool IOMapOTBM::saveSpawns(Map &map, const FileName &dir) {
 	// Create the XML file
 	pugi::xml_document doc;
 	if (saveSpawns(map, doc)) {
-		return doc.save_file(filepath.wc_str(), "\t", pugi::format_default, pugi::encoding_utf8);
+		return saveMapXmlFile(doc, filepath);
 	}
 	return false;
 }
@@ -1865,7 +2155,7 @@ bool IOMapOTBM::saveHouses(Map &map, const FileName &dir) {
 	// Create the XML file
 	pugi::xml_document doc;
 	if (saveHouses(map, doc)) {
-		return doc.save_file(filepath.wc_str(), "\t", pugi::format_default, pugi::encoding_utf8);
+		return saveMapXmlFile(doc, filepath);
 	}
 	return false;
 }
@@ -1914,7 +2204,7 @@ bool IOMapOTBM::saveZones(Map &map, const FileName &dir) {
 	// Create the XML file
 	pugi::xml_document doc;
 	if (saveZones(map, doc)) {
-		return doc.save_file(filepath.wc_str(), "\t", pugi::format_default, pugi::encoding_utf8);
+		return saveMapXmlFile(doc, filepath);
 	}
 	return false;
 }
@@ -1947,7 +2237,7 @@ bool IOMapOTBM::saveSpawnsNpc(Map &map, const FileName &dir) {
 	// Create the XML file
 	pugi::xml_document doc;
 	if (saveSpawnsNpc(map, doc)) {
-		return doc.save_file(filepath.wc_str(), "\t", pugi::format_default, pugi::encoding_utf8);
+		return saveMapXmlFile(doc, filepath);
 	}
 	return false;
 }
