@@ -33,6 +33,7 @@
 	<npc name="A Nightmare Scion" looktype="321" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="A Prisoner" looktype="130" lookitem="0" lookaddon="0" lookhead="81" lookbody="21" looklegs="54" lookfeet="94" />
 	<npc name="A Restless Soul" looktype="48" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
+	<npc name="A Seagull" looktype="223" />
 	<npc name="A Sleeping Dragon" looktype="0" lookitem="11402" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="A Starving Dog" looktype="258" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="A Strange Chalice" looktype="0" lookitem="23737" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
@@ -194,6 +195,7 @@
 	<npc name="Captain Jack" looktype="132" lookitem="0" lookaddon="0" lookhead="0" lookbody="128" looklegs="95" lookfeet="115" />
 	<npc name="Captain Jack Rat" looktype="1346" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="Captain Kurt" looktype="140" lookitem="0" lookaddon="0" lookhead="60" lookbody="24" looklegs="38" lookfeet="0" />
+	<npc name="Captain Marie-Denise Banner" lookitem="52733" />
 	<npc name="Captain Max" looktype="134" lookitem="0" lookaddon="0" lookhead="95" lookbody="10" looklegs="56" lookfeet="77" />
 	<npc name="Captain Max (Calassa)" looktype="134" lookitem="0" lookaddon="0" lookhead="95" lookbody="10" looklegs="56" lookfeet="77" />
 	<npc name="Captain Pelagia" looktype="155" lookitem="0" lookaddon="0" lookhead="94" lookbody="0" looklegs="114" lookfeet="85" />
@@ -839,6 +841,7 @@
 	<npc name="Rudolph" looktype="128" lookitem="0" lookaddon="0" lookhead="41" lookbody="29" looklegs="78" lookfeet="76" />
 	<npc name="Runtel Blackspark" looktype="472" lookitem="0" lookaddon="0" lookhead="59" lookbody="114" looklegs="0" lookfeet="94" />
 	<npc name="Ruprecht" looktype="153" lookitem="0" lookaddon="0" lookhead="59" lookbody="115" looklegs="115" lookfeet="38" />
+	<npc name="S'Zallar M'Andar" looktype="115" />
 	<npc name="Saideh" looktype="330" lookitem="0" lookaddon="0" lookhead="0" lookbody="0" looklegs="0" lookfeet="0" />
 	<npc name="Salbra" looktype="140" lookitem="0" lookaddon="0" lookhead="60" lookbody="24" looklegs="38" lookfeet="0" />
 	<npc name="Sam" looktype="131" lookitem="0" lookaddon="0" lookhead="38" lookbody="113" looklegs="67" lookfeet="95" />

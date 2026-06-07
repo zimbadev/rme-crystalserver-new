@@ -56,9 +56,11 @@ public:
 	bool loadFromXML(const FileName &filename, bool standard, wxString &error, wxArrayString &warnings);
 	bool importXMLFromOT(const FileName &filename, wxString &error, wxArrayString &warnings);
 	bool importMissingFromServerLua(const FileName &directory, const FileName &targetXml, wxString &error, wxArrayString &warnings);
+	bool importFromServerLua(const FileName &directory, const FileName &targetXml, wxString &error, wxArrayString &warnings);
 
 	bool saveToXML(const FileName &filename);
 	wxArrayString getMissingNpcNames() const;
+	void removeTruncatedAlias(const std::string &alias, const NpcType &resolvedNpc, pugi::xml_node &npcNodes);
 };
 
 class NpcType {

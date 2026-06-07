@@ -10,8 +10,10 @@
         <separator/>
         <menu name="$Import">
             <item name="$Import Map..." action="IMPORT_MAP" help="Import map data from another map file."/>
-            <item name="Import $Monsters..." action="IMPORT_MONSTERS" help="Import either a monsters.xml file or a specific monster."/>
-            <item name="Import $NPC..." action="IMPORT_NPCS" help="Import either a npc.xml file or a specific NPC."/>
+            <item name="Import $Monsters..." action="IMPORT_MONSTERS_FROM_SERVER" help="Import missing monsters from the server data folder configured in Preferences."/>
+            <item name="Import $NPC..." action="IMPORT_NPCS_FROM_SERVER" help="Import missing NPCs from the server data folder configured in Preferences."/>
+            <item name="Import Monster $Legacy (XML)..." action="IMPORT_MONSTERS" help="Import monsters from a legacy OT monsters.xml file."/>
+            <item name="Import NPC $Legacy (XML)..." action="IMPORT_NPCS" help="Import NPCs from a legacy OT npc.xml file."/>
             <item name="Import Mi$nimap..." action="IMPORT_MINIMAP" help="Import map data from a .bmp file."/>
         </menu>
         <menu name="$Export">
