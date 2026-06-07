@@ -844,10 +844,10 @@ bool GraphicManager::loadItemSpriteMetadata(const std::shared_ptr<ItemType> &t, 
 	item_count = std::max<uint16_t>(item_count, t->id);
 
 	// Number of blendframes (some sprites consist of several merged sprites
-	sType->layers = t->layers;
-	sType->pattern_x = t->pattern_width;
-	sType->pattern_y = t->pattern_height;
-	sType->pattern_z = t->pattern_depth;
+	sType->layers = std::max<uint8_t>(1, t->layers);
+	sType->pattern_x = std::max<uint8_t>(1, t->pattern_width);
+	sType->pattern_y = std::max<uint8_t>(1, t->pattern_height);
+	sType->pattern_z = std::max<uint8_t>(1, t->pattern_depth);
 
 	// Length of animation
 	sType->sprite_phase_size = t->m_animationPhases.size();
@@ -869,8 +869,8 @@ bool GraphicManager::loadItemSpriteMetadata(const std::shared_ptr<ItemType> &t, 
 	sType->numsprites = (int)sType->layers * (int)sType->pattern_x * (int)sType->pattern_y * sType->pattern_z * std::max<int>(1, sType->sprite_phase_size);
 
 	// Read the sprite ids
-	for (uint32_t i = 0; i < sType->numsprites; ++i) {
-		uint32_t sprite_id = t->m_sprites[i];
+	for (uint32_t i = 0; i < static_cast<uint32_t>(sType->numsprites); ++i) {
+		const uint32_t sprite_id = i < t->m_sprites.size() ? t->m_sprites[i] : 0;
 
 		if (image_space[sprite_id] == nullptr) {
 			GameSprite::NormalImage* img = newd GameSprite::NormalImage();
@@ -1091,7 +1091,35 @@ int GameSprite::getIndex(int width, int height, int layer, int pattern_x, int pa
 	return ((((frame % this->sprite_phase_size) * this->pattern_z + pattern_z) * this->pattern_y + pattern_y) * this->pattern_x + pattern_x) * this->layers + layer;
 }
 
+uint32_t GameSprite::getSpriteID(int _layer, int _count, int _pattern_x, int _pattern_y, int _pattern_z, int _frame) {
+	if (numsprites <= 0 || spriteList.empty()) {
+		return 0;
+	}
+
+	uint32_t v;
+	if (_count >= 0) {
+		v = static_cast<uint32_t>(_count);
+	} else {
+		v = static_cast<uint32_t>(getIndex(0, 0, _layer, _pattern_x, _pattern_y, _pattern_z, _frame));
+	}
+	if (v >= numsprites) {
+		if (numsprites == 1) {
+			v = 0;
+		} else {
+			v %= numsprites;
+		}
+	}
+	if (v >= spriteList.size() || spriteList[v] == nullptr) {
+		return 0;
+	}
+	return spriteList[v]->id;
+}
+
 GLuint GameSprite::getHardwareID(int _layer, int _count, int _pattern_x, int _pattern_y, int _pattern_z, int _frame) {
+	if (numsprites <= 0 || spriteList.empty()) {
+		return 0;
+	}
+
 	uint32_t v;
 	if (_count >= 0) {
 		v = _count;
@@ -1104,6 +1132,9 @@ GLuint GameSprite::getHardwareID(int _layer, int _count, int _pattern_x, int _pa
 		} else {
 			v %= numsprites;
 		}
+	}
+	if (v >= spriteList.size() || spriteList[v] == nullptr) {
+		return 0;
 	}
 	return spriteList[v]->getHardwareID();
 }
