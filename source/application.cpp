@@ -571,6 +571,84 @@ void MainFrame::ShowMissingNpcs() {
 	}
 }
 
+bool MainFrame::ImportMonstersFromServerData(bool interactive) {
+	const std::string serverDataFolder = g_settings.getString(Config::SERVER_DATA_FOLDER);
+	if (serverDataFolder.empty()) {
+		if (interactive) {
+			g_gui.PopupDialog(
+				"Import monsters",
+				"Configure the server data folder in Preferences (Client tab) before importing monsters from the server.",
+				wxOK
+			);
+		}
+		return false;
+	}
+
+	wxString error;
+	wxArrayString warnings;
+	const bool importedAny = g_monsters.importFromServerLua(
+		FileName(wxstr(serverDataFolder)),
+		FileName(wxString("data/creatures/monsters.xml")),
+		error,
+		warnings
+	);
+
+	if (!warnings.IsEmpty()) {
+		g_gui.ListDialog("Monster Lua import warnings", warnings);
+	}
+	if (!importedAny && !error.empty()) {
+		if (interactive) {
+			g_gui.PopupDialog("Import monsters", error, wxOK);
+		}
+	} else if (importedAny && interactive) {
+		g_gui.PopupDialog("Import monsters", "Monsters were imported from the server data folder.", wxOK);
+	}
+
+	ShowMissingMonsters();
+	g_materials.createOtherTileset();
+	g_gui.RefreshPalettes();
+	return importedAny;
+}
+
+bool MainFrame::ImportNpcsFromServerData(bool interactive) {
+	const std::string serverDataFolder = g_settings.getString(Config::SERVER_DATA_FOLDER);
+	if (serverDataFolder.empty()) {
+		if (interactive) {
+			g_gui.PopupDialog(
+				"Import NPCs",
+				"Configure the server data folder in Preferences (Client tab) before importing NPCs from the server.",
+				wxOK
+			);
+		}
+		return false;
+	}
+
+	wxString error;
+	wxArrayString warnings;
+	const bool importedAny = g_npcs.importFromServerLua(
+		FileName(wxstr(serverDataFolder)),
+		FileName(wxString("data/creatures/npcs.xml")),
+		error,
+		warnings
+	);
+
+	if (!warnings.IsEmpty()) {
+		g_gui.ListDialog("Npc Lua import warnings", warnings);
+	}
+	if (!importedAny && !error.empty()) {
+		if (interactive) {
+			g_gui.PopupDialog("Import NPCs", error, wxOK);
+		}
+	} else if (importedAny && interactive) {
+		g_gui.PopupDialog("Import NPCs", "NPCs were imported from the server data folder.", wxOK);
+	}
+
+	ShowMissingNpcs();
+	g_materials.createNpcTileset();
+	g_gui.RefreshPalettes();
+	return importedAny;
+}
+
 bool MainFrame::DoQueryImportCreatures() {
 	// Monsters
 	if (g_monsters.hasMissing()) {
@@ -591,11 +669,13 @@ bool MainFrame::DoQueryImportCreatures() {
 			if (!importedAny && !error.empty()) {
 				g_gui.PopupDialog("Missing monsters", error, wxOK);
 			}
+
+			ShowMissingMonsters();
 		} else {
 			long ret = g_gui.PopupDialog("Missing monsters", "There are missing monsters in the editor, do you want to load them from an OT monster file?", wxYES | wxNO);
 			if (ret == wxID_YES) {
 				do {
-					wxFileDialog dlg(g_gui.root, "Import monster file", "", "", "*.xml", wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
+					wxFileDialog dlg(g_gui.root, "Import legacy monster XML file", "", "", "*.xml", wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
 					if (dlg.ShowModal() == wxID_OK) {
 						wxArrayString paths;
 						dlg.GetPaths(paths);
@@ -614,9 +694,9 @@ bool MainFrame::DoQueryImportCreatures() {
 					}
 				} while (g_monsters.hasMissing());
 			}
-		}
 
-		ShowMissingMonsters();
+			ShowMissingMonsters();
+		}
 	}
 	// Npcs
 	if (g_npcs.hasMissing()) {
@@ -637,11 +717,13 @@ bool MainFrame::DoQueryImportCreatures() {
 			if (!importedAny && !error.empty()) {
 				g_gui.PopupDialog("Missing npcs", error, wxOK);
 			}
+
+			ShowMissingNpcs();
 		} else {
 			long ret = g_gui.PopupDialog("Missing npcs", "There are missing npcs in the editor, do you want to load them from an OT npc file?", wxYES | wxNO);
 			if (ret == wxID_YES) {
 				do {
-					wxFileDialog dlg(g_gui.root, "Import npc file", "", "", "*.xml", wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
+					wxFileDialog dlg(g_gui.root, "Import legacy NPC XML file", "", "", "*.xml", wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
 					if (dlg.ShowModal() == wxID_OK) {
 						wxArrayString paths;
 						dlg.GetPaths(paths);
@@ -660,9 +742,9 @@ bool MainFrame::DoQueryImportCreatures() {
 					}
 				} while (g_npcs.hasMissing());
 			}
-		}
 
-		ShowMissingNpcs();
+			ShowMissingNpcs();
+		}
 	}
 	g_gui.RefreshPalettes();
 	return true;

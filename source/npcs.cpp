@@ -34,7 +34,193 @@
 namespace fs = std::filesystem;
 
 namespace {
-	bool extractLuaStringArgument(const std::string &content, const std::string &token, std::string &value) {
+	bool readLuaQuotedString(const std::string &content, size_t &pos, std::string &value) {
+		while (pos < content.size() && std::isspace(static_cast<unsigned char>(content[pos]))) {
+			++pos;
+		}
+		if (pos >= content.size()) {
+			return false;
+		}
+
+		if (content[pos] == '[') {
+			size_t eqCount = 0;
+			size_t markerPos = pos + 1;
+			while (markerPos < content.size() && content[markerPos] == '=') {
+				++eqCount;
+				++markerPos;
+			}
+			if (markerPos >= content.size() || content[markerPos] != '[') {
+				return false;
+			}
+
+			const std::string closeMarker = std::string("]") + std::string(eqCount, '=') + "]";
+			const size_t contentStart = markerPos + 1;
+			const size_t contentEnd = content.find(closeMarker, contentStart);
+			if (contentEnd == std::string::npos) {
+				return false;
+			}
+
+			value = content.substr(contentStart, contentEnd - contentStart);
+			pos = contentEnd + closeMarker.size();
+			return true;
+		}
+
+		if (content[pos] != '"' && content[pos] != '\'') {
+			return false;
+		}
+
+		const char quote = content[pos++];
+		value.clear();
+		while (pos < content.size()) {
+			if (content[pos] == '\\' && pos + 1 < content.size()) {
+				const char escaped = content[pos + 1];
+				switch (escaped) {
+					case 'n':
+						value += '\n';
+						break;
+					case 't':
+						value += '\t';
+						break;
+					case 'r':
+						value += '\r';
+						break;
+					default:
+						value += escaped;
+						break;
+				}
+				pos += 2;
+				continue;
+			}
+
+			if (content[pos] == quote) {
+				++pos;
+				return true;
+			}
+
+			value += content[pos++];
+		}
+		return false;
+	}
+
+	bool readLuaIdentifier(const std::string &content, size_t &pos, std::string &identifier) {
+		while (pos < content.size() && std::isspace(static_cast<unsigned char>(content[pos]))) {
+			++pos;
+		}
+		if (pos >= content.size() || !(std::isalpha(static_cast<unsigned char>(content[pos])) || content[pos] == '_')) {
+			return false;
+		}
+
+		const size_t start = pos;
+		++pos;
+		while (pos < content.size()) {
+			const char ch = content[pos];
+			if (std::isalnum(static_cast<unsigned char>(ch)) || ch == '_') {
+				++pos;
+				continue;
+			}
+			break;
+		}
+
+		identifier = content.substr(start, pos - start);
+		return true;
+	}
+
+	bool readAssignmentStringValue(const std::string &content, size_t assignEndPos, std::string &value) {
+		size_t lineStart = content.rfind('\n', assignEndPos);
+		if (lineStart == std::string::npos) {
+			lineStart = 0;
+		} else {
+			++lineStart;
+		}
+
+		size_t lineEnd = content.find_first_of("\r\n", assignEndPos);
+		if (lineEnd == std::string::npos) {
+			lineEnd = content.size();
+		}
+
+		const size_t doubleQuotePos = content.find('"', assignEndPos);
+		if (doubleQuotePos != std::string::npos && doubleQuotePos < lineEnd) {
+			size_t pos = doubleQuotePos;
+			if (readLuaQuotedString(content, pos, value)) {
+				return true;
+			}
+		}
+
+		const size_t longStringPos = content.find('[', assignEndPos);
+		if (longStringPos != std::string::npos && longStringPos < lineEnd) {
+			size_t pos = longStringPos;
+			if (readLuaQuotedString(content, pos, value)) {
+				return true;
+			}
+		}
+
+		size_t pos = assignEndPos;
+		return readLuaQuotedString(content, pos, value);
+	}
+
+	void collectLuaStringVariables(const std::string &content, std::unordered_map<std::string, std::string> &variables) {
+		const std::regex localAssignmentPattern(R"(\blocal\s+([A-Za-z_]\w*)\s*=)");
+		for (std::sregex_iterator it(content.begin(), content.end(), localAssignmentPattern), end; it != end; ++it) {
+			size_t pos = it->position() + it->length();
+			std::string value;
+			if (readAssignmentStringValue(content, pos, value)) {
+				variables[(*it)[1].str()] = value;
+			}
+		}
+
+		const std::regex namedAssignmentPattern(R"((?:^|[\r\n])\s*(internalNpcName|npcName)\s*=)");
+		for (std::sregex_iterator it(content.begin(), content.end(), namedAssignmentPattern), end; it != end; ++it) {
+			size_t pos = it->position() + it->length();
+			std::string value;
+			if (readAssignmentStringValue(content, pos, value)) {
+				variables[(*it)[1].str()] = value;
+			}
+		}
+	}
+
+	bool isTruncatedNpcNameAlias(const std::string &alias, const std::string &resolved) {
+		if (alias.empty() || resolved.empty() || alias == resolved) {
+			return false;
+		}
+		if (resolved.size() <= alias.size()) {
+			return false;
+		}
+		if (resolved.compare(0, alias.size(), alias) != 0) {
+			return false;
+		}
+		return resolved[alias.size()] == '\'';
+	}
+
+	bool resolveLuaStringValue(
+		const std::string &content,
+		size_t pos,
+		const std::unordered_map<std::string, std::string> &variables,
+		std::string &value
+	) {
+		if (readLuaQuotedString(content, pos, value)) {
+			return true;
+		}
+
+		std::string identifier;
+		if (!readLuaIdentifier(content, pos, identifier)) {
+			return false;
+		}
+
+		const auto variableIt = variables.find(identifier);
+		if (variableIt == variables.end()) {
+			return false;
+		}
+
+		value = variableIt->second;
+		return true;
+	}
+
+	bool extractLuaStringArgument(
+		const std::string &content,
+		const std::string &token,
+		const std::unordered_map<std::string, std::string> &variables,
+		std::string &value
+	) {
 		const size_t tokenPos = content.find(token);
 		if (tokenPos == std::string::npos) {
 			return false;
@@ -46,56 +232,76 @@ namespace {
 		}
 
 		++pos;
-		while (pos < content.size() && std::isspace(static_cast<unsigned char>(content[pos]))) {
-			++pos;
-		}
-
-		if (pos >= content.size() || (content[pos] != '"' && content[pos] != '\'')) {
-			return false;
-		}
-
-		const char quote = content[pos++];
-		const size_t start = pos;
-		while (pos < content.size()) {
-			if (content[pos] == quote && content[pos - 1] != '\\') {
-				value = content.substr(start, pos - start);
-				return true;
-			}
-			++pos;
-		}
-		return false;
+		return resolveLuaStringValue(content, pos, variables, value);
 	}
 
-	bool extractLuaStringAssignment(const std::string &content, const std::string &token, std::string &value) {
-		const size_t tokenPos = content.find(token);
-		if (tokenPos == std::string::npos) {
-			return false;
-		}
+	std::string resolveNpcNameFromLua(
+		const std::string &content,
+		const std::unordered_map<std::string, std::string> &variables,
+		std::string &truncatedAlias
+	) {
+		truncatedAlias.clear();
 
-		size_t pos = content.find('=', tokenPos + token.size());
-		if (pos == std::string::npos) {
-			return false;
-		}
+		std::string configName;
+		std::string createTypeName;
+		std::string namedVariable;
 
-		++pos;
-		while (pos < content.size() && std::isspace(static_cast<unsigned char>(content[pos]))) {
-			++pos;
-		}
-
-		if (pos >= content.size() || (content[pos] != '"' && content[pos] != '\'')) {
-			return false;
-		}
-
-		const char quote = content[pos++];
-		const size_t start = pos;
-		while (pos < content.size()) {
-			if (content[pos] == quote && content[pos - 1] != '\\') {
-				value = content.substr(start, pos - start);
-				return true;
+		const size_t configNameTokenPos = content.find("npcConfig.name");
+		if (configNameTokenPos != std::string::npos) {
+			const size_t eqPos = content.find('=', configNameTokenPos);
+			if (eqPos != std::string::npos && !readAssignmentStringValue(content, eqPos + 1, configName)) {
+				configName.clear();
 			}
-			++pos;
 		}
-		return false;
+		if (configName.empty()) {
+			const std::regex npcConfigNameVarPattern(R"(\bnpcConfig\.name\s*=\s*([A-Za-z_]\w*))");
+			std::smatch nameMatch;
+			if (std::regex_search(content, nameMatch, npcConfigNameVarPattern)) {
+				const auto variableIt = variables.find(nameMatch[1].str());
+				if (variableIt != variables.end()) {
+					configName = variableIt->second;
+				}
+			}
+		}
+
+		for (const char* variableName : { "internalNpcName", "npcName" }) {
+			const auto variableIt = variables.find(variableName);
+			if (variableIt != variables.end() && variableIt->second.size() > namedVariable.size()) {
+				namedVariable = variableIt->second;
+			}
+		}
+
+		if (!extractLuaStringArgument(content, "Game.createNpcType", variables, createTypeName)) {
+			const std::regex createNpcTypeVarPattern(R"(\bGame\.createNpcType\s*\(\s*([A-Za-z_]\w*)\s*\))");
+			std::smatch createMatch;
+			if (std::regex_search(content, createMatch, createNpcTypeVarPattern)) {
+				const auto variableIt = variables.find(createMatch[1].str());
+				if (variableIt != variables.end()) {
+					createTypeName = variableIt->second;
+				}
+			}
+		}
+
+		std::string resolved;
+		if (!configName.empty()) {
+			resolved = configName;
+		} else if (!namedVariable.empty()) {
+			resolved = namedVariable;
+		} else {
+			resolved = createTypeName;
+		}
+
+		if (!configName.empty() && isTruncatedNpcNameAlias(createTypeName, configName)) {
+			truncatedAlias = createTypeName;
+		} else if (!configName.empty() && isTruncatedNpcNameAlias(namedVariable, configName)) {
+			truncatedAlias = namedVariable;
+		} else if (isTruncatedNpcNameAlias(createTypeName, resolved)) {
+			truncatedAlias = createTypeName;
+		} else if (isTruncatedNpcNameAlias(namedVariable, resolved)) {
+			truncatedAlias = namedVariable;
+		}
+
+		return resolved;
 	}
 
 	bool extractLuaTableBlock(const std::string &content, const std::string &token, std::string &value) {
@@ -124,6 +330,13 @@ namespace {
 			++pos;
 		}
 		return false;
+	}
+
+	bool extractLuaOutfitBlock(const std::string &content, std::string &value) {
+		if (extractLuaTableBlock(content, "npcConfig.outfit", value)) {
+			return true;
+		}
+		return extractLuaTableBlock(content, ":outfit", value);
 	}
 
 	bool extractLuaIntegerField(const std::string &content, const char* fieldName, int &value) {
@@ -197,17 +410,6 @@ namespace {
 		}
 	}
 
-	bool hasNpcNodeByName(const pugi::xml_node &npcNodes, const std::string &name) {
-		const std::string lowerName = as_lower_str(name);
-		for (pugi::xml_node npcNode = npcNodes.child("npc"); npcNode; npcNode = npcNode.next_sibling("npc")) {
-			const pugi::xml_attribute nameAttribute = npcNode.attribute("name");
-			if (nameAttribute && as_lower_str(nameAttribute.as_string()) == lowerName) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	void appendNpcNode(pugi::xml_node &npcNodes, const NpcType &npcType) {
 		pugi::xml_node npcNode = npcNodes.append_child("npc");
 		npcNode.append_attribute("name") = npcType.name.c_str();
@@ -239,7 +441,29 @@ namespace {
 		}
 	}
 
-	NpcType* loadFromServerLua(const fs::path &filePath) {
+	void upsertNpcNode(pugi::xml_node &npcNodes, const NpcType &npcType) {
+		const std::string lowerName = as_lower_str(npcType.name);
+		for (pugi::xml_node npcNode = npcNodes.child("npc"); npcNode; npcNode = npcNode.next_sibling("npc")) {
+			const pugi::xml_attribute nameAttribute = npcNode.attribute("name");
+			if (nameAttribute && as_lower_str(nameAttribute.as_string()) == lowerName) {
+				npcNodes.remove_child(npcNode);
+				break;
+			}
+		}
+		appendNpcNode(npcNodes, npcType);
+	}
+
+	void registerNpcBrush(NpcType* npcType) {
+		if (!npcType->brush) {
+			npcType->brush = newd NpcBrush(npcType);
+			g_brushes.addBrush(npcType->brush);
+		}
+		npcType->in_other_tileset = true;
+		npcType->brush->flagAsVisible();
+	}
+
+	NpcType* loadFromServerLua(const fs::path &filePath, std::string &truncatedAlias) {
+		truncatedAlias.clear();
 		std::ifstream stream(filePath, std::ios::binary);
 		if (!stream.is_open()) {
 			return nullptr;
@@ -251,42 +475,15 @@ namespace {
 		}
 
 		std::unordered_map<std::string, std::string> stringVariables;
-		const std::regex stringAssignmentPattern(R"(\blocal\s+([A-Za-z_]\w*)\s*=\s*["']([^"']+)["'])");
-		for (std::sregex_iterator it(content.begin(), content.end(), stringAssignmentPattern), end; it != end; ++it) {
-			stringVariables[(*it)[1].str()] = (*it)[2].str();
-		}
+		collectLuaStringVariables(content, stringVariables);
 
-		std::string npcName;
-		if (!extractLuaStringArgument(content, "Game.createNpcType", npcName)) {
-			const std::regex createNpcTypeVarPattern(R"(\bGame\.createNpcType\s*\(\s*([A-Za-z_]\w*)\s*\))");
-			std::smatch createMatch;
-			if (std::regex_search(content, createMatch, createNpcTypeVarPattern)) {
-				const auto variableIt = stringVariables.find(createMatch[1].str());
-				if (variableIt != stringVariables.end()) {
-					npcName = variableIt->second;
-				}
-			}
-		}
-
-		if (npcName.empty()) {
-			extractLuaStringAssignment(content, "npcConfig.name", npcName);
-		}
-		if (npcName.empty()) {
-			const std::regex npcConfigNameVarPattern(R"(\bnpcConfig\.name\s*=\s*([A-Za-z_]\w*))");
-			std::smatch nameMatch;
-			if (std::regex_search(content, nameMatch, npcConfigNameVarPattern)) {
-				const auto variableIt = stringVariables.find(nameMatch[1].str());
-				if (variableIt != stringVariables.end()) {
-					npcName = variableIt->second;
-				}
-			}
-		}
+		const std::string npcName = resolveNpcNameFromLua(content, stringVariables, truncatedAlias);
 		if (npcName.empty()) {
 			return nullptr;
 		}
 
 		std::string outfitBlock;
-		if (!extractLuaTableBlock(content, "npcConfig.outfit", outfitBlock)) {
+		if (!extractLuaOutfitBlock(content, outfitBlock)) {
 			return nullptr;
 		}
 
@@ -617,12 +814,31 @@ bool NpcDatabase::importMissingFromServerLua(const FileName &directory, const Fi
 				continue;
 			}
 
-			std::unique_ptr<NpcType> parsedNpc(loadFromServerLua(entry.path()));
+			std::string truncatedAlias;
+			std::unique_ptr<NpcType> parsedNpc(loadFromServerLua(entry.path(), truncatedAlias));
 			if (!parsedNpc) {
 				continue;
 			}
 
-			const std::string npcKey = as_lower_str(parsedNpc->name);
+			std::string npcKey = as_lower_str(parsedNpc->name);
+			if (!missingNames.contains(npcKey) && !truncatedAlias.empty()) {
+				for (const auto &missingKey : missingNames) {
+					const auto missingIt = npcMap.find(missingKey);
+					if (missingIt == npcMap.end()) {
+						continue;
+					}
+
+					const std::string &missingName = missingIt->second->name;
+					if (missingName.size() > truncatedAlias.size()
+						&& missingName.compare(0, truncatedAlias.size(), truncatedAlias) == 0
+						&& missingName[truncatedAlias.size()] == '\'') {
+						parsedNpc->name = missingName;
+						parsedNpc->outfit.name = parsedNpc->name;
+						npcKey = missingKey;
+						break;
+					}
+				}
+			}
 			if (!missingNames.contains(npcKey)) {
 				continue;
 			}
@@ -633,16 +849,21 @@ bool NpcDatabase::importMissingFromServerLua(const FileName &directory, const Fi
 			}
 
 			NpcBrush* existingBrush = currentNpc->brush;
+			const bool wasInOtherTileset = currentNpc->in_other_tileset;
 			*currentNpc = *parsedNpc;
 			currentNpc->brush = existingBrush;
+			currentNpc->in_other_tileset = wasInOtherTileset;
 			currentNpc->missing = false;
 			currentNpc->standard = true;
 			currentNpc->outfit.name = currentNpc->name;
-
-			if (!hasNpcNodeByName(npcNodes, currentNpc->name)) {
-				appendNpcNode(npcNodes, *currentNpc);
-				xmlChanged = true;
+			if (currentNpc->brush) {
+				currentNpc->in_other_tileset = true;
+				currentNpc->brush->flagAsVisible();
 			}
+
+			removeTruncatedAlias(truncatedAlias, *currentNpc, npcNodes);
+			upsertNpcNode(npcNodes, *currentNpc);
+			xmlChanged = true;
 
 			missingNames.erase(npcKey);
 			++importedCount;
@@ -670,6 +891,149 @@ bool NpcDatabase::importMissingFromServerLua(const FileName &directory, const Fi
 	}
 
 	return importedCount > 0;
+}
+
+bool NpcDatabase::importFromServerLua(const FileName &directory, const FileName &targetXml, wxString &error, wxArrayString &warnings) {
+	if (!directory.DirExists()) {
+		error = "Server data folder does not exist.";
+		return false;
+	}
+
+	pugi::xml_document doc;
+	const pugi::xml_parse_result result = doc.load_file(targetXml.GetFullPath().mb_str());
+	if (!result) {
+		error = "Couldn't open file \"" + targetXml.GetFullName() + "\".";
+		return false;
+	}
+
+	pugi::xml_node npcNodes = doc.child("npcs");
+	if (!npcNodes) {
+		error = "Invalid npcs.xml structure.";
+		return false;
+	}
+
+	bool xmlChanged = false;
+	int importedCount = 0;
+
+	std::vector<fs::path> luaFiles;
+	try {
+		for (const auto &entry : fs::recursive_directory_iterator(fs::path(nstr(directory.GetFullPath())))) {
+			if (entry.is_regular_file() && entry.path().extension() == ".lua") {
+				luaFiles.push_back(entry.path());
+			}
+		}
+	} catch (const std::exception &e) {
+		error = wxString::Format("Failed to scan server data folder: %s", wxString(e.what(), wxConvUTF8));
+		return false;
+	}
+
+	struct LoadBarGuard {
+		~LoadBarGuard() {
+			g_gui.DestroyLoadBar();
+		}
+	} loadBarGuard;
+	g_gui.CreateLoadBar("Importing NPCs from server...");
+
+	const size_t totalFiles = luaFiles.size();
+	try {
+		for (size_t fileIndex = 0; fileIndex < totalFiles; ++fileIndex) {
+			const fs::path &filePath = luaFiles[fileIndex];
+
+			if (totalFiles > 0) {
+				g_gui.SetLoadDone(
+					static_cast<int>(100.0 * (fileIndex + 1) / totalFiles),
+					wxString::Format("Importing NPCs... (%zu/%zu)", fileIndex + 1, totalFiles)
+				);
+			}
+
+			std::string truncatedAlias;
+			std::unique_ptr<NpcType> parsedNpc(loadFromServerLua(filePath, truncatedAlias));
+			if (!parsedNpc) {
+				continue;
+			}
+
+			NpcType* currentNpc = (*this)[parsedNpc->name];
+			if (currentNpc) {
+				NpcBrush* existingBrush = currentNpc->brush;
+				const bool wasInOtherTileset = currentNpc->in_other_tileset;
+				*currentNpc = *parsedNpc;
+				currentNpc->brush = existingBrush;
+				currentNpc->in_other_tileset = wasInOtherTileset;
+				currentNpc->missing = false;
+				currentNpc->standard = true;
+				currentNpc->outfit.name = currentNpc->name;
+				if (currentNpc->brush) {
+					currentNpc->in_other_tileset = true;
+					currentNpc->brush->flagAsVisible();
+				}
+			} else {
+				currentNpc = parsedNpc.release();
+				currentNpc->missing = false;
+				currentNpc->standard = true;
+				currentNpc->outfit.name = currentNpc->name;
+				npcMap[as_lower_str(currentNpc->name)] = currentNpc;
+				registerNpcBrush(currentNpc);
+			}
+
+			removeTruncatedAlias(truncatedAlias, *currentNpc, npcNodes);
+			upsertNpcNode(npcNodes, *currentNpc);
+			xmlChanged = true;
+			++importedCount;
+		}
+	} catch (const std::exception &e) {
+		error = wxString::Format("Failed to scan server data folder: %s", wxString(e.what(), wxConvUTF8));
+		return importedCount > 0;
+	}
+
+	if (xmlChanged) {
+		sortNpcNodesAlphabetically(npcNodes);
+		ensureXmlUtf8Declaration(doc);
+	}
+	if (xmlChanged && !doc.save_file(targetXml.GetFullPath().mb_str(), "\t", pugi::format_default, pugi::encoding_utf8)) {
+		error = "Failed to write updated npcs.xml.";
+		return false;
+	}
+
+	if (importedCount == 0 && error.empty()) {
+		error = "No NPCs were found in the configured server data folder.";
+	}
+
+	return importedCount > 0;
+}
+
+void NpcDatabase::removeTruncatedAlias(const std::string &alias, const NpcType &resolvedNpc, pugi::xml_node &npcNodes) {
+	if (alias.empty() || alias == resolvedNpc.name) {
+		return;
+	}
+	if (resolvedNpc.name.size() <= alias.size()) {
+		return;
+	}
+	if (resolvedNpc.name.compare(0, alias.size(), alias) != 0 || resolvedNpc.name[alias.size()] != '\'') {
+		return;
+	}
+
+	const std::string lowerAlias = as_lower_str(alias);
+	for (pugi::xml_node npcNode = npcNodes.child("npc"); npcNode; npcNode = npcNode.next_sibling("npc")) {
+		const pugi::xml_attribute nameAttribute = npcNode.attribute("name");
+		if (nameAttribute && as_lower_str(nameAttribute.as_string()) == lowerAlias) {
+			npcNodes.remove_child(npcNode);
+			break;
+		}
+	}
+
+	NpcType* aliasNpc = (*this)[alias];
+	if (!aliasNpc || aliasNpc == (*this)[resolvedNpc.name]) {
+		return;
+	}
+	if (aliasNpc->outfit.lookType != resolvedNpc.outfit.lookType) {
+		return;
+	}
+
+	const auto aliasIter = npcMap.find(lowerAlias);
+	if (aliasIter != npcMap.end()) {
+		delete aliasIter->second;
+		npcMap.erase(aliasIter);
+	}
 }
 
 bool NpcDatabase::saveToXML(const FileName &filename) {

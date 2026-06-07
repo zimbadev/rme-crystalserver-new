@@ -58,8 +58,10 @@ MainMenuBar::MainMenuBar(MainFrame* frame) :
 	MAKE_ACTION(CLOSE, wxITEM_NORMAL, OnClose);
 
 	MAKE_ACTION(IMPORT_MAP, wxITEM_NORMAL, OnImportMap);
-	MAKE_ACTION(IMPORT_MONSTERS, wxITEM_NORMAL, OnImportMonsterData);
-	MAKE_ACTION(IMPORT_NPCS, wxITEM_NORMAL, OnImportNpcData);
+	MAKE_ACTION(IMPORT_MONSTERS, wxITEM_NORMAL, OnImportMonsterLegacyData);
+	MAKE_ACTION(IMPORT_NPCS, wxITEM_NORMAL, OnImportNpcLegacyData);
+	MAKE_ACTION(IMPORT_MONSTERS_FROM_SERVER, wxITEM_NORMAL, OnImportMonstersFromServer);
+	MAKE_ACTION(IMPORT_NPCS_FROM_SERVER, wxITEM_NORMAL, OnImportNpcsFromServer);
 	MAKE_ACTION(IMPORT_MINIMAP, wxITEM_NORMAL, OnImportMinimap);
 	MAKE_ACTION(EXPORT_MINIMAP, wxITEM_NORMAL, OnExportMinimap);
 	MAKE_ACTION(EXPORT_TILESETS, wxITEM_NORMAL, OnExportTilesets);
@@ -342,7 +344,10 @@ void MainMenuBar::Update() {
 	EnableItem(GENERATE_MAP, false);
 
 	EnableItem(IMPORT_MAP, is_local);
-	EnableItem(IMPORT_MONSTERS, is_local);
+	EnableItem(IMPORT_MONSTERS, loaded);
+	EnableItem(IMPORT_NPCS, loaded);
+	EnableItem(IMPORT_MONSTERS_FROM_SERVER, loaded);
+	EnableItem(IMPORT_NPCS_FROM_SERVER, loaded);
 	EnableItem(IMPORT_MINIMAP, false);
 	EnableItem(EXPORT_MINIMAP, is_local);
 	EnableItem(EXPORT_TILESETS, loaded);
@@ -809,8 +814,8 @@ void MainMenuBar::OnImportMap(wxCommandEvent &WXUNUSED(event)) {
 	importmap->ShowModal();
 }
 
-void MainMenuBar::OnImportMonsterData(wxCommandEvent &WXUNUSED(event)) {
-	wxFileDialog dlg(g_gui.root, "Import monster file", "", "", "*.xml", wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
+void MainMenuBar::OnImportMonsterLegacyData(wxCommandEvent &WXUNUSED(event)) {
+	wxFileDialog dlg(g_gui.root, "Import legacy monster XML file", "", "", "*.xml", wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
 	if (dlg.ShowModal() == wxID_OK) {
 		wxArrayString paths;
 		dlg.GetPaths(paths);
@@ -824,11 +829,12 @@ void MainMenuBar::OnImportMonsterData(wxCommandEvent &WXUNUSED(event)) {
 				wxMessageBox("Error OT data file \"" + paths[i] + "\".\n" + error, "Error", wxOK | wxICON_INFORMATION, g_gui.root);
 			}
 		}
+		g_gui.RefreshPalettes();
 	}
 }
 
-void MainMenuBar::OnImportNpcData(wxCommandEvent &WXUNUSED(event)) {
-	wxFileDialog dlg(g_gui.root, "Import npc file", "", "", "*.xml", wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
+void MainMenuBar::OnImportNpcLegacyData(wxCommandEvent &WXUNUSED(event)) {
+	wxFileDialog dlg(g_gui.root, "Import legacy NPC XML file", "", "", "*.xml", wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
 	if (dlg.ShowModal() == wxID_OK) {
 		wxArrayString paths;
 		dlg.GetPaths(paths);
@@ -837,12 +843,21 @@ void MainMenuBar::OnImportNpcData(wxCommandEvent &WXUNUSED(event)) {
 			wxArrayString warnings;
 			bool ok = g_npcs.importXMLFromOT(FileName(paths[i]), error, warnings);
 			if (ok) {
-				g_gui.ListDialog("Monster loader errors", warnings);
+				g_gui.ListDialog("Npc loader errors", warnings);
 			} else {
 				wxMessageBox("Error OT data file \"" + paths[i] + "\".\n" + error, "Error", wxOK | wxICON_INFORMATION, g_gui.root);
 			}
 		}
+		g_gui.RefreshPalettes();
 	}
+}
+
+void MainMenuBar::OnImportMonstersFromServer(wxCommandEvent &WXUNUSED(event)) {
+	frame->ImportMonstersFromServerData(true);
+}
+
+void MainMenuBar::OnImportNpcsFromServer(wxCommandEvent &WXUNUSED(event)) {
+	frame->ImportNpcsFromServerData(true);
 }
 
 void MainMenuBar::OnImportMinimap(wxCommandEvent &WXUNUSED(event)) {
