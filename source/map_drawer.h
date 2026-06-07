@@ -18,6 +18,8 @@
 #ifndef RME_MAP_DRAWER_H_
 #define RME_MAP_DRAWER_H_
 
+#include <cstdint>
+
 class GameSprite;
 
 struct MapTooltip {
@@ -77,6 +79,7 @@ public:
 	bool highlight_items;
 	bool show_blocking;
 	bool show_tooltips;
+	bool show_performance_stats;
 	bool show_as_minimap;
 	bool show_only_colors;
 	bool show_only_modified;
@@ -116,6 +119,23 @@ protected:
 	wxStopWatch pos_indicator_timer;
 	Position pos_indicator;
 
+	// Performance monitoring
+	wxStopWatch fps_timer;
+	int frame_count = 0;
+	double current_fps = 0.0;
+	wxStopWatch perf_update_timer;
+	double current_cpu = 0.0;
+	size_t current_ram = 0;
+
+#ifdef __WINDOWS__
+	ULARGE_INTEGER last_cpu_time;
+	ULARGE_INTEGER last_sys_time;
+	ULARGE_INTEGER last_now_time;
+#else
+	uint64_t last_total_time = 0;
+	uint64_t last_process_time = 0;
+#endif
+
 public:
 	MapDrawer(MapCanvas* canvas);
 	~MapDrawer();
@@ -140,6 +160,7 @@ public:
 	void DrawIngameBox();
 	void DrawGrid();
 	void DrawTooltips();
+	void DrawPerformanceStats();
 
 	void TakeScreenshot(uint8_t* screenshot_buffer);
 
@@ -190,6 +211,12 @@ protected:
 	};
 
 	void getColor(Brush* brush, const Position &position, uint8_t &r, uint8_t &g, uint8_t &b);
+
+	// Performance monitoring helpers
+	void UpdateRAMUsage();
+	void UpdateCPUUsage();
+	std::string FormatPerformanceStats() const;
+
 	void glBlitTexture(int x, int y, int textureId, int red, int green, int blue, int alpha, bool adjustZoom = false, bool isEditorSprite = false, const Outfit &outfit = {}, int spriteId = 0);
 	void glBlitSquare(int x, int y, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha, int size = rme::TileSize) const;
 	void glBlitSquare(int x, int y, const wxColor &color, int size = rme::TileSize) const;

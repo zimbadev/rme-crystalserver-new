@@ -21,6 +21,18 @@
 	#include <GL/glut.h>
 #endif
 
+#ifdef __WINDOWS__
+	#include <psapi.h>
+	#include <windows.h>
+	#pragma comment(lib, "psapi.lib")
+#else
+	#include <unistd.h>
+	#include <fstream>
+	#include <sstream>
+#endif
+
+#include <thread>
+
 #include "editor.h"
 #include "gui.h"
 #include "sprites.h"
@@ -73,6 +85,7 @@ void DrawingOptions::SetDefault() {
 	highlight_items = false;
 	show_blocking = false;
 	show_tooltips = false;
+	show_performance_stats = false;
 	show_as_minimap = false;
 	show_only_colors = false;
 	show_only_modified = false;
@@ -107,6 +120,7 @@ void DrawingOptions::SetIngame() {
 	highlight_items = false;
 	show_blocking = false;
 	show_tooltips = false;
+	show_performance_stats = false;
 	show_as_minimap = false;
 	show_only_colors = false;
 	show_only_modified = false;
@@ -134,8 +148,17 @@ bool DrawingOptions::isTooltips() const noexcept {
 }
 
 MapDrawer::MapDrawer(MapCanvas* canvas) :
-	canvas(canvas), editor(canvas->editor) {
+	canvas(canvas),
+	editor(canvas->editor)
+#ifdef __WINDOWS__
+	,
+	last_cpu_time {},
+	last_sys_time {},
+	last_now_time {}
+#endif
+{
 	light_drawer = std::make_shared<LightDrawer>();
+	perf_update_timer.Start();
 }
 
 MapDrawer::~MapDrawer() {
@@ -235,6 +258,9 @@ void MapDrawer::Draw() {
 	}
 	if (options.isTooltips()) {
 		DrawTooltips();
+	}
+	if (options.show_performance_stats) {
+		DrawPerformanceStats();
 	}
 }
 
@@ -1909,6 +1935,204 @@ void MapDrawer::DrawTooltips() {
 
 	glEnable(GL_TEXTURE_2D);
 #endif
+}
+
+void MapDrawer::UpdateRAMUsage() {
+#ifdef __WINDOWS__
+	PROCESS_MEMORY_COUNTERS pmc;
+	if (GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc))) {
+		current_ram = pmc.WorkingSetSize / (1024 * 1024);
+	}
+#else
+	std::ifstream file("/proc/self/statm");
+	if (file.is_open()) {
+		uint32_t size = 0;
+		uint32_t rss = 0;
+		file >> size >> rss;
+		current_ram = (rss * sysconf(_SC_PAGESIZE)) / (1024 * 1024);
+	}
+#endif
+}
+
+void MapDrawer::UpdateCPUUsage() {
+#ifdef __WINDOWS__
+	FILETIME ftime, fsys, fuser;
+	ULARGE_INTEGER now, sys, user;
+
+	GetSystemTimeAsFileTime(&ftime);
+	memcpy(&now, &ftime, sizeof(FILETIME));
+
+	GetProcessTimes(GetCurrentProcess(), &ftime, &ftime, &fsys, &fuser);
+	memcpy(&sys, &fsys, sizeof(FILETIME));
+	memcpy(&user, &fuser, sizeof(FILETIME));
+
+	if (last_now_time.QuadPart != 0) {
+		double process_diff = (double)((sys.QuadPart - last_sys_time.QuadPart) + (user.QuadPart - last_cpu_time.QuadPart));
+		double system_diff = (double)(now.QuadPart - last_now_time.QuadPart);
+
+		if (system_diff > 0) {
+			current_cpu = (process_diff / system_diff) * 100.0;
+			unsigned int num_cores = std::thread::hardware_concurrency();
+			if (num_cores > 0) {
+				current_cpu = current_cpu / num_cores;
+			}
+			if (current_cpu > 100.0) {
+				current_cpu = 100.0;
+			}
+		}
+	}
+
+	last_cpu_time = user;
+	last_sys_time = sys;
+	last_now_time = now;
+#else
+	std::ifstream file("/proc/self/stat");
+	if (!file.is_open()) {
+		return;
+	}
+
+	std::string buffer;
+	if (!std::getline(file, buffer)) {
+		return;
+	}
+
+	size_t pos = buffer.find(')');
+	if (pos == std::string::npos) {
+		return;
+	}
+
+	uint64_t utime = 0;
+	uint64_t stime = 0;
+	std::istringstream iss(buffer.substr(pos + 2));
+	std::string dummy;
+	char state;
+	int pid;
+	int ppid;
+	int pgrp;
+	int session;
+	int tty_nr;
+	int tpgid;
+	unsigned int flags;
+	unsigned int minflt;
+	unsigned int cminflt;
+	unsigned int majflt;
+
+	if (unsigned int cmajflt = 0; !(iss >> state >> pid >> ppid >> pgrp >> session >> tty_nr >> tpgid >> flags >> minflt >> cminflt >> majflt >> cmajflt >> utime >> stime)) {
+		return;
+	}
+
+	uint64_t process_time = utime + stime;
+	std::ifstream stat_file("/proc/stat");
+	if (!stat_file.is_open()) {
+		return;
+	}
+
+	uint64_t user = 0;
+	uint64_t nice = 0;
+	uint64_t system = 0;
+	uint64_t idle = 0;
+	uint64_t iowait = 0;
+	uint64_t irq = 0;
+	uint64_t softirq = 0;
+	uint64_t steal = 0;
+
+	std::string cpu_label;
+	stat_file >> cpu_label >> user >> nice >> system >> idle >> iowait >> irq >> softirq >> steal;
+
+	if (cpu_label == "cpu") {
+		uint64_t total_time = user + nice + system + idle + iowait + irq + softirq + steal;
+		if (last_total_time != 0) {
+			uint64_t total_diff = total_time - last_total_time;
+			uint64_t process_diff = process_time - last_process_time;
+
+			if (total_diff > 0) {
+				current_cpu = (100.0 * process_diff) / total_diff;
+				if (current_cpu > 100.0) {
+					current_cpu = 100.0;
+				}
+			}
+		}
+
+		last_total_time = total_time;
+		last_process_time = process_time;
+	}
+#endif
+}
+
+std::string MapDrawer::FormatPerformanceStats() const {
+	return fmt::format("{:.1f} FPS  ·  {:.1f}% CPU  ·  {} MB RAM", current_fps, current_cpu, current_ram);
+}
+
+namespace {
+	int MeasureBitmapTextWidth(const std::string &text, void* font) {
+		int width = 0;
+		for (const char &c : text) {
+			width += glutBitmapWidth(font, c);
+		}
+		return width;
+	}
+
+	void DrawBitmapText(int x, int y, const std::string &text, void* font) {
+		glRasterPos2i(x, y);
+		for (const char &c : text) {
+			glutBitmapCharacter(font, c);
+		}
+	}
+} // namespace
+
+void MapDrawer::DrawPerformanceStats() {
+	frame_count++;
+
+	long elapsed = perf_update_timer.Time();
+	if (elapsed >= 500) {
+		current_fps = (frame_count * 1000.0) / elapsed;
+		frame_count = 0;
+
+		UpdateRAMUsage();
+		UpdateCPUUsage();
+
+		perf_update_timer.Start();
+	}
+
+	const std::string stats_text = FormatPerformanceStats();
+	constexpr int margin = 10;
+	constexpr int panelPaddingX = 12;
+	constexpr int panelPaddingY = 8;
+	constexpr int lineHeight = 13;
+	void* font = GLUT_BITMAP_HELVETICA_12;
+
+	const int textWidth = MeasureBitmapTextWidth(stats_text, font);
+	const int panelWidth = textWidth + panelPaddingX * 2;
+	const int panelHeight = lineHeight + panelPaddingY * 2;
+	const int panelX = screensize_x - panelWidth - margin;
+	const int panelY = margin;
+	const int textX = panelX + panelPaddingX;
+	const int textY = panelY + panelPaddingY + lineHeight;
+
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0, screensize_x, screensize_y, 0, -1, 1);
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	glDisable(GL_TEXTURE_2D);
+
+	drawFilledRect(panelX + 1, panelY + 1, panelWidth, panelHeight, wxColor(0, 0, 0, 90));
+	drawFilledRect(panelX, panelY, panelWidth, panelHeight, wxColor(22, 24, 30, 215));
+	drawRect(panelX, panelY, panelWidth, panelHeight, wxColor(90, 96, 108, 160), 1);
+
+	glColor3f(0.88f, 0.90f, 0.93f);
+	DrawBitmapText(textX, textY, stats_text, font);
+
+	glEnable(GL_TEXTURE_2D);
+
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
 }
 
 void MapDrawer::DrawLight() const {
