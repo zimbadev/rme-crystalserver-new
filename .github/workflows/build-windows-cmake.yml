@@ -34,6 +34,9 @@ env:
 jobs:
   job:
     if: ${{ github.event_name == 'push' || !github.event.pull_request.draft }}
+    permissions:
+      actions: write
+      contents: read
     name: ${{ matrix.os }}-${{ matrix.buildtype }}
     runs-on: ${{ matrix.os }}
     strategy:

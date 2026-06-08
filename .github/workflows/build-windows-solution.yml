@@ -40,6 +40,9 @@ jobs:
 
   job:
     if: ${{ github.event_name == 'push' || !github.event.pull_request.draft }}
+    permissions:
+      actions: write
+      contents: read
     name: ${{ matrix.os }}-${{ matrix.buildtype }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -76,31 +79,15 @@ jobs:
             vcpkg-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json') }}-
             vcpkg-${{ matrix.triplet }}-
 
-      - name: Install vcpkg
-        run: |
-          if (-not (Test-Path "$env:VCPKG_ROOT\vcpkg.exe")) {
-            if (Test-Path "$env:VCPKG_ROOT\.git") {
-              git -C "$env:VCPKG_ROOT" fetch origin
-              git -C "$env:VCPKG_ROOT" checkout --force $env:VCPKG_GIT_COMMIT_ID
-            } else {
-              git clone https://github.com/microsoft/vcpkg.git "$env:VCPKG_ROOT"
-              git -C "$env:VCPKG_ROOT" checkout --force $env:VCPKG_GIT_COMMIT_ID
-            }
-
-            & "$env:VCPKG_ROOT\bootstrap-vcpkg.bat" -disableMetrics
-            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          } else {
-            Write-Host "Using cached vcpkg executable."
-          }
-
-          & "$env:VCPKG_ROOT\vcpkg.exe" integrate install
-
-      - name: Install vcpkg manifest dependencies
-        run: |
-          & "$env:VCPKG_ROOT\vcpkg.exe" install `
-            --triplet $env:VCPKG_DEFAULT_TRIPLET `
-            --x-install-root="$env:VCPKG_INSTALLED_DIR" `
-            --x-manifest-root="$env:GITHUB_WORKSPACE"
+      - name: Setup vcpkg and install dependencies
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgGitURL: "https://github.com/microsoft/vcpkg.git"
+          vcpkgGitCommitId: ${{ env.VCPKG_GIT_COMMIT_ID }}
+          vcpkgJsonGlob: vcpkg.json
+          vcpkgDirectory: ${{ github.workspace }}/vcpkg
+          doNotCache: false
+          runVcpkgInstall: true
 
       - name: Print useful paths
         run: |
