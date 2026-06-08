@@ -26,6 +26,7 @@ on:
 env:
   CMAKE_BUILD_PARALLEL_LEVEL: 2
   MAKEFLAGS: '-j 2'
+  VCPKG_BINARY_SOURCES: clear
   VCPKG_INSTALLED_DIR: ${{ github.workspace }}/vcpkg_installed
   VCPKG_ROOT: ${{ github.workspace }}/vcpkg
   VCPKG_DEFAULT_TRIPLET: x64-windows-static
@@ -81,6 +82,10 @@ jobs:
           vcpkgDirectory: ${{ github.workspace }}/vcpkg
           doNotCache: true
           runVcpkgInstall: false
+
+      - name: Disable vcpkg GHA binary cache
+        shell: bash
+        run: echo "VCPKG_BINARY_SOURCES=clear" >> "$GITHUB_ENV"
 
       - name: Cache vcpkg downloads
         uses: actions/cache@v4
