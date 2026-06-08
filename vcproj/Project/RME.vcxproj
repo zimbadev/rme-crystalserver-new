@@ -117,6 +117,7 @@
   <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <VcpkgConfiguration>Release</VcpkgConfiguration>
   </PropertyGroup>
+  <Import Project="$(VcpkgRoot)\scripts\buildsystems\msbuild\vcpkg.props" Condition="'$(VcpkgRoot)' != '' and Exists('$(VcpkgRoot)\scripts\buildsystems\msbuild\vcpkg.props')" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
@@ -547,6 +548,7 @@
     <Error Condition="('$(ProtocPath)' == '' or !Exists('$(ProtocPath)')) and !Exists('$(GeneratedDir)\appearances.pb.cc')" Text="protobuf compiler (protoc.exe) was not found and no committed generated sources exist. Expected protoc at $(VcpkgInstalledDir)\$(VcpkgTriplet)\tools\protobuf\protoc.exe. On first build, ensure VCPKG_ROOT is set and vcpkg is integrated (vcpkg integrate install); Visual Studio will install dependencies from vcpkg.json automatically." />
   </Target>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Import Project="$(VcpkgRoot)\scripts\buildsystems\msbuild\vcpkg.targets" Condition="'$(VcpkgRoot)' != '' and Exists('$(VcpkgRoot)\scripts\buildsystems\msbuild\vcpkg.targets')" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>
