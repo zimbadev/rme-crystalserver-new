@@ -29,6 +29,8 @@ env:
   MAKEFLAGS: '-j 2'
   VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
   VCPKG_INSTALLED_DIR: ${{ github.workspace }}/vcpkg_installed
+  VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+  VCPKG_DEFAULT_TRIPLET: x64-linux
 
 jobs:
   job:
@@ -54,7 +56,7 @@ jobs:
           cancel_others: true
 
       - name: Checkout repository
-        uses: actions/checkout@main
+        uses: actions/checkout@v4
 
       - name: Install Linux Dependencies
         run: >
@@ -69,26 +71,27 @@ jobs:
           restore-keys: |
             ccache-${{ matrix.os }}
 
-      - name: Restore artifacts and install vcpkg
+      - name: Resolve vcpkg baseline
         id: vcpkg-step
         run: |
           vcpkgCommitId=$(grep '.builtin-baseline' vcpkg.json | awk -F: '{print $2}' | tr -d '," ')
           echo "vcpkg commit ID: $vcpkgCommitId"
           echo "VCPKG_GIT_COMMIT_ID=$vcpkgCommitId" >> $GITHUB_ENV
 
-      - name: Cache vcpkg dependencies
+      - name: Cache vcpkg
         uses: actions/cache@v4
         with:
           path: |
             ${{ github.workspace }}/vcpkg_installed
-            ~/.cache/vcpkg
+            ${{ github.workspace }}/vcpkg/downloads
+            ${{ github.workspace }}/vcpkg/packages
           key: vcpkg-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json') }}-${{ env.VCPKG_GIT_COMMIT_ID }}
           restore-keys: |
             vcpkg-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json') }}-
             vcpkg-${{ matrix.triplet }}-
 
-      - name: Get vcpkg commit id from vcpkg.json
-        uses: lukka/run-vcpkg@main
+      - name: Setup vcpkg
+        uses: lukka/run-vcpkg@v11
         with:
           vcpkgGitURL: "https://github.com/microsoft/vcpkg.git"
           vcpkgGitCommitId: ${{ env.VCPKG_GIT_COMMIT_ID }}

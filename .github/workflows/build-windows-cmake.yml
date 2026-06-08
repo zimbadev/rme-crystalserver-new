@@ -26,6 +26,11 @@ on:
 env:
   CMAKE_BUILD_PARALLEL_LEVEL: 2
   MAKEFLAGS: '-j 2'
+  VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
+  VCPKG_INSTALLED_DIR: ${{ github.workspace }}/vcpkg_installed
+  VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+  VCPKG_DEFAULT_TRIPLET: x64-windows-static
+
 jobs:
   job:
     if: ${{ github.event_name == 'push' || !github.event.pull_request.draft }}
@@ -47,9 +52,9 @@ jobs:
           cancel_others: true
 
       - name: Checkout repository
-        uses: actions/checkout@main
+        uses: actions/checkout@v4
 
-      - name: Restore artifacts and install vcpkg
+      - name: Resolve vcpkg baseline
         id: vcpkg-step
         run: |
           $json=Get-Content vcpkg.json -Raw | ConvertFrom-Json
@@ -57,11 +62,26 @@ jobs:
           Write-Host "vcpkg commit ID: $vcpkgCommitId"
           echo "VCPKG_GIT_COMMIT_ID=$vcpkgCommitId" | Out-File -FilePath $env:GITHUB_ENV -Append
 
-      - name: Get vcpkg commit id from vcpkg.json
-        uses: lukka/run-vcpkg@main
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/vcpkg_installed
+            ${{ github.workspace }}/vcpkg/downloads
+            ${{ github.workspace }}/vcpkg/packages
+          key: vcpkg-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json') }}-${{ env.VCPKG_GIT_COMMIT_ID }}
+          restore-keys: |
+            vcpkg-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json') }}-
+            vcpkg-${{ matrix.triplet }}-
+
+      - name: Setup vcpkg
+        uses: lukka/run-vcpkg@v11
         with:
           vcpkgGitURL: "https://github.com/microsoft/vcpkg.git"
           vcpkgGitCommitId: ${{ env.VCPKG_GIT_COMMIT_ID }}
+          vcpkgJsonGlob: vcpkg.json
+          vcpkgDirectory: ${{ github.workspace }}/vcpkg
+          doNotCache: false
 
       - name: Get latest CMake and ninja
         uses: lukka/get-cmake@main
