@@ -22,6 +22,7 @@
 #include "preferences.h"
 #include "about_window.h"
 #include "minimap_window.h"
+#include "bitmap_to_map_window.h"
 #include "dat_debug_view.h"
 #include "result_window.h"
 #include "find_item_window.h"
@@ -579,6 +580,7 @@ MainMenuBar::MainMenuBar(MainFrame* frame) :
 	MAKE_ACTION(IMPORT_MONSTERS_FROM_SERVER, wxITEM_NORMAL, OnImportMonstersFromServer);
 	MAKE_ACTION(IMPORT_NPCS_FROM_SERVER, wxITEM_NORMAL, OnImportNpcsFromServer);
 	MAKE_ACTION(IMPORT_MINIMAP, wxITEM_NORMAL, OnImportMinimap);
+	MAKE_ACTION(IMPORT_BITMAP_TO_MAP, wxITEM_NORMAL, OnImportBitmapToMap);
 
 	MAKE_ACTION(EXPORT_MINIMAP, wxITEM_NORMAL, OnExportMinimap);
 	MAKE_ACTION(EXPORT_STATIC_HOUSE_DATA, wxITEM_NORMAL, OnExportStaticHouseData);
@@ -1331,6 +1333,14 @@ void MainMenuBar::OnImportMinimap(wxCommandEvent &WXUNUSED(event)) {
 	ASSERT(g_gui.IsEditorOpen());
 	// wxDialog* importmap = newd ImportMapWindow();
 	// importmap->ShowModal();
+}
+
+void MainMenuBar::OnImportBitmapToMap(wxCommandEvent &WXUNUSED(event)) {
+	if (!g_gui.IsEditorOpen()) {
+		return;
+	}
+	BitmapToMapWindow dlg(g_gui.root, *g_gui.GetCurrentEditor());
+	dlg.ShowModal();
 }
 
 void MainMenuBar::OnExportMinimap(wxCommandEvent &WXUNUSED(event)) {

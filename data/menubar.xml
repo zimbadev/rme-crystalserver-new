@@ -15,6 +15,7 @@
             <item name="Import Monster $Legacy (XML)..." action="IMPORT_MONSTERS" help="Import monsters from a legacy OT monsters.xml file."/>
             <item name="Import NPC $Legacy (XML)..." action="IMPORT_NPCS" help="Import NPCs from a legacy OT npc.xml file."/>
             <item name="Import Mi$nimap..." action="IMPORT_MINIMAP" help="Import map data from a .bmp file."/>
+            <item name="Import $Bitmap to Map..." action="IMPORT_BITMAP_TO_MAP" help="Import an image and convert colors to map tiles using brushes."/>
         </menu>
         <menu name="$Export">
             <item name="$Export Minimap..." action="EXPORT_MINIMAP" help="Export minimap to an image file."/>
