@@ -332,7 +332,7 @@ void Editor::saveMap(FileName filename, bool showdialog) {
 		map.name = fn.GetFullName().mb_str(wxConvUTF8);
 
 		if (showdialog) {
-			g_gui.CreateLoadBar("Saving OTBM map...");
+			g_gui.CreateLoadBar("Saving OTBM map...", false, "Saving");
 		}
 
 		// Perform the actual save
