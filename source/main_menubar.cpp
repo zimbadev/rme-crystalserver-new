@@ -40,7 +40,6 @@
 #include <chrono>
 #include <ctime>
 #include <filesystem>
-#include <format>
 #include <iomanip>
 #include <sstream>
 #include <string_view>
