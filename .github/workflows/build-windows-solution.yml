@@ -22,7 +22,6 @@ env:
   CMAKE_BUILD_PARALLEL_LEVEL: 2
   MAKEFLAGS: "-j 2"
   GITHUB_WORKSPACE: ${{ github.workspace }}
-  VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
   VCPKG_INSTALLED_DIR: ${{ github.workspace }}/vcpkg_installed
   VCPKG_ROOT: ${{ github.workspace }}/vcpkg
   VCPKG_DEFAULT_TRIPLET: x64-windows
@@ -81,6 +80,8 @@ jobs:
 
       - name: Setup vcpkg and install dependencies
         uses: lukka/run-vcpkg@v11
+        env:
+          VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
         with:
           vcpkgGitURL: "https://github.com/microsoft/vcpkg.git"
           vcpkgGitCommitId: ${{ env.VCPKG_GIT_COMMIT_ID }}
@@ -100,7 +101,8 @@ jobs:
         env:
           GITHUB_WORKSPACE: ${{ github.workspace }}
           VCPKG_ROOT: ${{ github.workspace }}/vcpkg
-        run: msbuild.exe /p:VcpkgEnableManifest=true /p:VCPKG_ROOT="$env:VCPKG_ROOT" /p:Configuration=Debug /p:Platform=x64 /p:GITHUB_WORKSPACE="$env:GITHUB_WORKSPACE" vcproj/RME.sln
+          VCPKG_BINARY_SOURCES: clear
+        run: msbuild.exe /p:VcpkgEnableManifest=true /p:VCPKG_ROOT="$env:VCPKG_ROOT" /p:VcpkgInstalledDir="$env:VCPKG_INSTALLED_DIR" /p:Configuration=${{ matrix.buildtype }} /p:Platform=x64 /p:GITHUB_WORKSPACE="$env:GITHUB_WORKSPACE" vcproj/RME.sln
 
       - name: Upload artifacts
         uses: actions/upload-artifact@main
