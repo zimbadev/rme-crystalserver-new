@@ -39,7 +39,7 @@ MapTab::MapTab(MapTabbook* aui, Editor* editor) :
 
 MapTab::MapTab(const MapTab* other) :
 	EditorTab(),
-	MapWindow(other->aui, *other->iref->editor),
+	MapWindow(other->aui->notebook, *other->iref->editor),
 	aui(other->aui),
 	iref(other->iref) {
 	iref->owner_count++;
