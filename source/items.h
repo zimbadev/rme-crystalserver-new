@@ -338,6 +338,8 @@ public:
 	uint16_t ground_equivalent = 0;
 	uint16_t rotateTo = 0;
 
+	int32_t start_frame = 0;
+
 	uint32_t border_group = 0;
 	uint32_t pattern_width = 0;
 	uint32_t pattern_height = 0;
@@ -347,7 +349,6 @@ public:
 	uint32_t height = 0;
 	uint32_t sprite_id = 0;
 	uint32_t loop_count = 0;
-	uint32_t start_frame = 0;
 	uint32_t patternWidth = 0;
 	uint32_t charges = 0;
 

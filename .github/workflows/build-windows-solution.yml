@@ -22,7 +22,9 @@ env:
   CMAKE_BUILD_PARALLEL_LEVEL: 2
   MAKEFLAGS: "-j 2"
   GITHUB_WORKSPACE: ${{ github.workspace }}
+  VCPKG_INSTALLED_DIR: ${{ github.workspace }}/vcpkg_installed
   VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+  VCPKG_DEFAULT_TRIPLET: x64-windows
   VCPKG_TRIPLET: x64-windows
 
 jobs:
@@ -37,6 +39,9 @@ jobs:
 
   job:
     if: ${{ github.event_name == 'push' || !github.event.pull_request.draft }}
+    permissions:
+      actions: write
+      contents: read
     name: ${{ matrix.os }}-${{ matrix.buildtype }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -51,30 +56,53 @@ jobs:
         uses: microsoft/setup-msbuild@v1.1
 
       - name: Checkout repository
-        uses: actions/checkout@main
+        uses: actions/checkout@v4
 
-      - name: Install vcpkg
+      - name: Resolve vcpkg baseline
+        id: vcpkg-step
         run: |
-          git clone https://github.com/Microsoft/vcpkg.git
-          cd vcpkg
-          ./bootstrap-vcpkg.bat
-          ./vcpkg integrate install
+          $json = Get-Content vcpkg.json -Raw | ConvertFrom-Json
+          $vcpkgCommitId = $json.'builtin-baseline'
+          Write-Host "vcpkg commit ID: $vcpkgCommitId"
+          echo "VCPKG_GIT_COMMIT_ID=$vcpkgCommitId" | Out-File -FilePath $env:GITHUB_ENV -Append
 
-      - name: Install vcpkg manifest dependencies
-        run: |
-          & "$env:VCPKG_ROOT\vcpkg.exe" install --triplet x64-windows --x-manifest-root="$env:GITHUB_WORKSPACE"
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/vcpkg_installed
+            ${{ github.workspace }}/vcpkg/downloads
+            ${{ github.workspace }}/vcpkg/packages
+          key: vcpkg-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json') }}-${{ env.VCPKG_GIT_COMMIT_ID }}
+          restore-keys: |
+            vcpkg-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json') }}-
+            vcpkg-${{ matrix.triplet }}-
+
+      - name: Setup vcpkg and install dependencies
+        uses: lukka/run-vcpkg@v11
+        env:
+          VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
+        with:
+          vcpkgGitURL: "https://github.com/microsoft/vcpkg.git"
+          vcpkgGitCommitId: ${{ env.VCPKG_GIT_COMMIT_ID }}
+          vcpkgJsonGlob: vcpkg.json
+          vcpkgDirectory: ${{ github.workspace }}/vcpkg
+          doNotCache: false
+          runVcpkgInstall: true
 
       - name: Print useful paths
         run: |
           Write-Host "Workspace: $env:GITHUB_WORKSPACE"
-          Write-Host "Vcpkg Path: $env:GITHUB_WORKSPACE\vcpkg"
+          Write-Host "Vcpkg Path: $env:VCPKG_ROOT"
+          Write-Host "Installed Path: $env:VCPKG_INSTALLED_DIR"
           Write-Host "Triplet: ${{ matrix.triplet }}"
 
       - name: Build project
         env:
           GITHUB_WORKSPACE: ${{ github.workspace }}
           VCPKG_ROOT: ${{ github.workspace }}/vcpkg
-        run: msbuild.exe /p:VcpkgEnableManifest=true /p:VCPKG_ROOT="$env:VCPKG_ROOT" /p:Configuration=Debug /p:Platform=x64 /p:GITHUB_WORKSPACE="$env:GITHUB_WORKSPACE" vcproj/RME.sln
+          VCPKG_BINARY_SOURCES: clear
+        run: msbuild.exe /p:VcpkgEnableManifest=true /p:VCPKG_ROOT="$env:VCPKG_ROOT" /p:VcpkgInstalledDir="$env:VCPKG_INSTALLED_DIR" /p:Configuration=${{ matrix.buildtype }} /p:Platform=x64 /p:GITHUB_WORKSPACE="$env:GITHUB_WORKSPACE" vcproj/RME.sln
 
       - name: Upload artifacts
         uses: actions/upload-artifact@main
