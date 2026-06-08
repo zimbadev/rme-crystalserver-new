@@ -1114,23 +1114,26 @@ bool GUI::SetLoadDone(int32_t done, const wxString &newMessage) {
 		return false;
 	}
 
+	int32_t newProgress = progressFrom + static_cast<int32_t>((done / 100.f) * (progressTo - progressFrom));
+	newProgress = std::max<int32_t>(0, std::min<int32_t>(100, newProgress));
+
+	bool messageChanged = !newMessage.empty() && newMessage != progressText;
+	if (newProgress == currentProgress && !messageChanged) {
+		return false;
+	}
+
 	if (!newMessage.empty()) {
 		progressText = newMessage;
 	}
 
-	int32_t newProgress = progressFrom + static_cast<int32_t>((done / 100.f) * (progressTo - progressFrom));
-	newProgress = std::max<int32_t>(0, std::min<int32_t>(100, newProgress));
-
 	bool skip = false;
 	if (progressBar) {
-		if (newProgress != currentProgress || !newMessage.empty()) {
-			progressBar->Update(
-				newProgress,
-				wxString::Format("%s (%d%%)", progressText, newProgress),
-				&skip
-			);
-			currentProgress = newProgress;
-		}
+		progressBar->Update(
+			newProgress,
+			wxString::Format("%s (%d%%)", progressText, newProgress),
+			&skip
+		);
+		currentProgress = newProgress;
 	}
 
 	for (int32_t index = 0; index < tabbook->GetTabCount(); ++index) {
