@@ -1111,9 +1111,7 @@ void GUI::SetLoadScale(int32_t from, int32_t to) {
 bool GUI::SetLoadDone(int32_t done, const wxString &newMessage) {
 	if (done == 100) {
 		DestroyLoadBar();
-		return true;
-	} else if (done == currentProgress) {
-		return true;
+		return false;
 	}
 
 	if (!newMessage.empty()) {
@@ -1130,7 +1128,9 @@ bool GUI::SetLoadDone(int32_t done, const wxString &newMessage) {
 			wxString::Format("%s (%d%%)", progressText, newProgress),
 			&skip
 		);
-		currentProgress = newProgress;
+		if (newProgress != currentProgress) {
+			currentProgress = newProgress;
+		}
 	}
 
 	for (int32_t index = 0; index < tabbook->GetTabCount(); ++index) {

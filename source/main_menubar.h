@@ -33,8 +33,13 @@ namespace MenuBar {
 		IMPORT_MAP,
 		IMPORT_MONSTERS,
 		IMPORT_NPCS,
+		IMPORT_MONSTERS_FROM_SERVER,
+		IMPORT_NPCS_FROM_SERVER,
 		IMPORT_MINIMAP,
 		EXPORT_MINIMAP,
+		EXPORT_STATIC_HOUSE_DATA,
+		EXPORT_CYCLOPEDIA_MAP,
+		REVERT_CYCLOPEDIA_ASSETS,
 		EXPORT_TILESETS,
 		RELOAD_DATA,
 		RECENT_FILES,
@@ -167,8 +172,6 @@ namespace MenuBar {
 		REMOVE_ON_SELECTION_DUPLICATED_ITEMS,
 		SEARCH_ON_MAP_WALLS_UPON_WALLS,
 		SEARCH_ON_SELECTION_WALLS_UPON_WALLS,
-		IMPORT_MONSTERS_FROM_SERVER,
-		IMPORT_NPCS_FROM_SERVER,
 	};
 }
 
@@ -190,6 +193,7 @@ public:
 	void AddRecentFile(FileName file);
 	void LoadRecentFiles();
 	void SaveRecentFiles();
+	void LoadScriptsMenu();
 	std::vector<wxString> GetRecentFiles();
 
 	// Interface
@@ -218,6 +222,9 @@ public:
 	void OnImportNpcsFromServer(wxCommandEvent &event);
 	void OnImportMinimap(wxCommandEvent &event);
 	void OnExportMinimap(wxCommandEvent &event);
+	void OnExportStaticHouseData(wxCommandEvent &event);
+	void OnExportCyclopediaMapData(wxCommandEvent &event);
+	void OnRevertCyclopediaAssets(wxCommandEvent &event);
 	void OnExportTilesets(wxCommandEvent &event);
 	void OnReloadDataFiles(wxCommandEvent &event);
 
