@@ -110,6 +110,8 @@ target_sources(${PROJECT_NAME}
 	application.cpp
 	artprovider.cpp
 	basemap.cpp
+	bitmap_to_map_window.cpp
+	bitmap_to_map_converter.cpp
 	brush.cpp
 	brush_tables.cpp
 	browse_tile_window.cpp

@@ -431,7 +431,11 @@
     <ClInclude Include="..\..\source\tileset.h" />
     <ClCompile Include="..\..\source\tileset.cpp" />
     <ClInclude Include="..\..\source\basemap.h" />
+    <ClInclude Include="..\..\source\bitmap_to_map_converter.h" />
+    <ClInclude Include="..\..\source\bitmap_to_map_window.h" />
     <ClCompile Include="..\..\source\basemap.cpp" />
+    <ClCompile Include="..\..\source\bitmap_to_map_converter.cpp" />
+    <ClCompile Include="..\..\source\bitmap_to_map_window.cpp" />
     <ClInclude Include="..\..\source\complexitem.h" />
     <ClCompile Include="..\..\source\complexitem.cpp" />
     <ClInclude Include="..\..\source\monster.h" />

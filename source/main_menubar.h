@@ -172,6 +172,7 @@ namespace MenuBar {
 		REMOVE_ON_SELECTION_DUPLICATED_ITEMS,
 		SEARCH_ON_MAP_WALLS_UPON_WALLS,
 		SEARCH_ON_SELECTION_WALLS_UPON_WALLS,
+		IMPORT_BITMAP_TO_MAP,
 	};
 }
 
@@ -221,6 +222,7 @@ public:
 	void OnImportMonstersFromServer(wxCommandEvent &event);
 	void OnImportNpcsFromServer(wxCommandEvent &event);
 	void OnImportMinimap(wxCommandEvent &event);
+	void OnImportBitmapToMap(wxCommandEvent &event);
 	void OnExportMinimap(wxCommandEvent &event);
 	void OnExportStaticHouseData(wxCommandEvent &event);
 	void OnExportCyclopediaMapData(wxCommandEvent &event);
