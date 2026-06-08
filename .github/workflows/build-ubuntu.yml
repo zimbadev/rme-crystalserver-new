@@ -27,7 +27,6 @@ on:
 env:
   CMAKE_BUILD_PARALLEL_LEVEL: 2
   MAKEFLAGS: '-j 2'
-  VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
   VCPKG_INSTALLED_DIR: ${{ github.workspace }}/vcpkg_installed
   VCPKG_ROOT: ${{ github.workspace }}/vcpkg
   VCPKG_DEFAULT_TRIPLET: x64-linux
@@ -36,7 +35,6 @@ jobs:
   job:
     if: ${{ github.event_name == 'push' || !github.event.pull_request.draft }}
     permissions:
-      actions: write
       contents: read
     name: ${{ matrix.os }}-${{ matrix.buildtype }}
     runs-on: ${{ matrix.os }}
@@ -75,32 +73,40 @@ jobs:
             ccache-${{ matrix.os }}
 
       - name: Resolve vcpkg baseline
-        id: vcpkg-step
+        id: vcpkg-baseline
         run: |
           vcpkgCommitId=$(grep '.builtin-baseline' vcpkg.json | awk -F: '{print $2}' | tr -d '," ')
           echo "vcpkg commit ID: $vcpkgCommitId"
-          echo "VCPKG_GIT_COMMIT_ID=$vcpkgCommitId" >> $GITHUB_ENV
+          echo "commit=$vcpkgCommitId" >> $GITHUB_OUTPUT
 
-      - name: Cache vcpkg
+      - name: Cache vcpkg installed
         uses: actions/cache@v4
         with:
-          path: |
-            ${{ github.workspace }}/vcpkg_installed
-            ${{ github.workspace }}/vcpkg/downloads
-            ${{ github.workspace }}/vcpkg/packages
-          key: vcpkg-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json') }}-${{ env.VCPKG_GIT_COMMIT_ID }}
+          path: ${{ github.workspace }}/vcpkg_installed
+          key: vcpkg-installed-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json') }}-${{ steps.vcpkg-baseline.outputs.commit }}
           restore-keys: |
-            vcpkg-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json') }}-
-            vcpkg-${{ matrix.triplet }}-
+            vcpkg-installed-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json') }}-
+            vcpkg-installed-${{ matrix.triplet }}-
 
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@v11
         with:
           vcpkgGitURL: "https://github.com/microsoft/vcpkg.git"
-          vcpkgGitCommitId: ${{ env.VCPKG_GIT_COMMIT_ID }}
+          vcpkgGitCommitId: ${{ steps.vcpkg-baseline.outputs.commit }}
           vcpkgJsonGlob: vcpkg.json
           vcpkgDirectory: ${{ github.workspace }}/vcpkg
-          doNotCache: false
+          doNotCache: true
+          runVcpkgInstall: false
+
+      - name: Cache vcpkg downloads
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/vcpkg/downloads
+          key: vcpkg-downloads-${{ steps.vcpkg-baseline.outputs.commit }}
+          restore-keys: vcpkg-downloads-
+
+      - name: Install vcpkg dependencies
+        run: ${{ github.workspace }}/vcpkg/vcpkg install --triplet=${{ matrix.triplet }}
 
       - name: Get latest CMake and ninja
         uses: lukka/get-cmake@main
