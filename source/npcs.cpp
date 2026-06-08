@@ -572,7 +572,7 @@ NpcType* NpcType::loadFromXML(pugi::xml_node node, wxArrayString &warnings) {
 		npcType->outfit.lookItem = attribute.as_int();
 	}
 
-	if ((attribute = node.attribute("lookaddon")) || (attribute = node.attribute("lookaddons"))) {
+	if ((attribute = node.attribute("lookaddon")) || (attribute = node.attribute("lookaddons")) || (attribute = node.attribute("lookAddons"))) {
 		npcType->outfit.lookAddon = attribute.as_int();
 	}
 

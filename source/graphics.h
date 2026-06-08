@@ -206,7 +206,7 @@ protected:
 	wxMemoryDC* m_wxMemoryDc[SPRITE_SIZE_COUNT];
 
 public:
-	std::shared_ptr<GameSprite::OutfitImage> getOutfitImage(int spriteId, Direction direction, const Outfit &outfit);
+	std::shared_ptr<GameSprite::OutfitImage> getOutfitImage(int spriteId, int spriteIndex, const Outfit &outfit);
 
 	uint32_t getID() const {
 		return id;

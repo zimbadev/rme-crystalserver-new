@@ -1139,9 +1139,8 @@ GLuint GameSprite::getHardwareID(int _layer, int _count, int _pattern_x, int _pa
 	return spriteList[v]->getHardwareID();
 }
 
-std::shared_ptr<GameSprite::OutfitImage> GameSprite::getOutfitImage(int spriteId, Direction direction, const Outfit &outfit) {
-	uint32_t spriteIndex = direction * layers;
-	if (layers > 1 && spriteIndex >= numsprites) {
+std::shared_ptr<GameSprite::OutfitImage> GameSprite::getOutfitImage(int spriteId, int spriteIndex, const Outfit &outfit) {
+	if (layers > 1 && (uint32_t)spriteIndex >= numsprites) {
 		if (numsprites == 1) {
 			spriteIndex = 0;
 		} else {
@@ -1151,9 +1150,7 @@ std::shared_ptr<GameSprite::OutfitImage> GameSprite::getOutfitImage(int spriteId
 
 	for (auto &img : instanced_templates) {
 		if (img->m_spriteId == spriteId && img->m_spriteIndex == spriteIndex) {
-			const auto &outfit = img->m_outfit;
-			uint32_t lookHash = outfit.lookHead << 24 | outfit.lookBody << 16 | outfit.lookLegs << 8 | outfit.lookFeet;
-			if (outfit.getColorHash() == lookHash) {
+			if (img->m_outfit.getColorHash() == outfit.getColorHash()) {
 				return img;
 			}
 		}
@@ -1410,6 +1407,7 @@ GameSprite::OutfitImage::OutfitImage(GameSprite* initParent, int initSpriteIndex
 	m_outfit(initOutfit) { }
 
 GameSprite::OutfitImage::~OutfitImage() {
+	delete[] m_cachedOutfitData;
 	m_cachedOutfitData = nullptr;
 }
 
@@ -1462,6 +1460,10 @@ uint8_t* GameSprite::OutfitImage::getRGBAData() {
 
 	int height = sprite->size.height;
 	int width = sprite->size.width;
+	auto totalSize = width * height * 4;
+	auto rgbadataCopy = std::make_unique<uint8_t[]>(totalSize);
+	std::memcpy(rgbadataCopy.get(), rgbadata, totalSize);
+	rgbadata = rgbadataCopy.get();
 	for (int y = 0; y < height; ++y) {
 		for (int x = 0; x < width; ++x) {
 			const int index = (y * width + x) * 4;
@@ -1487,7 +1489,7 @@ uint8_t* GameSprite::OutfitImage::getRGBAData() {
 
 	spdlog::debug("outfit name: {}, pattern_x: {}, pattern_y: {}, pattern_z: {}, sprite_phase_size: {}, layers: {}, draw height: {}, drawx: {}, drawy: {}", m_outfit.name, m_parent->pattern_x, m_parent->pattern_y, m_parent->pattern_z, m_parent->sprite_phase_size, m_parent->layers, m_parent->draw_height, m_parent->getDrawOffset().x, m_parent->getDrawOffset().y);
 
-	m_cachedOutfitData = rgbadata;
+	m_cachedOutfitData = rgbadataCopy.release();
 	return m_cachedOutfitData;
 }
 

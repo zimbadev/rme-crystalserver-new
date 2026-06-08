@@ -1396,10 +1396,26 @@ void MapDrawer::BlitCreature(int screenx, int screeny, const Outfit &outfit, con
 	screenx -= spr->getDrawOffset().x;
 	screeny -= spr->getDrawOffset().y;
 
+	int baseIdx = (int)dir * (int)spr->layers;
 	auto spriteId = spr->spriteList[0]->getHardwareID();
-	auto outfitImage = spr->getOutfitImage(spriteId, dir, outfit);
+	auto outfitImage = spr->getOutfitImage(spriteId, baseIdx, outfit);
 	if (outfitImage) {
 		glBlitTexture(screenx, screeny, outfitImage->getHardwareID(), red, green, blue, alpha, false, false, outfit, spriteId);
+	}
+
+	for (int py = 1; py < (int)spr->pattern_y; ++py) {
+		if (!(outfit.lookAddon & (1 << (py - 1)))) {
+			continue;
+		}
+		int addonIdx = (py * (int)spr->pattern_x + (int)dir) * (int)spr->layers;
+		if (addonIdx < 0 || (uint32_t)addonIdx >= spr->numsprites) {
+			continue;
+		}
+		auto addonSpriteId = spr->spriteList[addonIdx]->getHardwareID();
+		auto addonImage = spr->getOutfitImage(addonSpriteId, addonIdx, outfit);
+		if (addonImage) {
+			glBlitTexture(screenx, screeny, addonImage->getHardwareID(), red, green, blue, alpha, false, false, outfit, addonSpriteId);
+		}
 	}
 }
 
