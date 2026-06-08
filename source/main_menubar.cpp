@@ -211,7 +211,7 @@ namespace {
 		for (int attempt = 0; attempt < 1000; ++attempt) {
 			std::string snapshotName = baseName;
 			if (attempt > 0) {
-				snapshotName += std::format("-{:03}", attempt + 1);
+				snapshotName += fmt::format("-{:03}", attempt + 1);
 			}
 
 			std::filesystem::path snapshotPath = backupRootPath / snapshotName;

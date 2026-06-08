@@ -52,11 +52,11 @@
 #include <unordered_set>
 #include <chrono>
 #include <cmath>
-#include <format>
 #include <future>
 #include <iomanip>
 #include <limits>
 #include <map>
+#include <ranges>
 #include <set>
 #include <span>
 #include <sstream>
@@ -628,7 +628,7 @@ namespace {
 	}
 
 	std::string buildCatalogDataFilename(const std::string_view prefix, const std::string_view bytes) {
-		return std::format("{}-{}.dat", prefix, sha256Hex(bytes));
+		return fmt::format("{}-{}.dat", prefix, sha256Hex(bytes));
 	}
 
 	void appendU16(std::vector<uint8_t> &buffer, const uint16_t value) {
@@ -846,7 +846,7 @@ namespace {
 		const int chunkX = std::max(assetX / 32, 0);
 		const int chunkY = std::max(assetY / 32, 0);
 
-		return std::format("{}{:02}-{:04}-{:04}-{:02}-{}.bmp.lzma", minimap ? "minimap-" : "satellite-", scalePrefix, chunkX, chunkY, floor, hashHex);
+		return fmt::format("{}{:02}-{:04}-{:04}-{:02}-{}.bmp.lzma", minimap ? "minimap-" : "satellite-", scalePrefix, chunkX, chunkY, floor, hashHex);
 	}
 
 	bool hasCyclopediaTileData(const Tile* tile) {
@@ -2757,7 +2757,7 @@ namespace {
 		for (int attempt = 0; attempt < 1000; ++attempt) {
 			std::string runName = baseName;
 			if (attempt > 0) {
-				runName += std::format("-{:03}", attempt + 1);
+				runName += fmt::format("-{:03}", attempt + 1);
 			}
 
 			std::filesystem::path runPath = backupRootPath / runName;
@@ -2797,7 +2797,7 @@ namespace {
 		}
 
 		for (int attempt = 2; attempt < 1000; ++attempt) {
-			std::filesystem::path candidate = parentPath / std::format("{}.{}{}", baseName, attempt, suffix);
+			std::filesystem::path candidate = parentPath / fmt::format("{}.{}{}", baseName, attempt, suffix);
 			if (!std::filesystem::exists(candidate)) {
 				return candidate;
 			}
@@ -6691,7 +6691,7 @@ bool IOMapOTBM::serializeCyclopediaMapData(Map &map, std::string &buffer, std::v
 		}
 
 		++submittedAssets;
-		if (!reportProgress(done, std::format("Encoding assets... ({}/{}) [{}]", submittedAssets, totalAssets, spinner))) {
+		if (!reportProgress(done, fmt::format("Encoding assets... ({}/{}) [{}]", submittedAssets, totalAssets, spinner))) {
 			return false;
 		}
 
@@ -6713,7 +6713,7 @@ bool IOMapOTBM::serializeCyclopediaMapData(Map &map, std::string &buffer, std::v
 		++processedChunks;
 		const auto done = static_cast<int32_t>((processedChunks * 100LL) / totalChunks);
 		const char spinner = CyclopediaProgressSpinner[processedChunks % CyclopediaProgressSpinner.size()];
-		const std::string chunkMessage = std::format("Rendering chunks... ({}/{}) [{}]", processedChunks, totalChunks, spinner);
+		const std::string chunkMessage = fmt::format("Rendering chunks... ({}/{}) [{}]", processedChunks, totalChunks, spinner);
 		if (!reportProgress(done, chunkMessage)) {
 			return false;
 		}
@@ -6891,7 +6891,7 @@ bool IOMapOTBM::saveCyclopediaMapData(Map &map, const FileName &dir, const Cyclo
 			++writtenAssets;
 			const int32_t done = 96 + static_cast<int32_t>((writtenAssets * 3LL) / totalAssets);
 			const char spinner = CyclopediaProgressSpinner[writtenAssets % CyclopediaProgressSpinner.size()];
-			if (!reportProgress(done, std::format("Writing assets... ({}/{}) [{}]", writtenAssets, totalAssets, spinner))) {
+			if (!reportProgress(done, fmt::format("Writing assets... ({}/{}) [{}]", writtenAssets, totalAssets, spinner))) {
 				return false;
 			}
 		}
