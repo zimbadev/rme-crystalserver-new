@@ -1111,7 +1111,7 @@ void GUI::SetLoadScale(int32_t from, int32_t to) {
 bool GUI::SetLoadDone(int32_t done, const wxString &newMessage) {
 	if (done == 100) {
 		DestroyLoadBar();
-		return true;
+		return false;
 	}
 
 	if (!newMessage.empty()) {

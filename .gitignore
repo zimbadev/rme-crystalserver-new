@@ -14,7 +14,14 @@ remeres
 rme
 rme.cfg
 data/user
-world
+
+# SQLite runtime files
+*.db-shm
+*.db-wal
+*.db-journal
+*.sqlite-shm
+*.sqlite-wal
+*.sqlite-journal
 
 # Visual Studio
 *.MAP
@@ -57,8 +64,11 @@ xcuserdata
 cmake-build-debug/
 
 # User
+*.dll
+*.exe
 *.pdb
 *.rar
 *.lzma
 *.dat
 *.manifest
+/vcproj/Project

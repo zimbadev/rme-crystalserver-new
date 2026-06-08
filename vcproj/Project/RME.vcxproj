@@ -96,11 +96,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>$(ProjectName)_x64</TargetName>
-    <OutDir>$(SolutionDir)\..</OutDir>
+    <OutDir>$(ProjectDir)..\..\</OutDir>
     <SourcePath>$(OutDirFullPath)source</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)\..</OutDir>
+    <OutDir>$(ProjectDir)..\..\</OutDir>
     <SourcePath>$(OutDirFullPath)source</SourcePath>
     <TargetName>$(ProjectName)_Debug</TargetName>
   </PropertyGroup>
@@ -489,7 +489,28 @@
       <IncludeInUnityFile>false</IncludeInUnityFile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="generated\mapdata.pb.cc">
+      <IncludeInUnityFile>false</IncludeInUnityFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="generated\staticdata.pb.cc">
+      <IncludeInUnityFile>false</IncludeInUnityFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="generated\staticmapdata.pb.cc">
+      <IncludeInUnityFile>false</IncludeInUnityFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClInclude Include="generated\appearances.pb.h">
+      <IncludeInUnityFile>false</IncludeInUnityFile>
+    </ClInclude>
+    <ClInclude Include="generated\mapdata.pb.h">
+      <IncludeInUnityFile>false</IncludeInUnityFile>
+    </ClInclude>
+    <ClInclude Include="generated\staticdata.pb.h">
+      <IncludeInUnityFile>false</IncludeInUnityFile>
+    </ClInclude>
+    <ClInclude Include="generated\staticmapdata.pb.h">
       <IncludeInUnityFile>false</IncludeInUnityFile>
     </ClInclude>
   </ItemGroup>

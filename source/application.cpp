@@ -306,6 +306,13 @@ void Application::Unload() {
 	g_gui.root = nullptr;
 }
 
+void Application::ShutdownServices() {
+#ifdef _USE_PROCESS_COM
+	wxDELETE(m_proc_server);
+	wxDELETE(m_single_instance_checker);
+#endif
+}
+
 int Application::OnExit() {
 #ifdef _USE_PROCESS_COM
 	wxDELETE(m_proc_server);
