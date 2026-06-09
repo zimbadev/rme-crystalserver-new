@@ -27,7 +27,7 @@ on:
 env:
   CMAKE_BUILD_PARALLEL_LEVEL: 2
   MAKEFLAGS: '-j 2'
-  VCPKG_BINARY_SOURCES: clear
+  VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
   VCPKG_INSTALLED_DIR: ${{ github.workspace }}/vcpkg_installed
   VCPKG_ROOT: ${{ github.workspace }}/vcpkg
   VCPKG_DEFAULT_TRIPLET: x64-linux
@@ -36,6 +36,7 @@ jobs:
   job:
     if: ${{ github.event_name == 'push' || !github.event.pull_request.draft }}
     permissions:
+      actions: write
       contents: read
     name: ${{ matrix.os }}-${{ matrix.buildtype }}
     runs-on: ${{ matrix.os }}
@@ -63,40 +64,7 @@ jobs:
       - name: Install Linux Dependencies
         run: >
           sudo apt-get update &&
-          sudo apt-get install -y
-          ccache
-          linux-headers-$(uname -r)
-          libasio-dev
-          nlohmann-json3-dev
-          libfmt-dev
-          bison
-          libxi-dev
-          libxext-dev
-          libx11-dev
-          libgl1-mesa-dev
-          libglu1-mesa-dev
-          libegl1-mesa-dev
-          mesa-common-dev
-          libxrandr-dev
-          libxxf86vm-dev
-          libxinerama-dev
-          libxcursor-dev
-          libxpm-dev
-          libglvnd-dev
-          libglvnd0
-          libxft-dev
-          libwayland-dev
-          libxkbcommon-dev
-          libibus-1.0-dev
-          libasound2-dev
-          libxmu-dev
-          libdbus-1-dev
-          libxtst-dev
-          linux-libc-dev
-          libarchive-dev
-          libwxgtk3.0-gtk3-dev
-          python3-distutils
-          libxrender-dev
+          sudo apt-get install -y ccache linux-headers-$(uname -r)
 
       - name: CCache
         uses: hendrikmuhs/ccache-action@main
@@ -107,46 +75,38 @@ jobs:
             ccache-${{ matrix.os }}
 
       - name: Resolve vcpkg baseline
-        id: vcpkg-baseline
+        id: vcpkg-step
         run: |
           vcpkgCommitId=$(grep '.builtin-baseline' vcpkg.json | awk -F: '{print $2}' | tr -d '," ')
           echo "vcpkg commit ID: $vcpkgCommitId"
-          echo "commit=$vcpkgCommitId" >> $GITHUB_OUTPUT
+          echo "VCPKG_GIT_COMMIT_ID=$vcpkgCommitId" >> $GITHUB_ENV
 
-      - name: Cache vcpkg installed
+      - name: Cache vcpkg
         uses: actions/cache@v4
         with:
-          path: ${{ github.workspace }}/vcpkg_installed
-          key: vcpkg-installed-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json') }}-${{ steps.vcpkg-baseline.outputs.commit }}
+          path: |
+            ${{ github.workspace }}/vcpkg_installed
+            ${{ github.workspace }}/vcpkg/downloads
+            ${{ github.workspace }}/vcpkg/packages
+          key: vcpkg-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json') }}-${{ env.VCPKG_GIT_COMMIT_ID }}
           restore-keys: |
-            vcpkg-installed-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json') }}-
-            vcpkg-installed-${{ matrix.triplet }}-
+            vcpkg-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json') }}-
+            vcpkg-${{ matrix.triplet }}-
 
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@v11
         with:
           vcpkgGitURL: "https://github.com/microsoft/vcpkg.git"
-          vcpkgGitCommitId: ${{ steps.vcpkg-baseline.outputs.commit }}
+          vcpkgGitCommitId: ${{ env.VCPKG_GIT_COMMIT_ID }}
           vcpkgJsonGlob: vcpkg.json
           vcpkgDirectory: ${{ github.workspace }}/vcpkg
-          doNotCache: true
-          runVcpkgInstall: false
-
-      - name: Disable vcpkg GHA binary cache
-        run: echo "VCPKG_BINARY_SOURCES=clear" >> $GITHUB_ENV
-
-      - name: Cache vcpkg downloads
-        uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}/vcpkg/downloads
-          key: vcpkg-downloads-${{ steps.vcpkg-baseline.outputs.commit }}
-          restore-keys: vcpkg-downloads-
-
-      - name: Install vcpkg dependencies
-        run: ${{ github.workspace }}/vcpkg/vcpkg install --triplet=${{ matrix.triplet }}
+          doNotCache: false
 
       - name: Get latest CMake and ninja
         uses: lukka/get-cmake@main
+
+      - name: Install additional libraries
+        run: sudo apt-get install -y libasio-dev nlohmann-json3-dev libfmt-dev bison libxi-dev libgl1-mesa-dev libegl1-mesa-dev libglu1-mesa-dev mesa-common-dev libxrandr-dev libxxf86vm-dev libx11-dev libxft-dev libxext-dev libwayland-dev libxkbcommon-dev libibus-1.0-dev libasound2-dev libxmu-dev libdbus-1-dev libxtst-dev linux-libc-dev libarchive-dev libwxgtk3.0-gtk3-dev python3-distutils libxrender-dev
 
       - name: Run CMake Cache and Build
         uses: lukka/run-cmake@main

@@ -21,7 +21,6 @@ on:
 env:
   CMAKE_BUILD_PARALLEL_LEVEL: 2
   MAKEFLAGS: "-j 2"
-  VCPKG_BINARY_SOURCES: clear
   GITHUB_WORKSPACE: ${{ github.workspace }}
   VCPKG_INSTALLED_DIR: ${{ github.workspace }}/vcpkg_installed
   VCPKG_ROOT: ${{ github.workspace }}/vcpkg
@@ -41,6 +40,7 @@ jobs:
   job:
     if: ${{ github.event_name == 'push' || !github.event.pull_request.draft }}
     permissions:
+      actions: write
       contents: read
     name: ${{ matrix.os }}-${{ matrix.buildtype }}
     runs-on: ${{ matrix.os }}
@@ -59,46 +59,36 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Resolve vcpkg baseline
-        id: vcpkg-baseline
+        id: vcpkg-step
         run: |
           $json = Get-Content vcpkg.json -Raw | ConvertFrom-Json
           $vcpkgCommitId = $json.'builtin-baseline'
           Write-Host "vcpkg commit ID: $vcpkgCommitId"
-          echo "commit=$vcpkgCommitId" >> $env:GITHUB_OUTPUT
+          echo "VCPKG_GIT_COMMIT_ID=$vcpkgCommitId" | Out-File -FilePath $env:GITHUB_ENV -Append
 
-      - name: Cache vcpkg installed
+      - name: Cache vcpkg
         uses: actions/cache@v4
         with:
-          path: ${{ github.workspace }}/vcpkg_installed
-          key: vcpkg-installed-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json') }}-${{ steps.vcpkg-baseline.outputs.commit }}
+          path: |
+            ${{ github.workspace }}/vcpkg_installed
+            ${{ github.workspace }}/vcpkg/downloads
+            ${{ github.workspace }}/vcpkg/packages
+          key: vcpkg-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json') }}-${{ env.VCPKG_GIT_COMMIT_ID }}
           restore-keys: |
-            vcpkg-installed-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json') }}-
-            vcpkg-installed-${{ matrix.triplet }}-
+            vcpkg-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json') }}-
+            vcpkg-${{ matrix.triplet }}-
 
-      - name: Setup vcpkg
+      - name: Setup vcpkg and install dependencies
         uses: lukka/run-vcpkg@v11
+        env:
+          VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
         with:
           vcpkgGitURL: "https://github.com/microsoft/vcpkg.git"
-          vcpkgGitCommitId: ${{ steps.vcpkg-baseline.outputs.commit }}
+          vcpkgGitCommitId: ${{ env.VCPKG_GIT_COMMIT_ID }}
           vcpkgJsonGlob: vcpkg.json
           vcpkgDirectory: ${{ github.workspace }}/vcpkg
-          doNotCache: true
-          runVcpkgInstall: false
-
-      - name: Disable vcpkg GHA binary cache
-        shell: bash
-        run: echo "VCPKG_BINARY_SOURCES=clear" >> "$GITHUB_ENV"
-
-      - name: Cache vcpkg downloads
-        uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}/vcpkg/downloads
-          key: vcpkg-downloads-${{ steps.vcpkg-baseline.outputs.commit }}
-          restore-keys: vcpkg-downloads-
-
-      - name: Install vcpkg dependencies
-        shell: bash
-        run: "${VCPKG_ROOT}/vcpkg.exe" install --triplet=${VCPKG_DEFAULT_TRIPLET}
+          doNotCache: false
+          runVcpkgInstall: true
 
       - name: Print useful paths
         run: |
@@ -111,6 +101,7 @@ jobs:
         env:
           GITHUB_WORKSPACE: ${{ github.workspace }}
           VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+          VCPKG_BINARY_SOURCES: clear
         run: msbuild.exe /p:VcpkgEnableManifest=true /p:VCPKG_ROOT="$env:VCPKG_ROOT" /p:VcpkgInstalledDir="$env:VCPKG_INSTALLED_DIR" /p:Configuration=${{ matrix.buildtype }} /p:Platform=x64 /p:GITHUB_WORKSPACE="$env:GITHUB_WORKSPACE" vcproj/RME.sln
 
       - name: Upload artifacts
