@@ -19,6 +19,7 @@
 
 #include "graphics.h"
 #include "gl_compat.h"
+#include "gl_renderer.h"
 #include <chrono>
 
 #include "client_assets.h"
@@ -1292,7 +1293,10 @@ void GameSprite::Image::createGLTexture(GLuint textureId) {
 void GameSprite::Image::unloadGLTexture(GLuint textureId) {
 	isGLLoaded = false;
 	g_gui.gfx.loaded_textures -= 1;
-	glDeleteTextures(1, &textureId);
+	if (textureId != 0) {
+		GLRenderer::invalidateTexture(textureId);
+		glDeleteTextures(1, &textureId);
+	}
 }
 
 void GameSprite::Image::visit() {
@@ -1470,6 +1474,7 @@ void GameSprite::OutfitImage::unloadGLTexture(GLuint) {
 		isGLLoaded = false;
 		m_isGLLoaded = false;
 		g_gui.gfx.loaded_textures -= 1;
+		GLRenderer::invalidateTexture(m_textureId);
 		glDeleteTextures(1, &m_textureId);
 		m_textureId = 0;
 	}

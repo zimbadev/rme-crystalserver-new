@@ -4,7 +4,8 @@
 	"dependencies": [
 		"asio",
 		"pugixml",
-		"freeglut",
+		"glad",
+		"stb",
 		"nlohmann-json",
 		"fmt",
 		"wxwidgets",

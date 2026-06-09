@@ -353,7 +353,11 @@
     <ClInclude Include="..\..\source\table_brush.h" />
     <ClInclude Include="..\..\source\threads.h" />
     <ClInclude Include="..\..\source\gl_compat.h" />
+    <ClInclude Include="..\..\source\gl_renderer.h" />
     <ClInclude Include="..\..\source\graphics.h" />
+    <ClCompile Include="..\..\source\gl_renderer.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\..\source\graphics.cpp" />
     <ClInclude Include="..\..\source\pngfiles.h" />
     <ClInclude Include="..\..\source\sprites.h" />
@@ -458,6 +462,9 @@
     <ClInclude Include="..\..\source\spawn_npc_brush.h" />
     <ClCompile Include="..\..\source\spawn_npc_brush.cpp" />
     <ClCompile Include="..\..\source\sprite_appearances.cpp" />
+    <ClCompile Include="..\..\source\stb_truetype_impl.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClInclude Include="..\..\source\sprite_appearances.h" />
     <ClCompile Include="..\..\source\templatemap76-74.cpp" />
     <ClCompile Include="..\..\source\templatemap81.cpp" />

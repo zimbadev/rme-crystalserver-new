@@ -19,40 +19,40 @@
 #define RME_MAP_DRAWER_H_
 
 #include <cstdint>
-
-#include "graphics.h"
+#include <unordered_map>
+#include <utility>
+#include "light_drawer.h"
+#include "gl_renderer.h"
 
 class GameSprite;
 
-struct BlitOptions {
-	bool adjustZoom = false;
-	bool isEditorSprite = false;
-	Outfit outfit {};
-	int spriteId = 0;
-	SpriteUV uv { 0.f, 0.f, 1.f, 1.f };
+struct TooltipEntry {
+	std::string label; // "id: ", "aid: ", "text: ", "wp: "
+	std::string value; // "2597", "80", "Guild Wars"
 };
 
 struct MapTooltip {
-	enum TextLength {
-		MAX_CHARS_PER_LINE = 40,
-		MAX_CHARS = 255,
+	enum class Limits {
+		MAX_VALUE_DISPLAY = 1024,
+		MAX_WIDTH = 1024,
 	};
 
-	MapTooltip(int x, int y, std::string text, uint8_t r, uint8_t g, uint8_t b) :
-		x(x), y(y), text(text), r(r), g(g), b(b) {
-		ellipsis = (text.length() - 3) > MAX_CHARS;
-	}
+	MapTooltip(int map_x, int map_y, int map_z, uint8_t r, uint8_t g, uint8_t b) :
+		map_x(map_x), map_y(map_y), map_z(map_z), r(r), g(g), b(b) { }
 
-	void checkLineEnding() {
-		if (text.at(text.size() - 1) == '\n') {
-			text.resize(text.size() - 1);
+	void addEntry(const std::string &label, const std::string &value) {
+		std::string val = value;
+		if (val.size() > static_cast<size_t>(Limits::MAX_VALUE_DISPLAY)) {
+			val = val.substr(0, static_cast<size_t>(Limits::MAX_VALUE_DISPLAY)) + "...";
 		}
+		entries.emplace_back(label, val);
 	}
 
-	int x, y;
-	std::string text;
+	int map_x;
+	int map_y;
+	int map_z;
 	uint8_t r, g, b;
-	bool ellipsis;
+	std::vector<TooltipEntry> entries;
 };
 
 // Storage during drawing, for option caching
@@ -102,15 +102,36 @@ public:
 };
 
 class MapCanvas;
-class LightDrawer;
+
+struct BlitOptions {
+	bool adjustZoom = false;
+	bool isEditorSprite = false;
+	Outfit outfit = {};
+	int spriteId = 0;
+	SpriteUV uv = { 0.f, 0.f, 1.f, 1.f };
+};
 
 class MapDrawer {
 	MapCanvas* canvas;
 	Editor &editor;
 	DrawingOptions options;
-	std::shared_ptr<LightDrawer> light_drawer;
+	std::shared_ptr<LightDrawer> light_drawer = std::make_shared<LightDrawer>();
+	std::unique_ptr<GLRenderer> renderer = std::make_unique<GLRenderer>();
+
+	bool isSceneDirty() const;
+
+	// Scene cache tracking
+	int prevScrollX = -1;
+	int prevScrollY = -1;
+	float prevZoom = -1.f;
+	int prevFloor = -1;
+	int prevStartZ = -1;
+	int prevScreenW = -1;
+	int prevScreenH = -1;
+	bool fboDirty = true;
 
 	float zoom;
+	float globalTooltipFade = 0.0f;
 
 	uint32_t current_house_id;
 
@@ -123,8 +144,8 @@ class MapDrawer {
 	int floor;
 
 protected:
-	std::vector<MapTooltip*> tooltips;
-	std::ostringstream tooltip;
+	std::vector<MapTooltip> tooltips;
+	std::unordered_map<uint64_t, float> tooltipFadeAlpha;
 
 	wxStopWatch pos_indicator_timer;
 	Position pos_indicator;
@@ -149,6 +170,9 @@ protected:
 public:
 	MapDrawer(MapCanvas* canvas);
 	~MapDrawer();
+	void markDirty() {
+		fboDirty = true;
+	}
 
 	bool dragging;
 	bool dragging_draw;
@@ -170,6 +194,9 @@ public:
 	void DrawIngameBox();
 	void DrawGrid();
 	void DrawTooltips();
+
+	std::pair<float, float> MeasureTooltipText(const MapTooltip &tp);
+	void RenderTooltipText(const MapTooltip &tp, float startx, float starty, float fade = 1.0f);
 	void DrawPerformanceStats();
 
 	void TakeScreenshot(uint8_t* screenshot_buffer);
@@ -192,20 +219,25 @@ protected:
 	void BlitItem(int &screenx, int &screeny, const Position &pos, const Item* item, bool ephemeral = false, int red = 255, int green = 255, int blue = 255, int alpha = 255);
 	void BlitSpriteType(int screenx, int screeny, uint32_t spriteid, int red = 255, int green = 255, int blue = 255, int alpha = 255);
 	void BlitSpriteType(int screenx, int screeny, GameSprite* spr, int red = 255, int green = 255, int blue = 255, int alpha = 255);
+
+	// Performance monitoring helpers
+	void UpdateRAMUsage();
+	void UpdateCPUUsage();
+	std::string FormatPerformanceStats() const;
 	void BlitCreature(int screenx, int screeny, const Monster* npc, int red = 255, int green = 255, int blue = 255, int alpha = 255);
 	void BlitCreature(int screenx, int screeny, const Npc* c, int red = 255, int green = 255, int blue = 255, int alpha = 255);
 	void BlitCreature(int screenx, int screeny, const Outfit &outfit, const Direction &dir, int red = 255, int green = 255, int blue = 255, int alpha = 255);
 	void DrawTile(TileLocation* tile);
-	void DrawBrushIndicator(int x, int y, Brush* brush, uint8_t r, uint8_t g, uint8_t b);
+	void DrawBrushIndicator(int x, int y, [[maybe_unused]] Brush* brush, uint8_t r, uint8_t g, uint8_t b);
 	void DrawHookIndicator(int x, int y, const ItemType &type);
 	void DrawLightStrength(int x, int y, const Item*&item);
 	void DrawTileIndicators(TileLocation* location);
 	void DrawIndicator(int x, int y, int indicator, uint8_t r = 255, uint8_t g = 255, uint8_t b = 255, uint8_t a = 255);
 	void DrawPositionIndicator(int z);
 	void DrawLight() const;
-	void WriteTooltip(const Item* item, std::ostringstream &stream);
-	void WriteTooltip(const Waypoint* item, std::ostringstream &stream);
-	void MakeTooltip(int screenx, int screeny, const std::string &text, uint8_t r = 255, uint8_t g = 255, uint8_t b = 255);
+	void WriteTooltip(const Item* item, MapTooltip &tooltip);
+	void WriteTooltip(const Waypoint* waypoint, MapTooltip &tooltip);
+	MapTooltip &MakeTooltip(int map_x, int map_y, int map_z, uint8_t r = 255, uint8_t g = 255, uint8_t b = 255);
 	void AddLight(TileLocation* location);
 
 	enum BrushColor {
@@ -222,18 +254,12 @@ protected:
 
 	void getColor(Brush* brush, const Position &position, uint8_t &r, uint8_t &g, uint8_t &b);
 
-	// Performance monitoring helpers
-	void UpdateRAMUsage();
-	void UpdateCPUUsage();
-	std::string FormatPerformanceStats() const;
-
-	void glBlitTexture(int x, int y, int textureId, int red, int green, int blue, int alpha, const BlitOptions &opts = {});
+	void glBlitTexture(int x, int y, int textureId, const GLColor &color, const BlitOptions &opts = BlitOptions {});
 	void glBlitSquare(int x, int y, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha, int size = rme::TileSize) const;
 	void glBlitSquare(int x, int y, const wxColor &color, int size = rme::TileSize) const;
-	void glColor(const wxColor &color);
-	void glColor(BrushColor color);
-	void glColorCheck(Brush* brush, const Position &pos);
-	void drawRect(int x, int y, int w, int h, const wxColor &color, int width = 1);
+	void getBrushColor(BrushColor color, uint8_t &r, uint8_t &g, uint8_t &b, uint8_t &a);
+	void getCheckColor(Brush* brush, const Position &pos, uint8_t &r, uint8_t &g, uint8_t &b, uint8_t &a);
+	void drawRect(int x, int y, int w, int h, const wxColor &color, float width = 1.0f);
 	void drawFilledRect(int x, int y, int w, int h, const wxColor &color);
 
 private:
