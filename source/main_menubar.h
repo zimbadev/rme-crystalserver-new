@@ -165,6 +165,7 @@ namespace MenuBar {
 		FLOOR_15,
 		DEBUG_VIEW_DAT,
 		GOTO_WEBSITE,
+		GOTO_CRYSTAL_SERVER_REPOSITORY,
 		ABOUT,
 		SEARCH_ON_MAP_DUPLICATED_ITEMS,
 		SEARCH_ON_SELECTION_DUPLICATED_ITEMS,
@@ -318,6 +319,7 @@ public:
 	// About Menu
 	void OnDebugViewDat(wxCommandEvent &event);
 	void OnGotoWebsite(wxCommandEvent &event);
+	void OnGotoCrystalServerRepository(wxCommandEvent &event);
 	void OnAbout(wxCommandEvent &event);
 	void OnSearchForDuplicateItemsOnMap(wxCommandEvent &event);
 	void OnSearchForDuplicateItemsOnSelection(wxCommandEvent &event);

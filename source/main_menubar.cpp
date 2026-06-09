@@ -726,6 +726,7 @@ MainMenuBar::MainMenuBar(MainFrame* frame) :
 
 	MAKE_ACTION(DEBUG_VIEW_DAT, wxITEM_NORMAL, OnDebugViewDat);
 	MAKE_ACTION(GOTO_WEBSITE, wxITEM_NORMAL, OnGotoWebsite);
+	MAKE_ACTION(GOTO_CRYSTAL_SERVER_REPOSITORY, wxITEM_NORMAL, OnGotoCrystalServerRepository);
 	MAKE_ACTION(ABOUT, wxITEM_NORMAL, OnAbout);
 
 	MAKE_ACTION(SEARCH_ON_MAP_DUPLICATED_ITEMS, wxITEM_NORMAL, OnSearchForDuplicateItemsOnMap);
@@ -1602,7 +1603,11 @@ void MainMenuBar::OnReloadDataFiles(wxCommandEvent &WXUNUSED(event)) {
 }
 
 void MainMenuBar::OnGotoWebsite(wxCommandEvent &WXUNUSED(event)) {
-	::wxLaunchDefaultBrowser("https://www.remeresmapeditor.com/", wxBROWSER_NEW_WINDOW);
+	::wxLaunchDefaultBrowser("https://github.com/zimbadev/rme-crystalserver-new", wxBROWSER_NEW_WINDOW);
+}
+
+void MainMenuBar::OnGotoCrystalServerRepository(wxCommandEvent &WXUNUSED(event)) {
+	::wxLaunchDefaultBrowser("https://github.com/zimbadev/crystalserver", wxBROWSER_NEW_WINDOW);
 }
 
 void MainMenuBar::OnAbout(wxCommandEvent &WXUNUSED(event)) {
