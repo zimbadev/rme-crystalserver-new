@@ -36,10 +36,6 @@
 #include "monster.h"
 #include "npc.h"
 
-#if defined(__LINUX__) || defined(__WINDOWS__)
-	#include <GL/glut.h>
-#endif
-
 #include "../brushes/icon/rme_icon.xpm"
 
 BEGIN_EVENT_TABLE(MainFrame, wxFrame)
@@ -112,13 +108,6 @@ bool Application::OnInit() {
 	// Tell that we are the real thing
 	wxAppConsole::SetInstance(this);
 	wxArtProvider::Push(new ArtProvider());
-
-#if defined(__LINUX__) || defined(__WINDOWS__)
-	int argc = 1;
-	auto arg = wxString(this->argv[0]).ToStdString();
-	char* argv[] = { &arg[0] };
-	glutInit(&argc, argv);
-#endif
 
 	// Load some internal stuff
 	g_settings.load();

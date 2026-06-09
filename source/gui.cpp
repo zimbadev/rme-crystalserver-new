@@ -1078,8 +1078,10 @@ void GUI::RefreshView() {
 		}
 	}
 
-	for (EditorTab* editorTab : editorTabs) {
-		editorTab->GetWindow()->Refresh();
+	for (EditorTab* tab : editorTabs) {
+		auto* mapTab = static_cast<MapTab*>(tab);
+		mapTab->GetCanvas()->Refresh();
+		tab->GetWindow()->Update();
 	}
 }
 
@@ -1295,7 +1297,7 @@ bool GUI::DoUndo() {
 		SetStatusText("Undo action");
 		UpdateMinimap();
 		root->UpdateMenubar();
-		root->Refresh();
+		RefreshView();
 		return true;
 	}
 	return false;
@@ -1311,7 +1313,7 @@ bool GUI::DoRedo() {
 		SetStatusText("Redo action");
 		UpdateMinimap();
 		root->UpdateMenubar();
-		root->Refresh();
+		RefreshView();
 		return true;
 	}
 	return false;

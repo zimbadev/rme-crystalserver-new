@@ -22,6 +22,7 @@
 #include "filehandle.h"
 #include "gui.h"
 #include "gl_compat.h"
+#include "gl_renderer.h"
 
 #include <lzma.h>
 #include <algorithm>
@@ -244,6 +245,7 @@ GLuint SpriteSheet::getOrUploadGLTexture() {
 
 void SpriteSheet::releaseGLTexture() {
 	if (glTextureId != 0) {
+		GLRenderer::invalidateTexture(glTextureId);
 		glDeleteTextures(1, &glTextureId);
 		glTextureId = 0;
 	}
