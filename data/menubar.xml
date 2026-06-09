@@ -212,7 +212,8 @@
         <item name="Floor 15" action="FLOOR_15" help=""/>
     </menu>
     <menu name="$About">
-        <item name="Goto $Website" hotkey="F3" action="GOTO_WEBSITE" help=""/>
+        <item name="Goto Crystal $RME Repository" hotkey="F3" action="GOTO_WEBSITE" help=""/>
+        <item name="Goto Crystal $Server Repository" action="GOTO_CRYSTAL_SERVER_REPOSITORY" help=""/>
         <item name="$About..." hotkey="F1" action="ABOUT" help=""/>
     </menu>
 </menubar>

@@ -1236,7 +1236,9 @@ void MapDrawer::BlitItem(int &draw_x, int &draw_y, const Tile* tile, const Item*
 
 	int frame = item->getFrame();
 	int texnum = sprite->getHardwareID(0, subtype, pattern_x, pattern_y, pattern_z, frame);
-	glBlitTexture(screenx, screeny, texnum, red, green, blue, alpha);
+	int sprId = sprite->getSpriteID(0, subtype, pattern_x, pattern_y, pattern_z, frame);
+	auto uvs = sprite->getAtlasUVs(0, subtype, pattern_x, pattern_y, pattern_z, frame);
+	glBlitTexture(screenx, screeny, texnum, red, green, blue, alpha, BlitOptions { .spriteId = static_cast<int>(sprId), .uv = uvs });
 
 	if (options.show_hooks && (type.hookSouth || type.hookEast || type.hook != ITEM_HOOK_NONE)) {
 		DrawHookIndicator(draw_x, draw_y, type);
@@ -1334,7 +1336,9 @@ void MapDrawer::BlitItem(int &draw_x, int &draw_y, const Position &pos, const It
 
 	int frame = item->getFrame();
 	int texnum = sprite->getHardwareID(0, subtype, pattern_x, pattern_y, pattern_z, frame);
-	glBlitTexture(screenx, screeny, texnum, red, green, blue, alpha);
+	int sprId = sprite->getSpriteID(0, subtype, pattern_x, pattern_y, pattern_z, frame);
+	auto uvs = sprite->getAtlasUVs(0, subtype, pattern_x, pattern_y, pattern_z, frame);
+	glBlitTexture(screenx, screeny, texnum, red, green, blue, alpha, BlitOptions { .spriteId = static_cast<int>(sprId), .uv = uvs });
 
 	if (options.show_hooks && (type.hookSouth || type.hookEast) && zoom <= 3.0) {
 		DrawHookIndicator(draw_x, draw_y, type);
@@ -1361,7 +1365,9 @@ void MapDrawer::BlitSpriteType(int screenx, int screeny, uint32_t spriteid, int 
 
 	int frame = 0;
 	int texnum = sprite->getHardwareID(0, -1, 0, 0, 0, 0);
-	glBlitTexture(screenx, screeny, texnum, red, green, blue, alpha);
+	int sprId = sprite->getSpriteID(0, -1, 0, 0, 0, 0);
+	auto uvs = sprite->getAtlasUVs(0, -1, 0, 0, 0, 0);
+	glBlitTexture(screenx, screeny, texnum, red, green, blue, alpha, BlitOptions { .spriteId = static_cast<int>(sprId), .uv = uvs });
 }
 
 void MapDrawer::BlitSpriteType(int screenx, int screeny, GameSprite* sprite, int red, int green, int blue, int alpha) {
@@ -1374,7 +1380,9 @@ void MapDrawer::BlitSpriteType(int screenx, int screeny, GameSprite* sprite, int
 
 	int frame = 0;
 	int texnum = sprite->getHardwareID(0, -1, 0, 0, 0, 0);
-	glBlitTexture(screenx, screeny, texnum, red, green, blue, alpha);
+	int sprId = sprite->getSpriteID(0, -1, 0, 0, 0, 0);
+	auto uvs = sprite->getAtlasUVs(0, -1, 0, 0, 0, 0);
+	glBlitTexture(screenx, screeny, texnum, red, green, blue, alpha, BlitOptions { .spriteId = static_cast<int>(sprId), .uv = uvs });
 }
 
 void MapDrawer::BlitCreature(int screenx, int screeny, const Outfit &outfit, const Direction &dir, int red, int green, int blue, int alpha) {
@@ -1397,10 +1405,13 @@ void MapDrawer::BlitCreature(int screenx, int screeny, const Outfit &outfit, con
 	screeny -= spr->getDrawOffset().y;
 
 	int baseIdx = (int)dir * (int)spr->layers;
-	auto spriteId = spr->spriteList[0]->getHardwareID();
+	if (baseIdx < 0 || (uint32_t)baseIdx >= spr->numsprites || (uint32_t)baseIdx >= spr->spriteList.size() || spr->spriteList[baseIdx] == nullptr) {
+		return;
+	}
+	auto spriteId = spr->spriteList[baseIdx]->id;
 	auto outfitImage = spr->getOutfitImage(spriteId, baseIdx, outfit);
 	if (outfitImage) {
-		glBlitTexture(screenx, screeny, outfitImage->getHardwareID(), red, green, blue, alpha, false, false, outfit, spriteId);
+		glBlitTexture(screenx, screeny, outfitImage->getHardwareID(), red, green, blue, alpha, BlitOptions { .outfit = outfit, .spriteId = static_cast<int>(spriteId) });
 	}
 
 	for (int py = 1; py < (int)spr->pattern_y; ++py) {
@@ -1408,13 +1419,13 @@ void MapDrawer::BlitCreature(int screenx, int screeny, const Outfit &outfit, con
 			continue;
 		}
 		int addonIdx = (py * (int)spr->pattern_x + (int)dir) * (int)spr->layers;
-		if (addonIdx < 0 || (uint32_t)addonIdx >= spr->numsprites) {
+		if (addonIdx < 0 || (uint32_t)addonIdx >= spr->numsprites || (uint32_t)addonIdx >= spr->spriteList.size() || spr->spriteList[addonIdx] == nullptr) {
 			continue;
 		}
-		auto addonSpriteId = spr->spriteList[addonIdx]->getHardwareID();
+		auto addonSpriteId = spr->spriteList[addonIdx]->id;
 		auto addonImage = spr->getOutfitImage(addonSpriteId, addonIdx, outfit);
 		if (addonImage) {
-			glBlitTexture(screenx, screeny, addonImage->getHardwareID(), red, green, blue, alpha, false, false, outfit, addonSpriteId);
+			glBlitTexture(screenx, screeny, addonImage->getHardwareID(), red, green, blue, alpha, BlitOptions { .outfit = outfit, .spriteId = static_cast<int>(addonSpriteId) });
 		}
 	}
 }
@@ -1813,7 +1824,7 @@ void MapDrawer::DrawIndicator(int x, int y, int indicator, uint8_t r, uint8_t g,
 	}
 
 	int textureId = sprite->getHardwareID(0, 0, 0, -1, 0, 0);
-	glBlitTexture(x, y, textureId, r, g, b, a, true, true);
+	glBlitTexture(x, y, textureId, r, g, b, a, BlitOptions { .adjustZoom = true, .isEditorSprite = true });
 }
 
 void MapDrawer::DrawPositionIndicator(int z) {
@@ -2224,16 +2235,15 @@ void MapDrawer::ShowPositionIndicator(const Position &position) {
 	pos_indicator_timer.Start();
 }
 
-void MapDrawer::glBlitTexture(int sx, int sy, int textureId, int red, int green, int blue, int alpha, bool adjustZoom, bool isEditorSprite, const Outfit &outfit, int spriteId) {
+void MapDrawer::glBlitTexture(int sx, int sy, int textureId, int red, int green, int blue, int alpha, const BlitOptions &opts) {
 	if (textureId <= 0) {
 		return;
 	}
 
 	auto width = rme::TileSize;
 	auto height = rme::TileSize;
-	// Adjusts the offset of normal sprites
-	if (!isEditorSprite) {
-		SpriteSheetPtr sheet = g_spriteAppearances.getSheetBySpriteId(spriteId > 0 ? spriteId : textureId);
+	if (!opts.isEditorSprite && opts.spriteId > 0) {
+		SpriteSheetPtr sheet = g_spriteAppearances.getSheetBySpriteId(opts.spriteId);
 		if (!sheet) {
 			return;
 		}
@@ -2241,9 +2251,8 @@ void MapDrawer::glBlitTexture(int sx, int sy, int textureId, int red, int green,
 		width = sheet->getSpriteSize().width;
 		height = sheet->getSpriteSize().height;
 
-		// If the sprite is an outfit and the size is 64x64, adjust the offset
-		if (width == 64 && height == 64 && (outfit.lookType > 0 || outfit.lookItem > 0)) {
-			GameSprite* spr = g_gui.gfx.getCreatureSprite(outfit.lookType);
+		if (width == 64 && height == 64 && (opts.outfit.lookType > 0 || opts.outfit.lookItem > 0)) {
+			GameSprite* spr = g_gui.gfx.getCreatureSprite(opts.outfit.lookType);
 			if (spr && spr->getDrawOffset().x == 8 && spr->getDrawOffset().y == 8) {
 				sx -= width / 2;
 				sy -= height / 2;
@@ -2251,8 +2260,7 @@ void MapDrawer::glBlitTexture(int sx, int sy, int textureId, int red, int green,
 		}
 	}
 
-	// Adjust zoom if necessary
-	if (adjustZoom) {
+	if (opts.adjustZoom) {
 		if (zoom < 1.0f) {
 			float offset = 10 / (10 * zoom);
 			width = std::max<int>(16, static_cast<int>(width * zoom));
@@ -2268,20 +2276,20 @@ void MapDrawer::glBlitTexture(int sx, int sy, int textureId, int red, int green,
 		}
 	}
 
-	if (outfit.lookType > 0) {
-		spdlog::debug("Blitting outfit {} at ({}, {})", outfit.name, sx, sy);
+	if (opts.outfit.lookType > 0) {
+		spdlog::debug("Blitting outfit {} at ({}, {})", opts.outfit.name, sx, sy);
 	}
 
 	glBindTexture(GL_TEXTURE_2D, textureId);
 	glColor4ub(uint8_t(red), uint8_t(green), uint8_t(blue), uint8_t(alpha));
 	glBegin(GL_QUADS);
-	glTexCoord2f(0.f, 0.f);
+	glTexCoord2f(opts.uv.u0, opts.uv.v0);
 	glVertex2f(sx, sy);
-	glTexCoord2f(1.f, 0.f);
+	glTexCoord2f(opts.uv.u1, opts.uv.v0);
 	glVertex2f(sx + width, sy);
-	glTexCoord2f(1.f, 1.f);
+	glTexCoord2f(opts.uv.u1, opts.uv.v1);
 	glVertex2f(sx + width, sy + height);
-	glTexCoord2f(0.f, 1.f);
+	glTexCoord2f(opts.uv.u0, opts.uv.v1);
 	glVertex2f(sx, sy + height);
 	glEnd();
 }

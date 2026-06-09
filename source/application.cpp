@@ -187,7 +187,7 @@ bool Application::OnInit() {
 
 	// Goto RME website?
 	if (g_settings.getInteger(Config::GOTO_WEBSITE_ON_BOOT) == 1) {
-		::wxLaunchDefaultBrowser("http://www.remeresmapeditor.com/", wxBROWSER_NEW_WINDOW);
+		::wxLaunchDefaultBrowser("https://github.com/zimbadev/rme-crystalserver-new", wxBROWSER_NEW_WINDOW);
 		g_settings.setInteger(Config::GOTO_WEBSITE_ON_BOOT, 0);
 	}
 

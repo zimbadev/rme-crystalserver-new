@@ -21,8 +21,10 @@
 #include "settings.h"
 #include "filehandle.h"
 #include "gui.h"
+#include "gl_compat.h"
 
 #include <lzma.h>
+#include <algorithm>
 
 namespace fs = std::filesystem;
 
@@ -79,11 +81,16 @@ bool SpriteAppearances::loadCatalogContent(const std::string &dir, bool loadData
 			}
 		}
 	}
+
+	std::sort(sheets.begin(), sheets.end(), [](const SpriteSheetPtr &a, const SpriteSheetPtr &b) {
+		return a->lastId < b->lastId;
+	});
+
 	return true;
 }
 
 bool SpriteAppearances::loadSpriteSheet(const SpriteSheetPtr &sheet) {
-	if (sheet->loaded) {
+	if (sheet->loaded && sheet->data) {
 		return false;
 	}
 
@@ -182,10 +189,91 @@ bool SpriteAppearances::loadSpriteSheet(const SpriteSheetPtr &sheet) {
 }
 
 void SpriteAppearances::unload() {
+	for (const auto &sheet : sheets) {
+		if (sheet) {
+			sheet->releaseGLTexture();
+		}
+	}
 	spritesCount = 0;
 	sheets.clear();
 	sprites.clear();
 	appearanceFile.clear();
+}
+
+GLuint SpriteSheet::getOrUploadGLTexture() {
+	if (glTextureId != 0) {
+		return glTextureId;
+	}
+
+	if (!data) {
+		SpriteSheetPtr sheet = g_spriteAppearances.getSheetBySpriteId(firstId, false);
+		if (!sheet) {
+			return 0;
+		}
+		if (!g_spriteAppearances.loadSpriteSheet(sheet)) {
+			return 0;
+		}
+		if (!data) {
+			return 0;
+		}
+	}
+
+	glGenTextures(1, &glTextureId);
+	glBindTexture(GL_TEXTURE_2D, glTextureId);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SPRITE_SHEET_WIDTH, SPRITE_SHEET_HEIGHT, 0, GL_BGRA, GL_UNSIGNED_BYTE, data.get());
+
+	GLenum err = glGetError();
+	if (err != GL_NO_ERROR) {
+		spdlog::error("[SpriteSheet::getOrUploadGLTexture] glTexImage2D failed with GL error 0x{:04X}", static_cast<unsigned>(err));
+		glDeleteTextures(1, &glTextureId);
+		glTextureId = 0;
+		glBindTexture(GL_TEXTURE_2D, 0);
+		return 0;
+	}
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	data.reset();
+	loaded = true;
+	lastaccess = std::chrono::steady_clock::now();
+	return glTextureId;
+}
+
+void SpriteSheet::releaseGLTexture() {
+	if (glTextureId != 0) {
+		glDeleteTextures(1, &glTextureId);
+		glTextureId = 0;
+	}
+}
+
+SpriteUV SpriteSheet::getSpriteUVs(int spriteId) const {
+	auto size = getSpriteSize();
+	int spriteOffset = spriteId - firstId;
+	int allColumns = (size.width == 32) ? 12 : 6;
+	int row = spriteOffset / allColumns;
+	int col = spriteOffset % allColumns;
+
+	constexpr float halfTexelU = 0.5f / float(SPRITE_SHEET_WIDTH);
+	constexpr float halfTexelV = 0.5f / float(SPRITE_SHEET_HEIGHT);
+
+	float u0 = float(col * size.width) / float(SPRITE_SHEET_WIDTH) + halfTexelU;
+	float v0 = float(row * size.height) / float(SPRITE_SHEET_HEIGHT) + halfTexelV;
+	float u1 = float((col + 1) * size.width) / float(SPRITE_SHEET_WIDTH) - halfTexelU;
+	float v1 = float((row + 1) * size.height) / float(SPRITE_SHEET_HEIGHT) - halfTexelV;
+	return { u0, v0, u1, v1 };
+}
+
+SpriteAppearances::AtlasInfo SpriteAppearances::getAtlasInfo(int spriteId) {
+	auto sheet = getSheetBySpriteId(spriteId);
+	if (!sheet) {
+		return { 0, { 0, 0, 1, 1 } };
+	}
+	GLuint texId = sheet->getOrUploadGLTexture();
+	SpriteUV uvs = sheet->getSpriteUVs(spriteId);
+	return { texId, uvs };
 }
 
 SpriteSheetPtr SpriteAppearances::getSheetBySpriteId(int id, bool load /* = true */) {
@@ -193,12 +281,11 @@ SpriteSheetPtr SpriteAppearances::getSheetBySpriteId(int id, bool load /* = true
 		return nullptr;
 	}
 
-	// find sheet
-	auto sheetIt = std::find_if(sheets.begin(), sheets.end(), [=](const SpriteSheetPtr &sheet) {
-		return id >= sheet->firstId && id <= sheet->lastId;
+	auto sheetIt = std::lower_bound(sheets.begin(), sheets.end(), id, [](const SpriteSheetPtr &sheet, int spriteId) {
+		return sheet->lastId < spriteId;
 	});
 
-	if (sheetIt == sheets.end()) {
+	if (sheetIt == sheets.end() || id < (*sheetIt)->firstId) {
 		return nullptr;
 	}
 
@@ -316,10 +403,14 @@ SpritePtr SpriteAppearances::getSprite(int spriteId) {
 		return nullptr;
 	}
 
-	// Validate memory for sheet->data
+	// Reload sheet data if it was freed after GL upload
 	if (!sheet->data) {
-		spdlog::error("Sheet data is null for sprite {}.", spriteId);
-		return nullptr;
+		sheet->loaded = false;
+		loadSpriteSheet(sheet);
+		if (!sheet->data) {
+			spdlog::error("Sheet data is null for sprite {}.", spriteId);
+			return nullptr;
+		}
 	}
 
 	// Update bufferSize based on actual sheet height

@@ -352,6 +352,7 @@
     <ClCompile Include="..\..\source\spawn_monster_brush.cpp" />
     <ClInclude Include="..\..\source\table_brush.h" />
     <ClInclude Include="..\..\source\threads.h" />
+    <ClInclude Include="..\..\source\gl_compat.h" />
     <ClInclude Include="..\..\source\graphics.h" />
     <ClCompile Include="..\..\source\graphics.cpp" />
     <ClInclude Include="..\..\source\pngfiles.h" />
