@@ -33,6 +33,7 @@ Npc::Npc(const std::string &type_name) :
 
 Npc* Npc::deepCopy() const {
 	Npc* copy = new Npc(type_name);
+	copy->map_name = map_name;
 	copy->spawnNpcTime = spawnNpcTime;
 	copy->direction = direction;
 	copy->selected = selected;
@@ -63,6 +64,13 @@ std::string Npc::getName() const {
 		return type->name;
 	}
 	return "";
+}
+
+std::string Npc::getSaveName() const {
+	if (!map_name.empty()) {
+		return map_name;
+	}
+	return getName();
 }
 
 NpcBrush* Npc::getBrush() const {
