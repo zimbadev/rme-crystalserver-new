@@ -53,7 +53,16 @@ public:
 	bool isNpc() const;
 
 	std::string getName() const;
+	std::string getSaveName() const;
 	NpcBrush* getBrush() const;
+
+	void setMapName(const std::string &name) {
+		map_name = name;
+	}
+
+	[[nodiscard]] const std::string &getMapName() const noexcept {
+		return map_name;
+	}
 
 	int getSpawnNpcTime() const noexcept {
 		return spawnNpcTime;
@@ -75,6 +84,7 @@ public:
 
 protected:
 	std::string type_name;
+	std::string map_name;
 	Direction direction;
 	int spawnNpcTime;
 	bool saved;
