@@ -81,7 +81,7 @@ jobs:
       - name: Setup vcpkg and install dependencies
         uses: lukka/run-vcpkg@v11
         env:
-          VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
+          VCPKG_BINARY_SOURCES: clear
         with:
           vcpkgGitURL: "https://github.com/microsoft/vcpkg.git"
           vcpkgGitCommitId: ${{ env.VCPKG_GIT_COMMIT_ID }}
