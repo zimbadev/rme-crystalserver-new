@@ -2106,7 +2106,7 @@ void MapDrawer::UpdateCPUUsage() {
 }
 
 std::string MapDrawer::FormatPerformanceStats() const {
-	return fmt::format("{:.1f} FPS  \xc2\xb7  {:.1f}% CPU  \xc2\xb7  {} MB RAM", current_fps, current_cpu, current_ram).ToStdString();
+	return fmt::format("{:.1f} FPS  \xc2\xb7  {:.1f}% CPU  \xc2\xb7  {} MB RAM", current_fps, current_cpu, current_ram);
 }
 
 namespace {
