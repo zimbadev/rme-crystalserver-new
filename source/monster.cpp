@@ -42,6 +42,7 @@ Monster::Monster(const std::string &type_name, uint8_t weight) :
 
 Monster* Monster::deepCopy() const {
 	Monster* copy = newd Monster(type_name);
+	copy->map_name = map_name;
 	copy->spawntime = spawntime;
 	copy->weight = weight;
 	copy->direction = direction;
@@ -65,6 +66,13 @@ std::string Monster::getName() const {
 		return type->name;
 	}
 	return "";
+}
+
+std::string Monster::getSaveName() const {
+	if (!map_name.empty()) {
+		return map_name;
+	}
+	return getName();
 }
 
 MonsterBrush* Monster::getBrush() const {

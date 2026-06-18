@@ -4360,13 +4360,8 @@ namespace {
 	}
 
 	bool saveMapXmlFile(const pugi::xml_document &doc, const wxString &filepath) {
-		const bool optimized = g_settings.getBoolean(Config::OPTIMIZED_MAP_SAVE);
 		std::ostringstream stream;
-		if (optimized) {
-			doc.save(stream, "", pugi::format_raw, pugi::encoding_utf8);
-		} else {
-			doc.save(stream, "\t", pugi::format_default, pugi::encoding_utf8);
-		}
+		doc.save(stream, "\t", pugi::format_default, pugi::encoding_utf8);
 		const std::string content = stream.str();
 
 		if (fileMatchesXmlContent(filepath, content)) {
@@ -5652,6 +5647,7 @@ bool IOMapOTBM::loadSpawnsMonster(Map &map, pugi::xml_document &doc) {
 			}
 
 			Monster* monster = newd Monster(type);
+			monster->setMapName(name);
 			monster->setDirection(direction);
 			monster->setSpawnMonsterTime(spawntime);
 			monster->setWeight(weight);
@@ -5923,6 +5919,7 @@ bool IOMapOTBM::loadSpawnsNpc(Map &map, pugi::xml_document &doc) {
 			}
 
 			Npc* npc = newd Npc(type);
+			npc->setMapName(name);
 			npc->setDirection(direction);
 			npc->setSpawnNpcTime(spawntime);
 			npcTile->npc = npc;
@@ -6379,7 +6376,7 @@ bool IOMapOTBM::saveSpawns(Map &map, pugi::xml_document &doc) {
 					for (const auto monster : monsterTile->monsters) {
 						if (monster && !monster->isSaved()) {
 							pugi::xml_node monsterNode = spawnNode.append_child("monster");
-							monsterNode.append_attribute("name") = monster->getName().c_str();
+							monsterNode.append_attribute("name") = monster->getSaveName().c_str();
 							monsterNode.append_attribute("x") = x;
 							monsterNode.append_attribute("y") = y;
 							monsterNode.append_attribute("z") = spawnPosition.z;
@@ -7421,7 +7418,7 @@ bool IOMapOTBM::saveSpawnsNpc(Map &map, pugi::xml_document &doc) {
 					Npc* npc = npcTile->npc;
 					if (npc && !npc->isSaved()) {
 						pugi::xml_node npcNode = spawnNpcNode.append_child("npc");
-						npcNode.append_attribute("name") = npc->getName().c_str();
+						npcNode.append_attribute("name") = npc->getSaveName().c_str();
 						npcNode.append_attribute("x") = x;
 						npcNode.append_attribute("y") = y;
 						npcNode.append_attribute("z") = spawnPosition.z;

@@ -54,6 +54,15 @@ public:
 		return type_name;
 	}
 
+	void setMapName(const std::string &name) {
+		map_name = name;
+	}
+
+	[[nodiscard]] const std::string &getMapName() const noexcept {
+		return map_name;
+	}
+
+	std::string getSaveName() const;
 	std::string getName() const;
 	MonsterBrush* getBrush() const;
 
@@ -85,6 +94,7 @@ public:
 
 protected:
 	std::string type_name;
+	std::string map_name;
 	Direction direction;
 	uint8_t weight;
 	uint16_t spawntime;
