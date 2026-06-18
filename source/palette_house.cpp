@@ -47,6 +47,7 @@ EVT_LISTBOX_DCLICK(PALETTE_HOUSE_LISTBOX, HousePalettePanel::OnListBoxDoubleClic
 EVT_BUTTON(PALETTE_HOUSE_ADD_HOUSE, HousePalettePanel::OnClickAddHouse)
 EVT_BUTTON(PALETTE_HOUSE_EDIT_HOUSE, HousePalettePanel::OnClickEditHouse)
 EVT_BUTTON(PALETTE_HOUSE_REMOVE_HOUSE, HousePalettePanel::OnClickRemoveHouse)
+EVT_BUTTON(PALETTE_HOUSE_CHANGE_TOWN, HousePalettePanel::OnClickChangeHouseTown)
 
 EVT_TOGGLEBUTTON(PALETTE_HOUSE_BRUSH_BUTTON, HousePalettePanel::OnClickHouseBrushButton)
 EVT_TOGGLEBUTTON(PALETTE_HOUSE_SELECT_EXIT_BUTTON, HousePalettePanel::OnClickSelectExitButton)
@@ -78,6 +79,10 @@ HousePalettePanel::HousePalettePanel(wxWindow* parent, wxWindowID id) :
 	tmpsizer->Add(remove_house_button = newd wxButton(this, PALETTE_HOUSE_REMOVE_HOUSE, "Remove", wxDefaultPosition, wxSize(70, -1)), sizerFlags);
 	sidesizer->Add(tmpsizer, wxSizerFlags(0).Right());
 
+	tmpsizer = newd wxBoxSizer(wxHORIZONTAL);
+	tmpsizer->Add(change_town_button = newd wxButton(this, PALETTE_HOUSE_CHANGE_TOWN, "Change Town Id", wxDefaultPosition, wxDefaultSize), wxSizerFlags(1).Expand());
+	sidesizer->Add(tmpsizer, wxSizerFlags(0).Expand().Border(wxTOP, 4));
+
 	topsizer->Add(sidesizer, 1, wxEXPAND);
 
 	// Temple position
@@ -87,13 +92,10 @@ HousePalettePanel::HousePalettePanel(wxWindow* parent, wxWindowID id) :
 
 	tmpsizer = newd wxBoxSizer(wxHORIZONTAL);
 	house_brush_button = newd wxToggleButton(this, PALETTE_HOUSE_BRUSH_BUTTON, "House tiles");
-	tmpsizer->Add(house_brush_button);
-	sidesizer->Add(tmpsizer, wxSizerFlags(1).Center());
-
-	tmpsizer = newd wxBoxSizer(wxHORIZONTAL);
 	select_position_button = newd wxToggleButton(this, PALETTE_HOUSE_SELECT_EXIT_BUTTON, "Select Exit");
-	tmpsizer->Add(select_position_button);
-	sidesizer->Add(tmpsizer, wxSizerFlags(1).Center());
+	tmpsizer->Add(house_brush_button, wxSizerFlags(1).Expand());
+	tmpsizer->Add(select_position_button, wxSizerFlags(1).Expand());
+	sidesizer->Add(tmpsizer, wxSizerFlags(0).Expand().Border(wxALL, 4));
 
 	topsizer->Add(sidesizer, 0, wxEXPAND);
 
@@ -230,6 +232,7 @@ void HousePalettePanel::SelectHouse(size_t index) {
 	if (house_list->GetCount() > 0) {
 		edit_house_button->Enable(true);
 		remove_house_button->Enable(true);
+		change_town_button->Enable(map != nullptr && map->towns.count() > 0);
 		select_position_button->Enable(true);
 		house_brush_button->Enable(true);
 		// Select the house
@@ -239,6 +242,7 @@ void HousePalettePanel::SelectHouse(size_t index) {
 		// No houses :(
 		edit_house_button->Enable(false);
 		remove_house_button->Enable(false);
+		change_town_button->Enable(false);
 		select_position_button->Enable(false);
 		house_brush_button->Enable(false);
 	}
@@ -306,6 +310,7 @@ void HousePalettePanel::OnUpdate() {
 		add_house_button->Enable(false);
 		edit_house_button->Enable(false);
 		remove_house_button->Enable(false);
+		change_town_button->Enable(false);
 
 		SelectTown(0);
 	}
@@ -414,9 +419,81 @@ void HousePalettePanel::OnClickRemoveHouse(wxCommandEvent &event) {
 			house_brush_button->SetValue(false);
 			edit_house_button->Enable(false);
 			remove_house_button->Enable(false);
+			change_town_button->Enable(false);
 		}
 		g_gui.SelectBrush();
 	}
+	g_gui.RefreshView();
+}
+
+void HousePalettePanel::OnClickChangeHouseTown(wxCommandEvent &WXUNUSED(event)) {
+	if (map == nullptr || map->towns.count() == 0) {
+		return;
+	}
+
+	House* house = GetCurrentlySelectedHouse();
+	if (house == nullptr) {
+		return;
+	}
+
+	wxArrayString townNames;
+	std::vector<Town*> towns;
+	towns.reserve(map->towns.count());
+	for (TownMap::iterator town_iter = map->towns.begin(); town_iter != map->towns.end(); ++town_iter) {
+		towns.push_back(town_iter->second);
+		townNames.Add(wxstr(town_iter->second->getName()));
+	}
+
+	int initialSelection = 0;
+	for (size_t i = 0; i < towns.size(); ++i) {
+		if (towns[i]->getID() == house->townid) {
+			initialSelection = static_cast<int>(i);
+			break;
+		}
+	}
+
+	wxSingleChoiceDialog dialog(
+		this,
+		"Select the town for this house:",
+		"Change Town Id",
+		townNames
+	);
+	dialog.SetSelection(initialSelection);
+
+	if (dialog.ShowModal() != wxID_OK) {
+		return;
+	}
+
+	const int selection = dialog.GetSelection();
+	if (selection == wxNOT_FOUND || selection < 0 || static_cast<size_t>(selection) >= towns.size()) {
+		return;
+	}
+
+	Town* newTown = towns[selection];
+	if (newTown->getID() == house->townid) {
+		return;
+	}
+
+	const uint32_t houseId = house->id;
+	house->townid = newTown->getID();
+
+	for (uint32_t i = 0; i < town_choice->GetCount(); ++i) {
+		Town* town = reinterpret_cast<Town*>(town_choice->GetClientData(i));
+		if (town && town->getID() == newTown->getID()) {
+			SelectTown(i);
+			for (uint32_t j = 0; j < house_list->GetCount(); ++j) {
+				House* listedHouse = reinterpret_cast<House*>(house_list->GetClientData(j));
+				if (listedHouse && listedHouse->id == houseId) {
+					SelectHouse(j);
+					break;
+				}
+			}
+			break;
+		}
+	}
+
+	refresh_timer.Start(300, true);
+	g_gui.SelectBrush();
 	g_gui.RefreshView();
 }
 
@@ -432,6 +509,7 @@ void HousePalettePanel::OnListBoxClick(wxMouseEvent &event) {
 		house_brush_button->SetValue(false);
 		edit_house_button->Enable(false);
 		remove_house_button->Enable(false);
+		change_town_button->Enable(false);
 		g_gui.SelectBrush();
 	}
 }
