@@ -68,6 +68,7 @@ public:
 	void OnClickAddHouse(wxCommandEvent &event);
 	void OnClickEditHouse(wxCommandEvent &event);
 	void OnClickRemoveHouse(wxCommandEvent &event);
+	void OnClickChangeHouseTown(wxCommandEvent &event);
 
 #ifdef __APPLE__
 	// Used for detecting a deselect
@@ -83,6 +84,7 @@ protected:
 	wxButton* add_house_button;
 	wxButton* edit_house_button;
 	wxButton* remove_house_button;
+	wxButton* change_town_button;
 
 	// Used for ugly hack
 	bool do_resize_on_display;
