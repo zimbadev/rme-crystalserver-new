@@ -8,6 +8,9 @@ else()
     project(rme LANGUAGES CXX)
 endif()
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 find_package(asio CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
