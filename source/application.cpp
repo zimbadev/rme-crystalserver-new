@@ -583,7 +583,7 @@ bool MainFrame::ImportMonstersFromServerData(bool interactive) {
 	wxString error;
 	wxArrayString warnings;
 	const bool importedAny = g_monsters.importFromServerLua(
-		FileName(wxstr(serverDataFolder)),
+		FileName(wxstr(serverDataFolder + "/monster")),
 		FileName(wxString("data/creatures/monsters.xml")),
 		error,
 		warnings
@@ -622,7 +622,7 @@ bool MainFrame::ImportNpcsFromServerData(bool interactive) {
 	wxString error;
 	wxArrayString warnings;
 	const bool importedAny = g_npcs.importFromServerLua(
-		FileName(wxstr(serverDataFolder)),
+		FileName(wxstr(serverDataFolder + "/npc")),
 		FileName(wxString("data/creatures/npcs.xml")),
 		error,
 		warnings
@@ -653,7 +653,7 @@ bool MainFrame::DoQueryImportCreatures() {
 			wxString error;
 			wxArrayString warnings;
 			const bool importedAny = g_monsters.importMissingFromServerLua(
-				FileName(wxstr(serverDataFolder)),
+				FileName(wxstr(serverDataFolder + "/monster")),
 				FileName(wxString("data/creatures/monsters.xml")),
 				error,
 				warnings
@@ -701,7 +701,7 @@ bool MainFrame::DoQueryImportCreatures() {
 			wxString error;
 			wxArrayString warnings;
 			const bool importedAny = g_npcs.importMissingFromServerLua(
-				FileName(wxstr(serverDataFolder)),
+				FileName(wxstr(serverDataFolder + "/npc")),
 				FileName(wxString("data/creatures/npcs.xml")),
 				error,
 				warnings

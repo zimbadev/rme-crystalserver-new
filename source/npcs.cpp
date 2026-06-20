@@ -283,21 +283,17 @@ namespace {
 		}
 
 		std::string resolved;
-		if (!configName.empty()) {
-			resolved = configName;
-		} else if (!namedVariable.empty()) {
-			resolved = namedVariable;
-		} else {
+		if (!createTypeName.empty()) {
 			resolved = createTypeName;
+		} else if (!configName.empty()) {
+			resolved = configName;
+		} else {
+			resolved = namedVariable;
 		}
 
-		if (!configName.empty() && isTruncatedNpcNameAlias(createTypeName, configName)) {
-			truncatedAlias = createTypeName;
-		} else if (!configName.empty() && isTruncatedNpcNameAlias(namedVariable, configName)) {
-			truncatedAlias = namedVariable;
-		} else if (isTruncatedNpcNameAlias(createTypeName, resolved)) {
-			truncatedAlias = createTypeName;
-		} else if (isTruncatedNpcNameAlias(namedVariable, resolved)) {
+		if (!configName.empty() && configName != resolved && isTruncatedNpcNameAlias(configName, resolved)) {
+			truncatedAlias = configName;
+		} else if (!namedVariable.empty() && namedVariable != resolved && isTruncatedNpcNameAlias(namedVariable, resolved)) {
 			truncatedAlias = namedVariable;
 		}
 
