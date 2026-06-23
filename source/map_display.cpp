@@ -32,6 +32,7 @@
 #include "application.h"
 #include "live_server.h"
 #include "browse_tile_window.h"
+#include "common_windows.h"
 
 #include "doodad_brush.h"
 #include "house_exit_brush.h"
@@ -95,6 +96,7 @@ EVT_MENU(MAP_POPUP_MENU_SELECT_SPAWN_BRUSH, MapCanvas::OnSelectSpawnBrush)
 EVT_MENU(MAP_POPUP_MENU_SELECT_NPC_BRUSH, MapCanvas::OnSelectNpcBrush)
 EVT_MENU(MAP_POPUP_MENU_SELECT_SPAWN_NPC_BRUSH, MapCanvas::OnSelectSpawnNpcBrush)
 EVT_MENU(MAP_POPUP_MENU_SELECT_HOUSE_BRUSH, MapCanvas::OnSelectHouseBrush)
+EVT_MENU(MAP_POPUP_MENU_ADD_TOWN, MapCanvas::OnAddTownFromPosition)
 EVT_MENU(MAP_POPUP_MENU_MOVE_TO_TILESET, MapCanvas::OnSelectMoveTo)
 // ----
 EVT_MENU(MAP_POPUP_MENU_PROPERTIES, MapCanvas::OnProperties)
@@ -1599,16 +1601,16 @@ void MapCanvas::OnMousePropertiesRelease(wxMouseEvent &event) {
 		// Nothing
 	}
 
+	last_cursor_map_x = mouse_map_x;
+	last_cursor_map_y = mouse_map_y;
+	last_cursor_map_z = floor;
+
 	popup_menu->Update();
 	PopupMenu(popup_menu);
 
 	editor.resetActionsTimer();
 	dragging = false;
 	boundbox_selection = false;
-
-	last_cursor_map_x = mouse_map_x;
-	last_cursor_map_y = mouse_map_y;
-	last_cursor_map_z = floor;
 
 	g_gui.RefreshView();
 }
@@ -2005,6 +2007,19 @@ void MapCanvas::OnCopyPosition(wxCommandEvent &WXUNUSED(event)) {
 		int z = canvas->GetFloor();
 		canvas->MouseToMap(&x, &y);
 		posToClipboard(x, y, z, g_settings.getInteger(Config::COPY_POSITION_FORMAT));
+	}
+}
+
+void MapCanvas::OnAddTownFromPosition(wxCommandEvent &WXUNUSED(event)) {
+	Position pos(last_cursor_map_x, last_cursor_map_y, last_cursor_map_z);
+
+	if (editor.hasSelection()) {
+		pos = editor.getSelection().minPosition();
+	}
+
+	if (g_gui.GetCurrentEditor()) {
+		EditTownsDialog town_dialog(this, *g_gui.GetCurrentEditor(), pos, true);
+		town_dialog.ShowModal();
 	}
 }
 
@@ -2681,6 +2696,9 @@ void MapPopupMenu::Update() {
 
 			wxMenuItem* browseTile = Append(MAP_POPUP_MENU_BROWSE_TILE, "Browse Field", "Navigate from tile items");
 			browseTile->Enable(anything_selected);
+
+			AppendSeparator();
+			Append(MAP_POPUP_MENU_ADD_TOWN, "Add Town From Position", "Create a new town with temple at this position");
 		}
 	}
 }

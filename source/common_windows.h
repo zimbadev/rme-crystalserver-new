@@ -21,6 +21,7 @@
 #include "main.h"
 
 #include "dcbutton.h"
+#include "position.h"
 #include "positionctrl.h"
 
 class GameSprite;
@@ -342,7 +343,7 @@ protected:
  */
 class EditTownsDialog : public wxDialog {
 public:
-	EditTownsDialog(wxWindow* parent, Editor &editor);
+	EditTownsDialog(wxWindow* parent, Editor &editor, const Position &initial_position = Position(0, 0, 0), bool create_town_at_position = false);
 	virtual ~EditTownsDialog();
 
 	void OnListBoxChange(wxCommandEvent &);
@@ -357,6 +358,7 @@ protected:
 	void UpdateSelection(int new_selection);
 
 	Editor &editor;
+	Position initial_position;
 
 	std::vector<Town*> town_list;
 	uint32_t max_town_id;

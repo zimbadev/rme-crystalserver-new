@@ -1423,9 +1423,9 @@ EVT_BUTTON(wxID_OK, EditTownsDialog::OnClickOK)
 EVT_BUTTON(wxID_CANCEL, EditTownsDialog::OnClickCancel)
 END_EVENT_TABLE()
 
-EditTownsDialog::EditTownsDialog(wxWindow* parent, Editor &editor) :
+EditTownsDialog::EditTownsDialog(wxWindow* parent, Editor &editor, const Position &initial_position, bool create_town_at_position) :
 	wxDialog(parent, wxID_ANY, "Towns", wxDefaultPosition, wxSize(280, 330)),
-	editor(editor) {
+	editor(editor), initial_position(initial_position) {
 	const Map &map = editor.getMap();
 
 	// Create topsizer
@@ -1460,7 +1460,7 @@ EditTownsDialog::EditTownsDialog(wxWindow* parent, Editor &editor) :
 	sizer->Add(tmpsizer, 0, wxEXPAND | wxALL, 10);
 
 	// Temple position
-	temple_position = newd PositionCtrl(this, "Temple Position", 0, 0, 0, map.getWidth(), map.getHeight());
+	temple_position = newd PositionCtrl(this, "Temple Position", initial_position.x, initial_position.y, initial_position.z, map.getWidth(), map.getHeight());
 	select_position_button = newd wxButton(this, EDIT_TOWNS_SELECT_TEMPLE, "Go To");
 	temple_position->Add(select_position_button, 0, wxLEFT | wxRIGHT | wxBOTTOM, 5);
 	sizer->Add(temple_position, 0, wxEXPAND | wxLEFT | wxRIGHT, 10);
@@ -1473,7 +1473,19 @@ EditTownsDialog::EditTownsDialog(wxWindow* parent, Editor &editor) :
 
 	SetSizerAndFit(sizer);
 	Centre(wxBOTH);
-	BuildListBox(true);
+
+	if (create_town_at_position) {
+		BuildListBox(false);
+		Town* new_town = newd Town(++max_town_id);
+		new_town->setName("Unnamed Town");
+		new_town->setTemplePosition(initial_position);
+		town_list.push_back(new_town);
+		BuildListBox(false);
+		UpdateSelection(static_cast<int>(town_list.size()) - 1);
+		town_listbox->SetSelection(static_cast<int>(town_list.size()) - 1);
+	} else {
+		BuildListBox(true);
+	}
 }
 
 EditTownsDialog::~EditTownsDialog() {
@@ -1602,7 +1614,7 @@ void EditTownsDialog::OnClickSelectTemplePosition(wxCommandEvent &WXUNUSED(event
 void EditTownsDialog::OnClickAdd(wxCommandEvent &WXUNUSED(event)) {
 	Town* new_town = newd Town(++max_town_id);
 	new_town->setName("Unnamed Town");
-	new_town->setTemplePosition(Position(0, 0, 0));
+	new_town->setTemplePosition(initial_position);
 	town_list.push_back(new_town);
 
 	BuildListBox(false);
