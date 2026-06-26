@@ -215,6 +215,31 @@ struct AppearanceFlagUpgradeClassificationDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 AppearanceFlagUpgradeClassificationDefaultTypeInternal _AppearanceFlagUpgradeClassification_default_instance_;
 
+inline constexpr AppearanceFlagTransparencyLevel::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        level_{0u} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR AppearanceFlagTransparencyLevel::AppearanceFlagTransparencyLevel(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct AppearanceFlagTransparencyLevelDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR AppearanceFlagTransparencyLevelDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~AppearanceFlagTransparencyLevelDefaultTypeInternal() {}
+  union {
+    AppearanceFlagTransparencyLevel _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 AppearanceFlagTransparencyLevelDefaultTypeInternal _AppearanceFlagTransparencyLevel_default_instance_;
+
 inline constexpr AppearanceFlagSkillWheelGem::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : _cached_size_{0},
@@ -332,10 +357,14 @@ inline constexpr AppearanceFlagMarket::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : _cached_size_{0},
         restrict_to_profession_{},
+        name_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
         trade_as_object_id_{0u},
         show_as_object_id_{0u},
         minimum_level_{0u},
-        category_{static_cast< ::rme::protobuf::appearances::ITEM_CATEGORY >(1)} {}
+        category_{static_cast< ::rme::protobuf::appearances::ITEM_CATEGORY >(1)},
+        vocation_{static_cast< ::rme::protobuf::appearances::VOCATION >(-1)} {}
 
 template <typename>
 PROTOBUF_CONSTEXPR AppearanceFlagMarket::AppearanceFlagMarket(::_pbi::ConstantInitialized)
@@ -641,6 +670,7 @@ inline constexpr SpriteAnimation::Impl_::Impl_(
         synchronized_{false},
         random_start_phase_{false},
         loop_count_{0u},
+        animation_mode_{static_cast< ::rme::protobuf::appearances::ANIMATION_ANIMATION_MODE >(0)},
         loop_type_{static_cast< ::rme::protobuf::appearances::ANIMATION_LOOP_TYPE >(-1)} {}
 
 template <typename>
@@ -686,6 +716,7 @@ inline constexpr AppearanceFlags::Impl_::Impl_(
         skillwheel_gem_{nullptr},
         imbueable_{nullptr},
         proficiency_{nullptr},
+        transparencylevel_{nullptr},
         clip_{false},
         bottom_{false},
         top_{false},
@@ -728,8 +759,11 @@ inline constexpr AppearanceFlags::Impl_::Impl_(
         expirestop_{false},
         wrapkit_{false},
         dual_wielding_{false},
+        deco_item_kit_{false},
+        hook_south_{false},
         minimum_level_{0u},
-        weapon_type_{static_cast< ::rme::protobuf::appearances::WEAPON_TYPE >(0)} {}
+        weapon_type_{static_cast< ::rme::protobuf::appearances::WEAPON_TYPE >(0)},
+        hook_east_{false} {}
 
 template <typename>
 PROTOBUF_CONSTEXPR AppearanceFlags::AppearanceFlags(::_pbi::ConstantInitialized)
@@ -762,7 +796,14 @@ inline constexpr SpriteInfo::Impl_::Impl_(
         pattern_depth_{0u},
         layers_{0u},
         bounding_square_{0u},
-        is_opaque_{false} {}
+        pattern_size_{0u},
+        pattern_layers_{0u},
+        pattern_x_{0u},
+        is_opaque_{false},
+        is_animation_{false},
+        pattern_y_{0u},
+        pattern_z_{0u},
+        pattern_frames_{0u} {}
 
 template <typename>
 PROTOBUF_CONSTEXPR SpriteInfo::SpriteInfo(::_pbi::ConstantInitialized)
@@ -815,6 +856,7 @@ inline constexpr Appearance::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : _cached_size_{0},
         frame_group_{},
+        sprite_data_{},
         name_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
@@ -822,7 +864,8 @@ inline constexpr Appearance::Impl_::Impl_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
         flags_{nullptr},
-        id_{0u} {}
+        id_{0u},
+        appearance_type_{static_cast< ::rme::protobuf::appearances::APPEARANCE_TYPE >(1)} {}
 
 template <typename>
 PROTOBUF_CONSTEXPR Appearance::Appearance(::_pbi::ConstantInitialized)
@@ -875,7 +918,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 }  // namespace appearances
 }  // namespace protobuf
 }  // namespace rme
-static const ::_pb::EnumDescriptor* file_level_enum_descriptors_appearances_2eproto[8];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_appearances_2eproto[10];
 static constexpr const ::_pb::ServiceDescriptor**
     file_level_service_descriptors_appearances_2eproto = nullptr;
 const ::uint32_t
@@ -939,12 +982,14 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::SpriteAnimation, _impl_.loop_type_),
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::SpriteAnimation, _impl_.loop_count_),
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::SpriteAnimation, _impl_.sprite_phase_),
+        PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::SpriteAnimation, _impl_.animation_mode_),
         0,
         1,
         2,
-        4,
+        5,
         3,
         ~0u,
+        4,
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::Box, _impl_._has_bits_),
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::Box, _internal_metadata_),
         ~0u,  // no _extensions_
@@ -978,6 +1023,13 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::SpriteInfo, _impl_.animation_),
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::SpriteInfo, _impl_.is_opaque_),
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::SpriteInfo, _impl_.bounding_box_per_direction_),
+        PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::SpriteInfo, _impl_.pattern_size_),
+        PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::SpriteInfo, _impl_.pattern_layers_),
+        PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::SpriteInfo, _impl_.pattern_x_),
+        PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::SpriteInfo, _impl_.pattern_y_),
+        PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::SpriteInfo, _impl_.pattern_z_),
+        PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::SpriteInfo, _impl_.pattern_frames_),
+        PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::SpriteInfo, _impl_.is_animation_),
         1,
         2,
         3,
@@ -985,8 +1037,15 @@ const ::uint32_t
         ~0u,
         5,
         0,
-        6,
+        9,
         ~0u,
+        6,
+        7,
+        8,
+        11,
+        12,
+        13,
+        10,
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::FrameGroup, _impl_._has_bits_),
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::FrameGroup, _internal_metadata_),
         ~0u,  // no _extensions_
@@ -1014,11 +1073,15 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::Appearance, _impl_.flags_),
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::Appearance, _impl_.name_),
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::Appearance, _impl_.description_),
+        PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::Appearance, _impl_.appearance_type_),
+        PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::Appearance, _impl_.sprite_data_),
         3,
         ~0u,
         2,
         0,
         1,
+        4,
+        ~0u,
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::AppearanceFlags, _impl_._has_bits_),
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::AppearanceFlags, _internal_metadata_),
         ~0u,  // no _extensions_
@@ -1091,8 +1154,11 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::AppearanceFlags, _impl_.restrict_to_vocation_),
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::AppearanceFlags, _impl_.minimum_level_),
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::AppearanceFlags, _impl_.weapon_type_),
+        PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::AppearanceFlags, _impl_.deco_item_kit_),
+        PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::AppearanceFlags, _impl_.hook_south_),
+        PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::AppearanceFlags, _impl_.hook_east_),
+        PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::AppearanceFlags, _impl_.transparencylevel_),
         0,
-        18,
         19,
         20,
         21,
@@ -1100,9 +1166,9 @@ const ::uint32_t
         23,
         24,
         25,
+        26,
         1,
         2,
-        26,
         27,
         28,
         29,
@@ -1111,35 +1177,35 @@ const ::uint32_t
         32,
         33,
         34,
-        3,
         35,
-        4,
+        3,
         36,
+        4,
         37,
+        38,
         5,
         6,
-        38,
         39,
+        40,
         7,
         8,
-        40,
         41,
+        42,
         9,
         10,
         11,
-        42,
         43,
         44,
+        45,
         ~0u,
         12,
-        45,
         46,
-        13,
         47,
+        13,
         48,
         49,
-        14,
         50,
+        14,
         51,
         52,
         53,
@@ -1148,13 +1214,18 @@ const ::uint32_t
         56,
         57,
         58,
-        15,
         59,
+        15,
+        60,
         16,
         17,
         ~0u,
-        60,
+        63,
+        64,
         61,
+        62,
+        65,
+        18,
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::AppearanceFlagUpgradeClassification, _impl_._has_bits_),
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::AppearanceFlagUpgradeClassification, _internal_metadata_),
         ~0u,  // no _extensions_
@@ -1262,11 +1333,15 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::AppearanceFlagMarket, _impl_.show_as_object_id_),
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::AppearanceFlagMarket, _impl_.restrict_to_profession_),
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::AppearanceFlagMarket, _impl_.minimum_level_),
+        PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::AppearanceFlagMarket, _impl_.name_),
+        PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::AppearanceFlagMarket, _impl_.vocation_),
+        4,
+        1,
+        2,
+        ~0u,
         3,
         0,
-        1,
-        ~0u,
-        2,
+        5,
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::AppearanceFlagNPC, _impl_._has_bits_),
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::AppearanceFlagNPC, _internal_metadata_),
         ~0u,  // no _extensions_
@@ -1337,6 +1412,16 @@ const ::uint32_t
         ~0u,  // no sizeof(Split)
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::AppearanceFlagCyclopedia, _impl_.cyclopedia_type_),
         0,
+        PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::AppearanceFlagTransparencyLevel, _impl_._has_bits_),
+        PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::AppearanceFlagTransparencyLevel, _internal_metadata_),
+        ~0u,  // no _extensions_
+        ~0u,  // no _oneof_case_
+        ~0u,  // no _weak_field_map_
+        ~0u,  // no _inlined_string_donated_
+        ~0u,  // no _split_
+        ~0u,  // no sizeof(Split)
+        PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::AppearanceFlagTransparencyLevel, _impl_.level_),
+        0,
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::SpecialMeaningAppearanceIds, _impl_._has_bits_),
         PROTOBUF_FIELD_OFFSET(::rme::protobuf::appearances::SpecialMeaningAppearanceIds, _internal_metadata_),
         ~0u,  // no _extensions_
@@ -1398,32 +1483,33 @@ static const ::_pbi::MigrationSchema
         {0, 11, -1, sizeof(::rme::protobuf::appearances::Coordinate)},
         {14, 27, -1, sizeof(::rme::protobuf::appearances::Appearances)},
         {32, 42, -1, sizeof(::rme::protobuf::appearances::SpritePhase)},
-        {44, 58, -1, sizeof(::rme::protobuf::appearances::SpriteAnimation)},
-        {64, 76, -1, sizeof(::rme::protobuf::appearances::Box)},
-        {80, 97, -1, sizeof(::rme::protobuf::appearances::SpriteInfo)},
-        {106, 117, -1, sizeof(::rme::protobuf::appearances::FrameGroup)},
-        {120, 133, -1, sizeof(::rme::protobuf::appearances::Appearance)},
-        {138, 210, -1, sizeof(::rme::protobuf::appearances::AppearanceFlags)},
-        {274, 283, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagUpgradeClassification)},
-        {284, 293, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagBank)},
-        {294, 303, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagWrite)},
-        {304, 313, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagWriteOnce)},
-        {314, 324, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagLight)},
-        {326, 335, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagHeight)},
-        {336, 346, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagShift)},
-        {348, 357, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagClothes)},
-        {358, 367, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagDefaultAction)},
-        {368, 381, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagMarket)},
-        {386, 400, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagNPC)},
-        {406, 415, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagAutomap)},
-        {416, 425, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagHook)},
-        {426, 435, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagLenshelp)},
-        {436, 445, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagChangedToExpire)},
-        {446, 455, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagCyclopedia)},
-        {456, 471, -1, sizeof(::rme::protobuf::appearances::SpecialMeaningAppearanceIds)},
-        {478, 488, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagSkillWheelGem)},
-        {490, 499, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagImbueable)},
-        {500, 509, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagProficiency)},
+        {44, 59, -1, sizeof(::rme::protobuf::appearances::SpriteAnimation)},
+        {66, 78, -1, sizeof(::rme::protobuf::appearances::Box)},
+        {82, 106, -1, sizeof(::rme::protobuf::appearances::SpriteInfo)},
+        {122, 133, -1, sizeof(::rme::protobuf::appearances::FrameGroup)},
+        {136, 151, -1, sizeof(::rme::protobuf::appearances::Appearance)},
+        {158, 234, -1, sizeof(::rme::protobuf::appearances::AppearanceFlags)},
+        {302, 311, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagUpgradeClassification)},
+        {312, 321, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagBank)},
+        {322, 331, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagWrite)},
+        {332, 341, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagWriteOnce)},
+        {342, 352, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagLight)},
+        {354, 363, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagHeight)},
+        {364, 374, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagShift)},
+        {376, 385, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagClothes)},
+        {386, 395, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagDefaultAction)},
+        {396, 411, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagMarket)},
+        {418, 432, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagNPC)},
+        {438, 447, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagAutomap)},
+        {448, 457, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagHook)},
+        {458, 467, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagLenshelp)},
+        {468, 477, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagChangedToExpire)},
+        {478, 487, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagCyclopedia)},
+        {488, 497, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagTransparencyLevel)},
+        {498, 513, -1, sizeof(::rme::protobuf::appearances::SpecialMeaningAppearanceIds)},
+        {520, 530, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagSkillWheelGem)},
+        {532, 541, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagImbueable)},
+        {542, 551, -1, sizeof(::rme::protobuf::appearances::AppearanceFlagProficiency)},
 };
 static const ::_pb::Message* const file_default_instances[] = {
     &::rme::protobuf::appearances::_Coordinate_default_instance_._instance,
@@ -1451,6 +1537,7 @@ static const ::_pb::Message* const file_default_instances[] = {
     &::rme::protobuf::appearances::_AppearanceFlagLenshelp_default_instance_._instance,
     &::rme::protobuf::appearances::_AppearanceFlagChangedToExpire_default_instance_._instance,
     &::rme::protobuf::appearances::_AppearanceFlagCyclopedia_default_instance_._instance,
+    &::rme::protobuf::appearances::_AppearanceFlagTransparencyLevel_default_instance_._instance,
     &::rme::protobuf::appearances::_SpecialMeaningAppearanceIds_default_instance_._instance,
     &::rme::protobuf::appearances::_AppearanceFlagSkillWheelGem_default_instance_._instance,
     &::rme::protobuf::appearances::_AppearanceFlagImbueable_default_instance_._instance,
@@ -1470,185 +1557,209 @@ const char descriptor_table_protodef_appearances_2eproto[] ABSL_ATTRIBUTE_SECTIO
     "\005 \001(\01325.rme.protobuf.appearances.Special"
     "MeaningAppearanceIds\"9\n\013SpritePhase\022\024\n\014d"
     "uration_min\030\001 \001(\r\022\024\n\014duration_max\030\002 \001(\r\""
-    "\363\001\n\017SpriteAnimation\022\033\n\023default_start_pha"
+    "\277\002\n\017SpriteAnimation\022\033\n\023default_start_pha"
     "se\030\001 \001(\r\022\024\n\014synchronized\030\002 \001(\010\022\032\n\022random"
     "_start_phase\030\003 \001(\010\022@\n\tloop_type\030\004 \001(\0162-."
     "rme.protobuf.appearances.ANIMATION_LOOP_"
     "TYPE\022\022\n\nloop_count\030\005 \001(\r\022;\n\014sprite_phase"
     "\030\006 \003(\0132%.rme.protobuf.appearances.Sprite"
-    "Phase\":\n\003Box\022\t\n\001x\030\001 \001(\r\022\t\n\001y\030\002 \001(\r\022\r\n\005wi"
-    "dth\030\003 \001(\r\022\016\n\006height\030\004 \001(\r\"\242\002\n\nSpriteInfo"
-    "\022\025\n\rpattern_width\030\001 \001(\r\022\026\n\016pattern_heigh"
-    "t\030\002 \001(\r\022\025\n\rpattern_depth\030\003 \001(\r\022\016\n\006layers"
-    "\030\004 \001(\r\022\021\n\tsprite_id\030\005 \003(\r\022\027\n\017bounding_sq"
-    "uare\030\007 \001(\r\022<\n\tanimation\030\006 \001(\0132).rme.prot"
-    "obuf.appearances.SpriteAnimation\022\021\n\tis_o"
-    "paque\030\010 \001(\010\022A\n\032bounding_box_per_directio"
-    "n\030\t \003(\0132\035.rme.protobuf.appearances.Box\"\233"
-    "\001\n\nFrameGroup\022F\n\021fixed_frame_group\030\001 \001(\016"
-    "2+.rme.protobuf.appearances.FIXED_FRAME_"
-    "GROUP\022\n\n\002id\030\002 \001(\r\0229\n\013sprite_info\030\003 \001(\0132$"
-    ".rme.protobuf.appearances.SpriteInfo\"\260\001\n"
-    "\nAppearance\022\n\n\002id\030\001 \001(\r\0229\n\013frame_group\030\002"
-    " \003(\0132$.rme.protobuf.appearances.FrameGro"
-    "up\0228\n\005flags\030\003 \001(\0132).rme.protobuf.appeara"
-    "nces.AppearanceFlags\022\014\n\004name\030\004 \001(\014\022\023\n\013de"
-    "scription\030\005 \001(\014\"\211\022\n\017AppearanceFlags\022:\n\004b"
-    "ank\030\001 \001(\0132,.rme.protobuf.appearances.App"
-    "earanceFlagBank\022\014\n\004clip\030\002 \001(\010\022\016\n\006bottom\030"
-    "\003 \001(\010\022\013\n\003top\030\004 \001(\010\022\021\n\tcontainer\030\005 \001(\010\022\022\n"
-    "\ncumulative\030\006 \001(\010\022\016\n\006usable\030\007 \001(\010\022\020\n\010for"
-    "ceuse\030\010 \001(\010\022\020\n\010multiuse\030\t \001(\010\022<\n\005write\030\n"
-    " \001(\0132-.rme.protobuf.appearances.Appearan"
-    "ceFlagWrite\022E\n\nwrite_once\030\013 \001(\01321.rme.pr"
-    "otobuf.appearances.AppearanceFlagWriteOn"
-    "ce\022\022\n\nliquidpool\030\014 \001(\010\022\016\n\006unpass\030\r \001(\010\022\016"
-    "\n\006unmove\030\016 \001(\010\022\017\n\007unsight\030\017 \001(\010\022\r\n\005avoid"
-    "\030\020 \001(\010\022\035\n\025no_movement_animation\030\021 \001(\010\022\014\n"
-    "\004take\030\022 \001(\010\022\027\n\017liquidcontainer\030\023 \001(\010\022\014\n\004"
-    "hang\030\024 \001(\010\022:\n\004hook\030\025 \001(\0132,.rme.protobuf."
-    "appearances.AppearanceFlagHook\022\016\n\006rotate"
-    "\030\026 \001(\010\022<\n\005light\030\027 \001(\0132-.rme.protobuf.app"
-    "earances.AppearanceFlagLight\022\021\n\tdont_hid"
-    "e\030\030 \001(\010\022\023\n\013translucent\030\031 \001(\010\022<\n\005shift\030\032 "
-    "\001(\0132-.rme.protobuf.appearances.Appearanc"
-    "eFlagShift\022>\n\006height\030\033 \001(\0132..rme.protobu"
-    "f.appearances.AppearanceFlagHeight\022\024\n\014ly"
-    "ing_object\030\034 \001(\010\022\026\n\016animate_always\030\035 \001(\010"
-    "\022@\n\007automap\030\036 \001(\0132/.rme.protobuf.appeara"
-    "nces.AppearanceFlagAutomap\022B\n\010lenshelp\030\037"
-    " \001(\01320.rme.protobuf.appearances.Appearan"
-    "ceFlagLenshelp\022\020\n\010fullbank\030  \001(\010\022\023\n\013igno"
-    "re_look\030! \001(\010\022@\n\007clothes\030\" \001(\0132/.rme.pro"
-    "tobuf.appearances.AppearanceFlagClothes\022"
-    "M\n\016default_action\030# \001(\01325.rme.protobuf.a"
-    "ppearances.AppearanceFlagDefaultAction\022>"
-    "\n\006market\030$ \001(\0132..rme.protobuf.appearance"
-    "s.AppearanceFlagMarket\022\014\n\004wrap\030% \001(\010\022\016\n\006"
-    "unwrap\030& \001(\010\022\021\n\ttopeffect\030\' \001(\010\022@\n\013npcsa"
-    "ledata\030( \003(\0132+.rme.protobuf.appearances."
-    "AppearanceFlagNPC\022P\n\017changedtoexpire\030) \001"
-    "(\01327.rme.protobuf.appearances.Appearance"
-    "FlagChangedToExpire\022\016\n\006corpse\030* \001(\010\022\025\n\rp"
-    "layer_corpse\030+ \001(\010\022J\n\016cyclopediaitem\030, \001"
-    "(\01322.rme.protobuf.appearances.Appearance"
-    "FlagCyclopedia\022\014\n\004ammo\030- \001(\010\022\027\n\017show_off"
-    "_socket\030. \001(\010\022\022\n\nreportable\030/ \001(\010\022\\\n\025upg"
-    "radeclassification\0300 \001(\0132=.rme.protobuf."
-    "appearances.AppearanceFlagUpgradeClassif"
-    "ication\022\033\n\023reverse_addons_east\0301 \001(\010\022\033\n\023"
-    "reverse_addons_west\0302 \001(\010\022\034\n\024reverse_add"
-    "ons_south\0303 \001(\010\022\034\n\024reverse_addons_north\030"
-    "4 \001(\010\022\017\n\007wearout\0305 \001(\010\022\023\n\013clockexpire\0306 "
-    "\001(\010\022\016\n\006expire\0307 \001(\010\022\022\n\nexpirestop\0308 \001(\010\022"
-    "\017\n\007wrapkit\0309 \001(\010\022M\n\016skillwheel_gem\030: \001(\013"
-    "25.rme.protobuf.appearances.AppearanceFl"
-    "agSkillWheelGem\022\025\n\rdual_wielding\030; \001(\010\022D"
-    "\n\timbueable\030< \001(\01321.rme.protobuf.appeara"
-    "nces.AppearanceFlagImbueable\022H\n\013proficie"
-    "ncy\030= \001(\01323.rme.protobuf.appearances.App"
-    "earanceFlagProficiency\022@\n\024restrict_to_vo"
-    "cation\030> \003(\0162\".rme.protobuf.appearances."
-    "VOCATION\022\025\n\rminimum_level\030\? \001(\r\022:\n\013weapo"
-    "n_type\030@ \001(\0162%.rme.protobuf.appearances."
-    "WEAPON_TYPE\"E\n#AppearanceFlagUpgradeClas"
-    "sification\022\036\n\026upgrade_classification\030\001 \001"
-    "(\r\"\'\n\022AppearanceFlagBank\022\021\n\twaypoints\030\001 "
-    "\001(\r\".\n\023AppearanceFlagWrite\022\027\n\017max_text_l"
-    "ength\030\001 \001(\r\"7\n\027AppearanceFlagWriteOnce\022\034"
-    "\n\024max_text_length_once\030\001 \001(\r\"8\n\023Appearan"
-    "ceFlagLight\022\022\n\nbrightness\030\001 \001(\r\022\r\n\005color"
-    "\030\002 \001(\r\")\n\024AppearanceFlagHeight\022\021\n\televat"
-    "ion\030\001 \001(\r\"+\n\023AppearanceFlagShift\022\t\n\001x\030\001 "
-    "\001(\r\022\t\n\001y\030\002 \001(\r\"%\n\025AppearanceFlagClothes\022"
-    "\014\n\004slot\030\001 \001(\r\"V\n\033AppearanceFlagDefaultAc"
-    "tion\0227\n\006action\030\001 \001(\0162\'.rme.protobuf.appe"
-    "arances.PLAYER_ACTION\"\354\001\n\024AppearanceFlag"
-    "Market\0229\n\010category\030\001 \001(\0162\'.rme.protobuf."
-    "appearances.ITEM_CATEGORY\022\032\n\022trade_as_ob"
-    "ject_id\030\002 \001(\r\022\031\n\021show_as_object_id\030\003 \001(\r"
-    "\022K\n\026restrict_to_profession\030\005 \003(\0162+.rme.p"
-    "rotobuf.appearances.PLAYER_PROFESSION\022\025\n"
-    "\rminimum_level\030\006 \001(\r\"\245\001\n\021AppearanceFlagN"
-    "PC\022\014\n\004name\030\001 \001(\014\022\020\n\010location\030\002 \001(\014\022\022\n\nsa"
-    "le_price\030\003 \001(\r\022\021\n\tbuy_price\030\004 \001(\r\022\037\n\027cur"
-    "rency_object_type_id\030\005 \001(\r\022(\n currency_q"
-    "uest_flag_display_name\030\006 \001(\014\"&\n\025Appearan"
-    "ceFlagAutomap\022\r\n\005color\030\001 \001(\r\"L\n\022Appearan"
-    "ceFlagHook\0226\n\tdirection\030\001 \001(\0162#.rme.prot"
-    "obuf.appearances.HOOK_TYPE\"$\n\026Appearance"
-    "FlagLenshelp\022\n\n\002id\030\001 \001(\r\"=\n\035AppearanceFl"
-    "agChangedToExpire\022\034\n\024former_object_typei"
-    "d\030\001 \001(\r\"3\n\030AppearanceFlagCyclopedia\022\027\n\017c"
-    "yclopedia_type\030\001 \001(\r\"\312\001\n\033SpecialMeaningA"
-    "ppearanceIds\022\024\n\014gold_coin_id\030\001 \001(\r\022\030\n\020pl"
-    "atinum_coin_id\030\002 \001(\r\022\027\n\017crystal_coin_id\030"
-    "\003 \001(\r\022\025\n\rtibia_coin_id\030\004 \001(\r\022\031\n\021stamped_"
-    "letter_id\030\005 \001(\r\022\027\n\017supply_stash_id\030\006 \001(\r"
-    "\022\027\n\017reward_chest_id\030\007 \001(\r\"J\n\033AppearanceF"
-    "lagSkillWheelGem\022\026\n\016gem_quality_id\030\001 \001(\r"
-    "\022\023\n\013vocation_id\030\002 \001(\r\"-\n\027AppearanceFlagI"
-    "mbueable\022\022\n\nslot_count\030\001 \001(\r\"3\n\031Appearan"
-    "ceFlagProficiency\022\026\n\016proficiency_id\030\001 \001("
-    "\r*\224\001\n\rPLAYER_ACTION\022\026\n\022PLAYER_ACTION_NON"
-    "E\020\000\022\026\n\022PLAYER_ACTION_LOOK\020\001\022\025\n\021PLAYER_AC"
-    "TION_USE\020\002\022\026\n\022PLAYER_ACTION_OPEN\020\003\022$\n PL"
-    "AYER_ACTION_AUTOWALK_HIGHLIGHT\020\004*\352\005\n\rITE"
-    "M_CATEGORY\022\030\n\024ITEM_CATEGORY_ARMORS\020\001\022\031\n\025"
-    "ITEM_CATEGORY_AMULETS\020\002\022\027\n\023ITEM_CATEGORY"
-    "_BOOTS\020\003\022\034\n\030ITEM_CATEGORY_CONTAINERS\020\004\022\034"
-    "\n\030ITEM_CATEGORY_DECORATION\020\005\022\026\n\022ITEM_CAT"
-    "EGORY_FOOD\020\006\022\036\n\032ITEM_CATEGORY_HELMETS_HA"
-    "TS\020\007\022\026\n\022ITEM_CATEGORY_LEGS\020\010\022\030\n\024ITEM_CAT"
-    "EGORY_OTHERS\020\t\022\031\n\025ITEM_CATEGORY_POTIONS\020"
-    "\n\022\027\n\023ITEM_CATEGORY_RINGS\020\013\022\027\n\023ITEM_CATEG"
-    "ORY_RUNES\020\014\022\031\n\025ITEM_CATEGORY_SHIELDS\020\r\022\027"
-    "\n\023ITEM_CATEGORY_TOOLS\020\016\022\033\n\027ITEM_CATEGORY"
-    "_VALUABLES\020\017\022\034\n\030ITEM_CATEGORY_AMMUNITION"
-    "\020\020\022\026\n\022ITEM_CATEGORY_AXES\020\021\022\027\n\023ITEM_CATEG"
-    "ORY_CLUBS\020\022\022\"\n\036ITEM_CATEGORY_DISTANCE_WE"
-    "APONS\020\023\022\030\n\024ITEM_CATEGORY_SWORDS\020\024\022\034\n\030ITE"
-    "M_CATEGORY_WANDS_RODS\020\025\022!\n\035ITEM_CATEGORY"
-    "_PREMIUM_SCROLLS\020\026\022\035\n\031ITEM_CATEGORY_TIBI"
-    "A_COINS\020\027\022#\n\037ITEM_CATEGORY_CREATURE_PROD"
-    "UCTS\020\030\022\030\n\024ITEM_CATEGORY_QUIVER\020\031\022\033\n\027ITEM"
-    "_CATEGORY_SOULCORES\020\032*\355\001\n\021PLAYER_PROFESS"
-    "ION\022\"\n\025PLAYER_PROFESSION_ANY\020\377\377\377\377\377\377\377\377\377\001\022"
-    "\032\n\026PLAYER_PROFESSION_NONE\020\000\022\034\n\030PLAYER_PR"
-    "OFESSION_KNIGHT\020\001\022\035\n\031PLAYER_PROFESSION_P"
-    "ALADIN\020\002\022\036\n\032PLAYER_PROFESSION_SORCERER\020\003"
-    "\022\033\n\027PLAYER_PROFESSION_DRUID\020\004\022\036\n\032PLAYER_"
-    "PROFESSION_PROMOTED\020\n*\203\001\n\023ANIMATION_LOOP"
-    "_TYPE\022)\n\034ANIMATION_LOOP_TYPE_PINGPONG\020\377\377"
-    "\377\377\377\377\377\377\377\001\022 \n\034ANIMATION_LOOP_TYPE_INFINITE"
-    "\020\000\022\037\n\033ANIMATION_LOOP_TYPE_COUNTED\020\001*4\n\tH"
-    "OOK_TYPE\022\023\n\017HOOK_TYPE_SOUTH\020\001\022\022\n\016HOOK_TY"
-    "PE_EAST\020\002*\337\001\n\013WEAPON_TYPE\022\030\n\024WEAPON_TYPE"
-    "_NOWEAPON\020\000\022\025\n\021WEAPON_TYPE_SWORD\020\001\022\023\n\017WE"
-    "APON_TYPE_AXE\020\002\022\024\n\020WEAPON_TYPE_CLUB\020\003\022\024\n"
-    "\020WEAPON_TYPE_FIST\020\004\022\023\n\017WEAPON_TYPE_BOW\020\005"
-    "\022\030\n\024WEAPON_TYPE_CROSSBOW\020\006\022\030\n\024WEAPON_TYP"
-    "E_WAND_ROD\020\007\022\025\n\021WEAPON_TYPE_THROW\020\010*\270\001\n\010"
-    "VOCATION\022\031\n\014VOCATION_ANY\020\377\377\377\377\377\377\377\377\377\001\022\021\n\rV"
-    "OCATION_NONE\020\000\022\023\n\017VOCATION_KNIGHT\020\001\022\024\n\020V"
-    "OCATION_PALADIN\020\002\022\025\n\021VOCATION_SORCERER\020\003"
-    "\022\022\n\016VOCATION_DRUID\020\004\022\021\n\rVOCATION_MONK\020\005\022"
-    "\025\n\021VOCATION_PROMOTED\020\n*\201\001\n\021FIXED_FRAME_G"
-    "ROUP\022!\n\035FIXED_FRAME_GROUP_OUTFIT_IDLE\020\000\022"
-    "#\n\037FIXED_FRAME_GROUP_OUTFIT_MOVING\020\001\022$\n "
-    "FIXED_FRAME_GROUP_OBJECT_INITIAL\020\002"
+    "Phase\022J\n\016animation_mode\030\007 \001(\01622.rme.prot"
+    "obuf.appearances.ANIMATION_ANIMATION_MOD"
+    "E\":\n\003Box\022\t\n\001x\030\001 \001(\r\022\t\n\001y\030\002 \001(\r\022\r\n\005width\030"
+    "\003 \001(\r\022\016\n\006height\030\004 \001(\r\"\267\003\n\nSpriteInfo\022\025\n\r"
+    "pattern_width\030\001 \001(\r\022\026\n\016pattern_height\030\002 "
+    "\001(\r\022\025\n\rpattern_depth\030\003 \001(\r\022\016\n\006layers\030\004 \001"
+    "(\r\022\021\n\tsprite_id\030\005 \003(\r\022\027\n\017bounding_square"
+    "\030\007 \001(\r\022<\n\tanimation\030\006 \001(\0132).rme.protobuf"
+    ".appearances.SpriteAnimation\022\021\n\tis_opaqu"
+    "e\030\010 \001(\010\022A\n\032bounding_box_per_direction\030\t "
+    "\003(\0132\035.rme.protobuf.appearances.Box\022\024\n\014pa"
+    "ttern_size\030\n \001(\r\022\026\n\016pattern_layers\030\013 \001(\r"
+    "\022\021\n\tpattern_x\030\014 \001(\r\022\021\n\tpattern_y\030\r \001(\r\022\021"
+    "\n\tpattern_z\030\016 \001(\r\022\026\n\016pattern_frames\030\017 \001("
+    "\r\022\024\n\014is_animation\030\020 \001(\010\"\233\001\n\nFrameGroup\022F"
+    "\n\021fixed_frame_group\030\001 \001(\0162+.rme.protobuf"
+    ".appearances.FIXED_FRAME_GROUP\022\n\n\002id\030\002 \001"
+    "(\r\0229\n\013sprite_info\030\003 \001(\0132$.rme.protobuf.a"
+    "ppearances.SpriteInfo\"\211\002\n\nAppearance\022\n\n\002"
+    "id\030\001 \001(\r\0229\n\013frame_group\030\002 \003(\0132$.rme.prot"
+    "obuf.appearances.FrameGroup\0228\n\005flags\030\003 \001"
+    "(\0132).rme.protobuf.appearances.Appearance"
+    "Flags\022\014\n\004name\030\004 \001(\014\022\023\n\013description\030\005 \001(\014"
+    "\022B\n\017appearance_type\030\006 \001(\0162).rme.protobuf"
+    ".appearances.APPEARANCE_TYPE\022\023\n\013sprite_d"
+    "ata\030\007 \003(\014\"\235\023\n\017AppearanceFlags\022:\n\004bank\030\001 "
+    "\001(\0132,.rme.protobuf.appearances.Appearanc"
+    "eFlagBank\022\014\n\004clip\030\002 \001(\010\022\016\n\006bottom\030\003 \001(\010\022"
+    "\013\n\003top\030\004 \001(\010\022\021\n\tcontainer\030\005 \001(\010\022\022\n\ncumul"
+    "ative\030\006 \001(\010\022\016\n\006usable\030\007 \001(\010\022\020\n\010forceuse\030"
+    "\010 \001(\010\022\020\n\010multiuse\030\t \001(\010\022<\n\005write\030\n \001(\0132-"
+    ".rme.protobuf.appearances.AppearanceFlag"
+    "Write\022E\n\nwrite_once\030\013 \001(\01321.rme.protobuf"
+    ".appearances.AppearanceFlagWriteOnce\022\022\n\n"
+    "liquidpool\030\014 \001(\010\022\016\n\006unpass\030\r \001(\010\022\016\n\006unmo"
+    "ve\030\016 \001(\010\022\017\n\007unsight\030\017 \001(\010\022\r\n\005avoid\030\020 \001(\010"
+    "\022\035\n\025no_movement_animation\030\021 \001(\010\022\014\n\004take\030"
+    "\022 \001(\010\022\027\n\017liquidcontainer\030\023 \001(\010\022\014\n\004hang\030\024"
+    " \001(\010\022:\n\004hook\030\025 \001(\0132,.rme.protobuf.appear"
+    "ances.AppearanceFlagHook\022\016\n\006rotate\030\026 \001(\010"
+    "\022<\n\005light\030\027 \001(\0132-.rme.protobuf.appearanc"
+    "es.AppearanceFlagLight\022\021\n\tdont_hide\030\030 \001("
+    "\010\022\023\n\013translucent\030\031 \001(\010\022<\n\005shift\030\032 \001(\0132-."
+    "rme.protobuf.appearances.AppearanceFlagS"
+    "hift\022>\n\006height\030\033 \001(\0132..rme.protobuf.appe"
+    "arances.AppearanceFlagHeight\022\024\n\014lying_ob"
+    "ject\030\034 \001(\010\022\026\n\016animate_always\030\035 \001(\010\022@\n\007au"
+    "tomap\030\036 \001(\0132/.rme.protobuf.appearances.A"
+    "ppearanceFlagAutomap\022B\n\010lenshelp\030\037 \001(\01320"
+    ".rme.protobuf.appearances.AppearanceFlag"
+    "Lenshelp\022\020\n\010fullbank\030  \001(\010\022\023\n\013ignore_loo"
+    "k\030! \001(\010\022@\n\007clothes\030\" \001(\0132/.rme.protobuf."
+    "appearances.AppearanceFlagClothes\022M\n\016def"
+    "ault_action\030# \001(\01325.rme.protobuf.appeara"
+    "nces.AppearanceFlagDefaultAction\022>\n\006mark"
+    "et\030$ \001(\0132..rme.protobuf.appearances.Appe"
+    "aranceFlagMarket\022\014\n\004wrap\030% \001(\010\022\016\n\006unwrap"
+    "\030& \001(\010\022\021\n\ttopeffect\030\' \001(\010\022@\n\013npcsaledata"
+    "\030( \003(\0132+.rme.protobuf.appearances.Appear"
+    "anceFlagNPC\022P\n\017changedtoexpire\030) \001(\01327.r"
+    "me.protobuf.appearances.AppearanceFlagCh"
+    "angedToExpire\022\016\n\006corpse\030* \001(\010\022\025\n\rplayer_"
+    "corpse\030+ \001(\010\022J\n\016cyclopediaitem\030, \001(\01322.r"
+    "me.protobuf.appearances.AppearanceFlagCy"
+    "clopedia\022\014\n\004ammo\030- \001(\010\022\027\n\017show_off_socke"
+    "t\030. \001(\010\022\022\n\nreportable\030/ \001(\010\022\\\n\025upgradecl"
+    "assification\0300 \001(\0132=.rme.protobuf.appear"
+    "ances.AppearanceFlagUpgradeClassificatio"
+    "n\022\033\n\023reverse_addons_east\0301 \001(\010\022\033\n\023revers"
+    "e_addons_west\0302 \001(\010\022\034\n\024reverse_addons_so"
+    "uth\0303 \001(\010\022\034\n\024reverse_addons_north\0304 \001(\010\022"
+    "\017\n\007wearout\0305 \001(\010\022\023\n\013clockexpire\0306 \001(\010\022\016\n"
+    "\006expire\0307 \001(\010\022\022\n\nexpirestop\0308 \001(\010\022\017\n\007wra"
+    "pkit\0309 \001(\010\022M\n\016skillwheel_gem\030: \001(\01325.rme"
+    ".protobuf.appearances.AppearanceFlagSkil"
+    "lWheelGem\022\025\n\rdual_wielding\030; \001(\010\022D\n\timbu"
+    "eable\030< \001(\01321.rme.protobuf.appearances.A"
+    "ppearanceFlagImbueable\022H\n\013proficiency\030= "
+    "\001(\01323.rme.protobuf.appearances.Appearanc"
+    "eFlagProficiency\022@\n\024restrict_to_vocation"
+    "\030> \003(\0162\".rme.protobuf.appearances.VOCATI"
+    "ON\022\025\n\rminimum_level\030\? \001(\r\022:\n\013weapon_type"
+    "\030@ \001(\0162%.rme.protobuf.appearances.WEAPON"
+    "_TYPE\022\025\n\rdeco_item_kit\030A \001(\010\022\022\n\nhook_sou"
+    "th\030F \001(\010\022\021\n\thook_east\030G \001(\010\022T\n\021transpare"
+    "ncylevel\030H \001(\01329.rme.protobuf.appearance"
+    "s.AppearanceFlagTransparencyLevel\"E\n#App"
+    "earanceFlagUpgradeClassification\022\036\n\026upgr"
+    "ade_classification\030\001 \001(\r\"\'\n\022AppearanceFl"
+    "agBank\022\021\n\twaypoints\030\001 \001(\r\".\n\023AppearanceF"
+    "lagWrite\022\027\n\017max_text_length\030\001 \001(\r\"7\n\027App"
+    "earanceFlagWriteOnce\022\034\n\024max_text_length_"
+    "once\030\001 \001(\r\"8\n\023AppearanceFlagLight\022\022\n\nbri"
+    "ghtness\030\001 \001(\r\022\r\n\005color\030\002 \001(\r\")\n\024Appearan"
+    "ceFlagHeight\022\021\n\televation\030\001 \001(\r\"+\n\023Appea"
+    "ranceFlagShift\022\t\n\001x\030\001 \001(\r\022\t\n\001y\030\002 \001(\r\"%\n\025"
+    "AppearanceFlagClothes\022\014\n\004slot\030\001 \001(\r\"V\n\033A"
+    "ppearanceFlagDefaultAction\0227\n\006action\030\001 \001"
+    "(\0162\'.rme.protobuf.appearances.PLAYER_ACT"
+    "ION\"\260\002\n\024AppearanceFlagMarket\0229\n\010category"
+    "\030\001 \001(\0162\'.rme.protobuf.appearances.ITEM_C"
+    "ATEGORY\022\032\n\022trade_as_object_id\030\002 \001(\r\022\031\n\021s"
+    "how_as_object_id\030\003 \001(\r\022K\n\026restrict_to_pr"
+    "ofession\030\005 \003(\0162+.rme.protobuf.appearance"
+    "s.PLAYER_PROFESSION\022\025\n\rminimum_level\030\006 \001"
+    "(\r\022\014\n\004name\030\007 \001(\t\0224\n\010vocation\030\010 \001(\0162\".rme"
+    ".protobuf.appearances.VOCATION\"\245\001\n\021Appea"
+    "ranceFlagNPC\022\014\n\004name\030\001 \001(\014\022\020\n\010location\030\002"
+    " \001(\014\022\022\n\nsale_price\030\003 \001(\r\022\021\n\tbuy_price\030\004 "
+    "\001(\r\022\037\n\027currency_object_type_id\030\005 \001(\r\022(\n "
+    "currency_quest_flag_display_name\030\006 \001(\014\"&"
+    "\n\025AppearanceFlagAutomap\022\r\n\005color\030\001 \001(\r\"L"
+    "\n\022AppearanceFlagHook\0226\n\tdirection\030\001 \001(\0162"
+    "#.rme.protobuf.appearances.HOOK_TYPE\"$\n\026"
+    "AppearanceFlagLenshelp\022\n\n\002id\030\001 \001(\r\"=\n\035Ap"
+    "pearanceFlagChangedToExpire\022\034\n\024former_ob"
+    "ject_typeid\030\001 \001(\r\"3\n\030AppearanceFlagCyclo"
+    "pedia\022\027\n\017cyclopedia_type\030\001 \001(\r\"0\n\037Appear"
+    "anceFlagTransparencyLevel\022\r\n\005level\030\001 \001(\r"
+    "\"\312\001\n\033SpecialMeaningAppearanceIds\022\024\n\014gold"
+    "_coin_id\030\001 \001(\r\022\030\n\020platinum_coin_id\030\002 \001(\r"
+    "\022\027\n\017crystal_coin_id\030\003 \001(\r\022\025\n\rtibia_coin_"
+    "id\030\004 \001(\r\022\031\n\021stamped_letter_id\030\005 \001(\r\022\027\n\017s"
+    "upply_stash_id\030\006 \001(\r\022\027\n\017reward_chest_id\030"
+    "\007 \001(\r\"J\n\033AppearanceFlagSkillWheelGem\022\026\n\016"
+    "gem_quality_id\030\001 \001(\r\022\023\n\013vocation_id\030\002 \001("
+    "\r\"-\n\027AppearanceFlagImbueable\022\022\n\nslot_cou"
+    "nt\030\001 \001(\r\"3\n\031AppearanceFlagProficiency\022\026\n"
+    "\016proficiency_id\030\001 \001(\r*\224\001\n\rPLAYER_ACTION\022"
+    "\026\n\022PLAYER_ACTION_NONE\020\000\022\026\n\022PLAYER_ACTION"
+    "_LOOK\020\001\022\025\n\021PLAYER_ACTION_USE\020\002\022\026\n\022PLAYER"
+    "_ACTION_OPEN\020\003\022$\n PLAYER_ACTION_AUTOWALK"
+    "_HIGHLIGHT\020\004*\225\007\n\rITEM_CATEGORY\022\030\n\024ITEM_C"
+    "ATEGORY_ARMORS\020\001\022\031\n\025ITEM_CATEGORY_AMULET"
+    "S\020\002\022\027\n\023ITEM_CATEGORY_BOOTS\020\003\022\034\n\030ITEM_CAT"
+    "EGORY_CONTAINERS\020\004\022\034\n\030ITEM_CATEGORY_DECO"
+    "RATION\020\005\022\026\n\022ITEM_CATEGORY_FOOD\020\006\022\036\n\032ITEM"
+    "_CATEGORY_HELMETS_HATS\020\007\022\026\n\022ITEM_CATEGOR"
+    "Y_LEGS\020\010\022\030\n\024ITEM_CATEGORY_OTHERS\020\t\022\031\n\025IT"
+    "EM_CATEGORY_POTIONS\020\n\022\027\n\023ITEM_CATEGORY_R"
+    "INGS\020\013\022\027\n\023ITEM_CATEGORY_RUNES\020\014\022\031\n\025ITEM_"
+    "CATEGORY_SHIELDS\020\r\022\027\n\023ITEM_CATEGORY_TOOL"
+    "S\020\016\022\033\n\027ITEM_CATEGORY_VALUABLES\020\017\022\034\n\030ITEM"
+    "_CATEGORY_AMMUNITION\020\020\022\026\n\022ITEM_CATEGORY_"
+    "AXES\020\021\022\027\n\023ITEM_CATEGORY_CLUBS\020\022\022\"\n\036ITEM_"
+    "CATEGORY_DISTANCE_WEAPONS\020\023\022\030\n\024ITEM_CATE"
+    "GORY_SWORDS\020\024\022\034\n\030ITEM_CATEGORY_WANDS_ROD"
+    "S\020\025\022!\n\035ITEM_CATEGORY_PREMIUM_SCROLLS\020\026\022\035"
+    "\n\031ITEM_CATEGORY_TIBIA_COINS\020\027\022#\n\037ITEM_CA"
+    "TEGORY_CREATURE_PRODUCTS\020\030\022\030\n\024ITEM_CATEG"
+    "ORY_QUIVER\020\031\022\037\n\033ITEM_CATEGORY_TWOHANDWEA"
+    "PON\020\032\022\031\n\025ITEM_CATEGORY_HELMETS\020\033\022\032\n\026ITEM"
+    "_CATEGORY_BACKPACK\020\034\022\037\n\033ITEM_CATEGORY_ON"
+    "EHANDWEAPON\020\035\022\027\n\023ITEM_CATEGORY_ARROW\020\036\022\033"
+    "\n\027ITEM_CATEGORY_SOULCORES\020\037\022\027\n\023ITEM_CATE"
+    "GORY_FISTS\020 *\355\001\n\021PLAYER_PROFESSION\022\"\n\025PL"
+    "AYER_PROFESSION_ANY\020\377\377\377\377\377\377\377\377\377\001\022\032\n\026PLAYER"
+    "_PROFESSION_NONE\020\000\022\034\n\030PLAYER_PROFESSION_"
+    "KNIGHT\020\001\022\035\n\031PLAYER_PROFESSION_PALADIN\020\002\022"
+    "\036\n\032PLAYER_PROFESSION_SORCERER\020\003\022\033\n\027PLAYE"
+    "R_PROFESSION_DRUID\020\004\022\036\n\032PLAYER_PROFESSIO"
+    "N_PROMOTED\020\n*\203\001\n\023ANIMATION_LOOP_TYPE\022)\n\034"
+    "ANIMATION_LOOP_TYPE_PINGPONG\020\377\377\377\377\377\377\377\377\377\001\022"
+    " \n\034ANIMATION_LOOP_TYPE_INFINITE\020\000\022\037\n\033ANI"
+    "MATION_LOOP_TYPE_COUNTED\020\001*S\n\030ANIMATION_"
+    "ANIMATION_MODE\022\033\n\027ANIMATION_ASYNCHRONIZE"
+    "D\020\000\022\032\n\026ANIMATION_SYNCHRONIZED\020\001*4\n\tHOOK_"
+    "TYPE\022\023\n\017HOOK_TYPE_SOUTH\020\001\022\022\n\016HOOK_TYPE_E"
+    "AST\020\002*n\n\017APPEARANCE_TYPE\022\025\n\021APPEARANCE_O"
+    "BJECT\020\001\022\025\n\021APPEARANCE_OUTFIT\020\002\022\025\n\021APPEAR"
+    "ANCE_EFFECT\020\003\022\026\n\022APPEARANCE_MISSILE\020\004*\337\001"
+    "\n\013WEAPON_TYPE\022\030\n\024WEAPON_TYPE_NOWEAPON\020\000\022"
+    "\025\n\021WEAPON_TYPE_SWORD\020\001\022\023\n\017WEAPON_TYPE_AX"
+    "E\020\002\022\024\n\020WEAPON_TYPE_CLUB\020\003\022\024\n\020WEAPON_TYPE"
+    "_FIST\020\004\022\023\n\017WEAPON_TYPE_BOW\020\005\022\030\n\024WEAPON_T"
+    "YPE_CROSSBOW\020\006\022\030\n\024WEAPON_TYPE_WAND_ROD\020\007"
+    "\022\025\n\021WEAPON_TYPE_THROW\020\010*\270\001\n\010VOCATION\022\031\n\014"
+    "VOCATION_ANY\020\377\377\377\377\377\377\377\377\377\001\022\021\n\rVOCATION_NONE"
+    "\020\000\022\023\n\017VOCATION_KNIGHT\020\001\022\024\n\020VOCATION_PALA"
+    "DIN\020\002\022\025\n\021VOCATION_SORCERER\020\003\022\022\n\016VOCATION"
+    "_DRUID\020\004\022\021\n\rVOCATION_MONK\020\005\022\025\n\021VOCATION_"
+    "PROMOTED\020\n*\201\001\n\021FIXED_FRAME_GROUP\022!\n\035FIXE"
+    "D_FRAME_GROUP_OUTFIT_IDLE\020\000\022#\n\037FIXED_FRA"
+    "ME_GROUP_OUTFIT_MOVING\020\001\022$\n FIXED_FRAME_"
+    "GROUP_OBJECT_INITIAL\020\002"
 };
 static ::absl::once_flag descriptor_table_appearances_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_appearances_2eproto = {
     false,
     false,
-    7154,
+    8102,
     descriptor_table_protodef_appearances_2eproto,
     "appearances.proto",
     &descriptor_table_appearances_2eproto_once,
     nullptr,
     0,
-    29,
+    30,
     schemas,
     file_default_instances,
     TableStruct_appearances_2eproto::offsets,
@@ -1672,9 +1783,9 @@ const ::google::protobuf::EnumDescriptor* ITEM_CATEGORY_descriptor() {
   return file_level_enum_descriptors_appearances_2eproto[1];
 }
 PROTOBUF_CONSTINIT const uint32_t ITEM_CATEGORY_internal_data_[] = {
-    1703937u, 0u, };
+    2097153u, 0u, };
 bool ITEM_CATEGORY_IsValid(int value) {
-  return 1 <= value && value <= 26;
+  return 1 <= value && value <= 32;
 }
 const ::google::protobuf::EnumDescriptor* PLAYER_PROFESSION_descriptor() {
   ::google::protobuf::internal::AssignDescriptors(&descriptor_table_appearances_2eproto);
@@ -1694,18 +1805,36 @@ PROTOBUF_CONSTINIT const uint32_t ANIMATION_LOOP_TYPE_internal_data_[] = {
 bool ANIMATION_LOOP_TYPE_IsValid(int value) {
   return -1 <= value && value <= 1;
 }
-const ::google::protobuf::EnumDescriptor* HOOK_TYPE_descriptor() {
+const ::google::protobuf::EnumDescriptor* ANIMATION_ANIMATION_MODE_descriptor() {
   ::google::protobuf::internal::AssignDescriptors(&descriptor_table_appearances_2eproto);
   return file_level_enum_descriptors_appearances_2eproto[4];
+}
+PROTOBUF_CONSTINIT const uint32_t ANIMATION_ANIMATION_MODE_internal_data_[] = {
+    131072u, 0u, };
+bool ANIMATION_ANIMATION_MODE_IsValid(int value) {
+  return 0 <= value && value <= 1;
+}
+const ::google::protobuf::EnumDescriptor* HOOK_TYPE_descriptor() {
+  ::google::protobuf::internal::AssignDescriptors(&descriptor_table_appearances_2eproto);
+  return file_level_enum_descriptors_appearances_2eproto[5];
 }
 PROTOBUF_CONSTINIT const uint32_t HOOK_TYPE_internal_data_[] = {
     131073u, 0u, };
 bool HOOK_TYPE_IsValid(int value) {
   return 1 <= value && value <= 2;
 }
+const ::google::protobuf::EnumDescriptor* APPEARANCE_TYPE_descriptor() {
+  ::google::protobuf::internal::AssignDescriptors(&descriptor_table_appearances_2eproto);
+  return file_level_enum_descriptors_appearances_2eproto[6];
+}
+PROTOBUF_CONSTINIT const uint32_t APPEARANCE_TYPE_internal_data_[] = {
+    262145u, 0u, };
+bool APPEARANCE_TYPE_IsValid(int value) {
+  return 1 <= value && value <= 4;
+}
 const ::google::protobuf::EnumDescriptor* WEAPON_TYPE_descriptor() {
   ::google::protobuf::internal::AssignDescriptors(&descriptor_table_appearances_2eproto);
-  return file_level_enum_descriptors_appearances_2eproto[5];
+  return file_level_enum_descriptors_appearances_2eproto[7];
 }
 PROTOBUF_CONSTINIT const uint32_t WEAPON_TYPE_internal_data_[] = {
     589824u, 0u, };
@@ -1714,7 +1843,7 @@ bool WEAPON_TYPE_IsValid(int value) {
 }
 const ::google::protobuf::EnumDescriptor* VOCATION_descriptor() {
   ::google::protobuf::internal::AssignDescriptors(&descriptor_table_appearances_2eproto);
-  return file_level_enum_descriptors_appearances_2eproto[6];
+  return file_level_enum_descriptors_appearances_2eproto[8];
 }
 PROTOBUF_CONSTINIT const uint32_t VOCATION_internal_data_[] = {
     524287u, 32u, 16u, };
@@ -1723,7 +1852,7 @@ bool VOCATION_IsValid(int value) {
 }
 const ::google::protobuf::EnumDescriptor* FIXED_FRAME_GROUP_descriptor() {
   ::google::protobuf::internal::AssignDescriptors(&descriptor_table_appearances_2eproto);
-  return file_level_enum_descriptors_appearances_2eproto[7];
+  return file_level_enum_descriptors_appearances_2eproto[9];
 }
 PROTOBUF_CONSTINIT const uint32_t FIXED_FRAME_GROUP_internal_data_[] = {
     196608u, 0u, };
@@ -2729,9 +2858,9 @@ inline void SpriteAnimation::SharedCtor(::_pb::Arena* arena) {
   ::memset(reinterpret_cast<char *>(&_impl_) +
                offsetof(Impl_, default_start_phase_),
            0,
-           offsetof(Impl_, loop_count_) -
+           offsetof(Impl_, animation_mode_) -
                offsetof(Impl_, default_start_phase_) +
-               sizeof(Impl_::loop_count_));
+               sizeof(Impl_::animation_mode_));
 }
 SpriteAnimation::~SpriteAnimation() {
   // @@protoc_insertion_point(destructor:rme.protobuf.appearances.SpriteAnimation)
@@ -2792,16 +2921,16 @@ const ::google::protobuf::internal::ClassData* SpriteAnimation::GetClassData() c
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<3, 6, 2, 0, 2> SpriteAnimation::_table_ = {
+const ::_pbi::TcParseTable<3, 7, 3, 0, 2> SpriteAnimation::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(SpriteAnimation, _impl_._has_bits_),
     0, // no _extensions_
-    6, 56,  // max_field_number, fast_idx_mask
+    7, 56,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294967232,  // skipmap
+    4294967168,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    6,  // num_field_entries
-    2,  // num_aux_entries
+    7,  // num_field_entries
+    3,  // num_aux_entries
     offsetof(decltype(_table_), aux_entries),
     _class_data_.base(),
     nullptr,  // post_loop_handler
@@ -2822,14 +2951,16 @@ const ::_pbi::TcParseTable<3, 6, 2, 0, 2> SpriteAnimation::_table_ = {
      {24, 2, 0, PROTOBUF_FIELD_OFFSET(SpriteAnimation, _impl_.random_start_phase_)}},
     // optional .rme.protobuf.appearances.ANIMATION_LOOP_TYPE loop_type = 4;
     {::_pbi::TcParser::FastErS1,
-     {32, 4, 1, PROTOBUF_FIELD_OFFSET(SpriteAnimation, _impl_.loop_type_)}},
+     {32, 5, 1, PROTOBUF_FIELD_OFFSET(SpriteAnimation, _impl_.loop_type_)}},
     // optional uint32 loop_count = 5;
     {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(SpriteAnimation, _impl_.loop_count_), 3>(),
      {40, 3, 0, PROTOBUF_FIELD_OFFSET(SpriteAnimation, _impl_.loop_count_)}},
     // repeated .rme.protobuf.appearances.SpritePhase sprite_phase = 6;
     {::_pbi::TcParser::FastMtR1,
      {50, 63, 0, PROTOBUF_FIELD_OFFSET(SpriteAnimation, _impl_.sprite_phase_)}},
-    {::_pbi::TcParser::MiniParse, {}},
+    // optional .rme.protobuf.appearances.ANIMATION_ANIMATION_MODE animation_mode = 7;
+    {::_pbi::TcParser::FastEr0S1,
+     {56, 4, 1, PROTOBUF_FIELD_OFFSET(SpriteAnimation, _impl_.animation_mode_)}},
   }}, {{
     65535, 65535
   }}, {{
@@ -2843,7 +2974,7 @@ const ::_pbi::TcParseTable<3, 6, 2, 0, 2> SpriteAnimation::_table_ = {
     {PROTOBUF_FIELD_OFFSET(SpriteAnimation, _impl_.random_start_phase_), _Internal::kHasBitsOffset + 2, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional .rme.protobuf.appearances.ANIMATION_LOOP_TYPE loop_type = 4;
-    {PROTOBUF_FIELD_OFFSET(SpriteAnimation, _impl_.loop_type_), _Internal::kHasBitsOffset + 4, 1,
+    {PROTOBUF_FIELD_OFFSET(SpriteAnimation, _impl_.loop_type_), _Internal::kHasBitsOffset + 5, 1,
     (0 | ::_fl::kFcOptional | ::_fl::kEnumRange)},
     // optional uint32 loop_count = 5;
     {PROTOBUF_FIELD_OFFSET(SpriteAnimation, _impl_.loop_count_), _Internal::kHasBitsOffset + 3, 0,
@@ -2851,9 +2982,13 @@ const ::_pbi::TcParseTable<3, 6, 2, 0, 2> SpriteAnimation::_table_ = {
     // repeated .rme.protobuf.appearances.SpritePhase sprite_phase = 6;
     {PROTOBUF_FIELD_OFFSET(SpriteAnimation, _impl_.sprite_phase_), -1, 0,
     (0 | ::_fl::kFcRepeated | ::_fl::kMessage | ::_fl::kTvTable)},
+    // optional .rme.protobuf.appearances.ANIMATION_ANIMATION_MODE animation_mode = 7;
+    {PROTOBUF_FIELD_OFFSET(SpriteAnimation, _impl_.animation_mode_), _Internal::kHasBitsOffset + 4, 2,
+    (0 | ::_fl::kFcOptional | ::_fl::kEnumRange)},
   }}, {{
     {::_pbi::TcParser::GetTable<::rme::protobuf::appearances::SpritePhase>()},
     {-1, 3},
+    {0, 2},
   }}, {{
   }},
 };
@@ -2867,10 +3002,10 @@ PROTOBUF_NOINLINE void SpriteAnimation::Clear() {
 
   _impl_.sprite_phase_.Clear();
   cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     ::memset(&_impl_.default_start_phase_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.loop_count_) -
-        reinterpret_cast<char*>(&_impl_.default_start_phase_)) + sizeof(_impl_.loop_count_));
+        reinterpret_cast<char*>(&_impl_.animation_mode_) -
+        reinterpret_cast<char*>(&_impl_.default_start_phase_)) + sizeof(_impl_.animation_mode_));
     _impl_.loop_type_ = -1;
   }
   _impl_._has_bits_.Clear();
@@ -2915,7 +3050,7 @@ PROTOBUF_NOINLINE void SpriteAnimation::Clear() {
           }
 
           // optional .rme.protobuf.appearances.ANIMATION_LOOP_TYPE loop_type = 4;
-          if (cached_has_bits & 0x00000010u) {
+          if (cached_has_bits & 0x00000020u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteEnumToArray(
                 4, this_._internal_loop_type(), target);
@@ -2937,6 +3072,13 @@ PROTOBUF_NOINLINE void SpriteAnimation::Clear() {
                 ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
                     6, repfield, repfield.GetCachedSize(),
                     target, stream);
+          }
+
+          // optional .rme.protobuf.appearances.ANIMATION_ANIMATION_MODE animation_mode = 7;
+          if (cached_has_bits & 0x00000010u) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteEnumToArray(
+                7, this_._internal_animation_mode(), target);
           }
 
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
@@ -2973,7 +3115,7 @@ PROTOBUF_NOINLINE void SpriteAnimation::Clear() {
             }
           }
           cached_has_bits = this_._impl_._has_bits_[0];
-          if (cached_has_bits & 0x0000001fu) {
+          if (cached_has_bits & 0x0000003fu) {
             // optional uint32 default_start_phase = 1;
             if (cached_has_bits & 0x00000001u) {
               total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
@@ -2992,8 +3134,13 @@ PROTOBUF_NOINLINE void SpriteAnimation::Clear() {
               total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
                   this_._internal_loop_count());
             }
-            // optional .rme.protobuf.appearances.ANIMATION_LOOP_TYPE loop_type = 4;
+            // optional .rme.protobuf.appearances.ANIMATION_ANIMATION_MODE animation_mode = 7;
             if (cached_has_bits & 0x00000010u) {
+              total_size += 1 +
+                            ::_pbi::WireFormatLite::EnumSize(this_._internal_animation_mode());
+            }
+            // optional .rme.protobuf.appearances.ANIMATION_LOOP_TYPE loop_type = 4;
+            if (cached_has_bits & 0x00000020u) {
               total_size += 1 +
                             ::_pbi::WireFormatLite::EnumSize(this_._internal_loop_type());
             }
@@ -3013,7 +3160,7 @@ void SpriteAnimation::MergeImpl(::google::protobuf::MessageLite& to_msg, const :
   _this->_internal_mutable_sprite_phase()->MergeFrom(
       from._internal_sprite_phase());
   cached_has_bits = from._impl_._has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     if (cached_has_bits & 0x00000001u) {
       _this->_impl_.default_start_phase_ = from._impl_.default_start_phase_;
     }
@@ -3027,6 +3174,9 @@ void SpriteAnimation::MergeImpl(::google::protobuf::MessageLite& to_msg, const :
       _this->_impl_.loop_count_ = from._impl_.loop_count_;
     }
     if (cached_has_bits & 0x00000010u) {
+      _this->_impl_.animation_mode_ = from._impl_.animation_mode_;
+    }
+    if (cached_has_bits & 0x00000020u) {
       _this->_impl_.loop_type_ = from._impl_.loop_type_;
     }
   }
@@ -3404,9 +3554,9 @@ SpriteInfo::SpriteInfo(
                offsetof(Impl_, pattern_width_),
            reinterpret_cast<const char *>(&from._impl_) +
                offsetof(Impl_, pattern_width_),
-           offsetof(Impl_, is_opaque_) -
+           offsetof(Impl_, pattern_frames_) -
                offsetof(Impl_, pattern_width_) +
-               sizeof(Impl_::is_opaque_));
+               sizeof(Impl_::pattern_frames_));
 
   // @@protoc_insertion_point(copy_constructor:rme.protobuf.appearances.SpriteInfo)
 }
@@ -3422,9 +3572,9 @@ inline void SpriteInfo::SharedCtor(::_pb::Arena* arena) {
   ::memset(reinterpret_cast<char *>(&_impl_) +
                offsetof(Impl_, animation_),
            0,
-           offsetof(Impl_, is_opaque_) -
+           offsetof(Impl_, pattern_frames_) -
                offsetof(Impl_, animation_) +
-               sizeof(Impl_::is_opaque_));
+               sizeof(Impl_::pattern_frames_));
 }
 SpriteInfo::~SpriteInfo() {
   // @@protoc_insertion_point(destructor:rme.protobuf.appearances.SpriteInfo)
@@ -3490,15 +3640,15 @@ const ::google::protobuf::internal::ClassData* SpriteInfo::GetClassData() const 
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<4, 9, 2, 0, 2> SpriteInfo::_table_ = {
+const ::_pbi::TcParseTable<4, 16, 2, 0, 2> SpriteInfo::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_._has_bits_),
     0, // no _extensions_
-    9, 120,  // max_field_number, fast_idx_mask
+    16, 120,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294966784,  // skipmap
+    4294901760,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    9,  // num_field_entries
+    16,  // num_field_entries
     2,  // num_aux_entries
     offsetof(decltype(_table_), aux_entries),
     _class_data_.base(),
@@ -3508,7 +3658,9 @@ const ::_pbi::TcParseTable<4, 9, 2, 0, 2> SpriteInfo::_table_ = {
     ::_pbi::TcParser::GetTable<::rme::protobuf::appearances::SpriteInfo>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
-    {::_pbi::TcParser::MiniParse, {}},
+    // optional bool is_animation = 16;
+    {::_pbi::TcParser::FastV8S2,
+     {384, 10, 0, PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.is_animation_)}},
     // optional uint32 pattern_width = 1;
     {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(SpriteInfo, _impl_.pattern_width_), 1>(),
      {8, 1, 0, PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.pattern_width_)}},
@@ -3531,17 +3683,29 @@ const ::_pbi::TcParseTable<4, 9, 2, 0, 2> SpriteInfo::_table_ = {
     {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(SpriteInfo, _impl_.bounding_square_), 5>(),
      {56, 5, 0, PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.bounding_square_)}},
     // optional bool is_opaque = 8;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(SpriteInfo, _impl_.is_opaque_), 6>(),
-     {64, 6, 0, PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.is_opaque_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(SpriteInfo, _impl_.is_opaque_), 9>(),
+     {64, 9, 0, PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.is_opaque_)}},
     // repeated .rme.protobuf.appearances.Box bounding_box_per_direction = 9;
     {::_pbi::TcParser::FastMtR1,
      {74, 63, 1, PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.bounding_box_per_direction_)}},
-    {::_pbi::TcParser::MiniParse, {}},
-    {::_pbi::TcParser::MiniParse, {}},
-    {::_pbi::TcParser::MiniParse, {}},
-    {::_pbi::TcParser::MiniParse, {}},
-    {::_pbi::TcParser::MiniParse, {}},
-    {::_pbi::TcParser::MiniParse, {}},
+    // optional uint32 pattern_size = 10;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(SpriteInfo, _impl_.pattern_size_), 6>(),
+     {80, 6, 0, PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.pattern_size_)}},
+    // optional uint32 pattern_layers = 11;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(SpriteInfo, _impl_.pattern_layers_), 7>(),
+     {88, 7, 0, PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.pattern_layers_)}},
+    // optional uint32 pattern_x = 12;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(SpriteInfo, _impl_.pattern_x_), 8>(),
+     {96, 8, 0, PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.pattern_x_)}},
+    // optional uint32 pattern_y = 13;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(SpriteInfo, _impl_.pattern_y_), 11>(),
+     {104, 11, 0, PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.pattern_y_)}},
+    // optional uint32 pattern_z = 14;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(SpriteInfo, _impl_.pattern_z_), 12>(),
+     {112, 12, 0, PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.pattern_z_)}},
+    // optional uint32 pattern_frames = 15;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(SpriteInfo, _impl_.pattern_frames_), 13>(),
+     {120, 13, 0, PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.pattern_frames_)}},
   }}, {{
     65535, 65535
   }}, {{
@@ -3567,11 +3731,32 @@ const ::_pbi::TcParseTable<4, 9, 2, 0, 2> SpriteInfo::_table_ = {
     {PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.bounding_square_), _Internal::kHasBitsOffset + 5, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
     // optional bool is_opaque = 8;
-    {PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.is_opaque_), _Internal::kHasBitsOffset + 6, 0,
+    {PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.is_opaque_), _Internal::kHasBitsOffset + 9, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // repeated .rme.protobuf.appearances.Box bounding_box_per_direction = 9;
     {PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.bounding_box_per_direction_), -1, 1,
     (0 | ::_fl::kFcRepeated | ::_fl::kMessage | ::_fl::kTvTable)},
+    // optional uint32 pattern_size = 10;
+    {PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.pattern_size_), _Internal::kHasBitsOffset + 6, 0,
+    (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    // optional uint32 pattern_layers = 11;
+    {PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.pattern_layers_), _Internal::kHasBitsOffset + 7, 0,
+    (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    // optional uint32 pattern_x = 12;
+    {PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.pattern_x_), _Internal::kHasBitsOffset + 8, 0,
+    (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    // optional uint32 pattern_y = 13;
+    {PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.pattern_y_), _Internal::kHasBitsOffset + 11, 0,
+    (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    // optional uint32 pattern_z = 14;
+    {PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.pattern_z_), _Internal::kHasBitsOffset + 12, 0,
+    (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    // optional uint32 pattern_frames = 15;
+    {PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.pattern_frames_), _Internal::kHasBitsOffset + 13, 0,
+    (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    // optional bool is_animation = 16;
+    {PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.is_animation_), _Internal::kHasBitsOffset + 10, 0,
+    (0 | ::_fl::kFcOptional | ::_fl::kBool)},
   }}, {{
     {::_pbi::TcParser::GetTable<::rme::protobuf::appearances::SpriteAnimation>()},
     {::_pbi::TcParser::GetTable<::rme::protobuf::appearances::Box>()},
@@ -3593,10 +3778,15 @@ PROTOBUF_NOINLINE void SpriteInfo::Clear() {
     ABSL_DCHECK(_impl_.animation_ != nullptr);
     _impl_.animation_->Clear();
   }
-  if (cached_has_bits & 0x0000007eu) {
+  if (cached_has_bits & 0x000000feu) {
     ::memset(&_impl_.pattern_width_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.is_opaque_) -
-        reinterpret_cast<char*>(&_impl_.pattern_width_)) + sizeof(_impl_.is_opaque_));
+        reinterpret_cast<char*>(&_impl_.pattern_layers_) -
+        reinterpret_cast<char*>(&_impl_.pattern_width_)) + sizeof(_impl_.pattern_layers_));
+  }
+  if (cached_has_bits & 0x00003f00u) {
+    ::memset(&_impl_.pattern_x_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.pattern_frames_) -
+        reinterpret_cast<char*>(&_impl_.pattern_x_)) + sizeof(_impl_.pattern_frames_));
   }
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
@@ -3668,7 +3858,7 @@ PROTOBUF_NOINLINE void SpriteInfo::Clear() {
           }
 
           // optional bool is_opaque = 8;
-          if (cached_has_bits & 0x00000040u) {
+          if (cached_has_bits & 0x00000200u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 8, this_._internal_is_opaque(), target);
@@ -3683,6 +3873,55 @@ PROTOBUF_NOINLINE void SpriteInfo::Clear() {
                 ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
                     9, repfield, repfield.GetCachedSize(),
                     target, stream);
+          }
+
+          // optional uint32 pattern_size = 10;
+          if (cached_has_bits & 0x00000040u) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
+                10, this_._internal_pattern_size(), target);
+          }
+
+          // optional uint32 pattern_layers = 11;
+          if (cached_has_bits & 0x00000080u) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
+                11, this_._internal_pattern_layers(), target);
+          }
+
+          // optional uint32 pattern_x = 12;
+          if (cached_has_bits & 0x00000100u) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
+                12, this_._internal_pattern_x(), target);
+          }
+
+          // optional uint32 pattern_y = 13;
+          if (cached_has_bits & 0x00000800u) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
+                13, this_._internal_pattern_y(), target);
+          }
+
+          // optional uint32 pattern_z = 14;
+          if (cached_has_bits & 0x00001000u) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
+                14, this_._internal_pattern_z(), target);
+          }
+
+          // optional uint32 pattern_frames = 15;
+          if (cached_has_bits & 0x00002000u) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
+                15, this_._internal_pattern_frames(), target);
+          }
+
+          // optional bool is_animation = 16;
+          if (cached_has_bits & 0x00000400u) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteBoolToArray(
+                16, this_._internal_is_animation(), target);
           }
 
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
@@ -3727,7 +3966,7 @@ PROTOBUF_NOINLINE void SpriteInfo::Clear() {
             }
           }
           cached_has_bits = this_._impl_._has_bits_[0];
-          if (cached_has_bits & 0x0000007fu) {
+          if (cached_has_bits & 0x000000ffu) {
             // optional .rme.protobuf.appearances.SpriteAnimation animation = 6;
             if (cached_has_bits & 0x00000001u) {
               total_size += 1 +
@@ -3758,9 +3997,45 @@ PROTOBUF_NOINLINE void SpriteInfo::Clear() {
               total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
                   this_._internal_bounding_square());
             }
-            // optional bool is_opaque = 8;
+            // optional uint32 pattern_size = 10;
             if (cached_has_bits & 0x00000040u) {
+              total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+                  this_._internal_pattern_size());
+            }
+            // optional uint32 pattern_layers = 11;
+            if (cached_has_bits & 0x00000080u) {
+              total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+                  this_._internal_pattern_layers());
+            }
+          }
+          if (cached_has_bits & 0x00003f00u) {
+            // optional uint32 pattern_x = 12;
+            if (cached_has_bits & 0x00000100u) {
+              total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+                  this_._internal_pattern_x());
+            }
+            // optional bool is_opaque = 8;
+            if (cached_has_bits & 0x00000200u) {
               total_size += 2;
+            }
+            // optional bool is_animation = 16;
+            if (cached_has_bits & 0x00000400u) {
+              total_size += 3;
+            }
+            // optional uint32 pattern_y = 13;
+            if (cached_has_bits & 0x00000800u) {
+              total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+                  this_._internal_pattern_y());
+            }
+            // optional uint32 pattern_z = 14;
+            if (cached_has_bits & 0x00001000u) {
+              total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+                  this_._internal_pattern_z());
+            }
+            // optional uint32 pattern_frames = 15;
+            if (cached_has_bits & 0x00002000u) {
+              total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+                  this_._internal_pattern_frames());
             }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
@@ -3780,7 +4055,7 @@ void SpriteInfo::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::goog
   _this->_internal_mutable_bounding_box_per_direction()->MergeFrom(
       from._internal_bounding_box_per_direction());
   cached_has_bits = from._impl_._has_bits_[0];
-  if (cached_has_bits & 0x0000007fu) {
+  if (cached_has_bits & 0x000000ffu) {
     if (cached_has_bits & 0x00000001u) {
       ABSL_DCHECK(from._impl_.animation_ != nullptr);
       if (_this->_impl_.animation_ == nullptr) {
@@ -3806,7 +4081,30 @@ void SpriteInfo::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::goog
       _this->_impl_.bounding_square_ = from._impl_.bounding_square_;
     }
     if (cached_has_bits & 0x00000040u) {
+      _this->_impl_.pattern_size_ = from._impl_.pattern_size_;
+    }
+    if (cached_has_bits & 0x00000080u) {
+      _this->_impl_.pattern_layers_ = from._impl_.pattern_layers_;
+    }
+  }
+  if (cached_has_bits & 0x00003f00u) {
+    if (cached_has_bits & 0x00000100u) {
+      _this->_impl_.pattern_x_ = from._impl_.pattern_x_;
+    }
+    if (cached_has_bits & 0x00000200u) {
       _this->_impl_.is_opaque_ = from._impl_.is_opaque_;
+    }
+    if (cached_has_bits & 0x00000400u) {
+      _this->_impl_.is_animation_ = from._impl_.is_animation_;
+    }
+    if (cached_has_bits & 0x00000800u) {
+      _this->_impl_.pattern_y_ = from._impl_.pattern_y_;
+    }
+    if (cached_has_bits & 0x00001000u) {
+      _this->_impl_.pattern_z_ = from._impl_.pattern_z_;
+    }
+    if (cached_has_bits & 0x00002000u) {
+      _this->_impl_.pattern_frames_ = from._impl_.pattern_frames_;
     }
   }
   _this->_impl_._has_bits_[0] |= cached_has_bits;
@@ -3828,8 +4126,8 @@ void SpriteInfo::InternalSwap(SpriteInfo* PROTOBUF_RESTRICT other) {
   _impl_.sprite_id_.InternalSwap(&other->_impl_.sprite_id_);
   _impl_.bounding_box_per_direction_.InternalSwap(&other->_impl_.bounding_box_per_direction_);
   ::google::protobuf::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.is_opaque_)
-      + sizeof(SpriteInfo::_impl_.is_opaque_)
+      PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.pattern_frames_)
+      + sizeof(SpriteInfo::_impl_.pattern_frames_)
       - PROTOBUF_FIELD_OFFSET(SpriteInfo, _impl_.animation_)>(
           reinterpret_cast<char*>(&_impl_.animation_),
           reinterpret_cast<char*>(&other->_impl_.animation_));
@@ -4182,6 +4480,7 @@ inline PROTOBUF_NDEBUG_INLINE Appearance::Impl_::Impl_(
       : _has_bits_{from._has_bits_},
         _cached_size_{0},
         frame_group_{visibility, arena, from.frame_group_},
+        sprite_data_{visibility, arena, from.sprite_data_},
         name_(arena, from.name_),
         description_(arena, from.description_) {}
 
@@ -4202,7 +4501,13 @@ Appearance::Appearance(
   _impl_.flags_ = (cached_has_bits & 0x00000004u) ? ::google::protobuf::Message::CopyConstruct<::rme::protobuf::appearances::AppearanceFlags>(
                               arena, *from._impl_.flags_)
                         : nullptr;
-  _impl_.id_ = from._impl_.id_;
+  ::memcpy(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, id_),
+           reinterpret_cast<const char *>(&from._impl_) +
+               offsetof(Impl_, id_),
+           offsetof(Impl_, appearance_type_) -
+               offsetof(Impl_, id_) +
+               sizeof(Impl_::appearance_type_));
 
   // @@protoc_insertion_point(copy_constructor:rme.protobuf.appearances.Appearance)
 }
@@ -4211,8 +4516,10 @@ inline PROTOBUF_NDEBUG_INLINE Appearance::Impl_::Impl_(
     ::google::protobuf::Arena* arena)
       : _cached_size_{0},
         frame_group_{visibility, arena},
+        sprite_data_{visibility, arena},
         name_(arena),
-        description_(arena) {}
+        description_(arena),
+        appearance_type_{static_cast< ::rme::protobuf::appearances::APPEARANCE_TYPE >(1)} {}
 
 inline void Appearance::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
@@ -4245,6 +4552,10 @@ constexpr auto Appearance::InternalNewImpl_() {
   constexpr auto arena_bits = ::google::protobuf::internal::EncodePlacementArenaOffsets({
       PROTOBUF_FIELD_OFFSET(Appearance, _impl_.frame_group_) +
           decltype(Appearance::_impl_.frame_group_)::
+              InternalGetArenaOffset(
+                  ::google::protobuf::Message::internal_visibility()),
+      PROTOBUF_FIELD_OFFSET(Appearance, _impl_.sprite_data_) +
+          decltype(Appearance::_impl_.sprite_data_)::
               InternalGetArenaOffset(
                   ::google::protobuf::Message::internal_visibility()),
   });
@@ -4285,16 +4596,16 @@ const ::google::protobuf::internal::ClassData* Appearance::GetClassData() const 
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<3, 5, 2, 0, 2> Appearance::_table_ = {
+const ::_pbi::TcParseTable<3, 7, 3, 0, 2> Appearance::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(Appearance, _impl_._has_bits_),
     0, // no _extensions_
-    5, 56,  // max_field_number, fast_idx_mask
+    7, 56,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294967264,  // skipmap
+    4294967168,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    5,  // num_field_entries
-    2,  // num_aux_entries
+    7,  // num_field_entries
+    3,  // num_aux_entries
     offsetof(decltype(_table_), aux_entries),
     _class_data_.base(),
     nullptr,  // post_loop_handler
@@ -4319,8 +4630,12 @@ const ::_pbi::TcParseTable<3, 5, 2, 0, 2> Appearance::_table_ = {
     // optional bytes description = 5;
     {::_pbi::TcParser::FastBS1,
      {42, 1, 0, PROTOBUF_FIELD_OFFSET(Appearance, _impl_.description_)}},
-    {::_pbi::TcParser::MiniParse, {}},
-    {::_pbi::TcParser::MiniParse, {}},
+    // optional .rme.protobuf.appearances.APPEARANCE_TYPE appearance_type = 6;
+    {::_pbi::TcParser::FastEr1S1,
+     {48, 4, 4, PROTOBUF_FIELD_OFFSET(Appearance, _impl_.appearance_type_)}},
+    // repeated bytes sprite_data = 7;
+    {::_pbi::TcParser::FastBR1,
+     {58, 63, 0, PROTOBUF_FIELD_OFFSET(Appearance, _impl_.sprite_data_)}},
   }}, {{
     65535, 65535
   }}, {{
@@ -4339,9 +4654,16 @@ const ::_pbi::TcParseTable<3, 5, 2, 0, 2> Appearance::_table_ = {
     // optional bytes description = 5;
     {PROTOBUF_FIELD_OFFSET(Appearance, _impl_.description_), _Internal::kHasBitsOffset + 1, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBytes | ::_fl::kRepAString)},
+    // optional .rme.protobuf.appearances.APPEARANCE_TYPE appearance_type = 6;
+    {PROTOBUF_FIELD_OFFSET(Appearance, _impl_.appearance_type_), _Internal::kHasBitsOffset + 4, 2,
+    (0 | ::_fl::kFcOptional | ::_fl::kEnumRange)},
+    // repeated bytes sprite_data = 7;
+    {PROTOBUF_FIELD_OFFSET(Appearance, _impl_.sprite_data_), -1, 0,
+    (0 | ::_fl::kFcRepeated | ::_fl::kBytes | ::_fl::kRepSString)},
   }}, {{
     {::_pbi::TcParser::GetTable<::rme::protobuf::appearances::FrameGroup>()},
     {::_pbi::TcParser::GetTable<::rme::protobuf::appearances::AppearanceFlags>()},
+    {1, 4},
   }}, {{
   }},
 };
@@ -4354,6 +4676,7 @@ PROTOBUF_NOINLINE void Appearance::Clear() {
   (void) cached_has_bits;
 
   _impl_.frame_group_.Clear();
+  _impl_.sprite_data_.Clear();
   cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000007u) {
     if (cached_has_bits & 0x00000001u) {
@@ -4367,7 +4690,10 @@ PROTOBUF_NOINLINE void Appearance::Clear() {
       _impl_.flags_->Clear();
     }
   }
-  _impl_.id_ = 0u;
+  if (cached_has_bits & 0x00000018u) {
+    _impl_.id_ = 0u;
+    _impl_.appearance_type_ = 1;
+  }
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
@@ -4425,6 +4751,19 @@ PROTOBUF_NOINLINE void Appearance::Clear() {
             target = stream->WriteBytesMaybeAliased(5, _s, target);
           }
 
+          // optional .rme.protobuf.appearances.APPEARANCE_TYPE appearance_type = 6;
+          if (cached_has_bits & 0x00000010u) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteEnumToArray(
+                6, this_._internal_appearance_type(), target);
+          }
+
+          // repeated bytes sprite_data = 7;
+          for (int i = 0, n = this_._internal_sprite_data_size(); i < n; ++i) {
+            const auto& s = this_._internal_sprite_data().Get(i);
+            target = stream->WriteBytes(7, s, target);
+          }
+
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
             target =
                 ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
@@ -4457,9 +4796,18 @@ PROTOBUF_NOINLINE void Appearance::Clear() {
                 total_size += ::google::protobuf::internal::WireFormatLite::MessageSize(msg);
               }
             }
+            // repeated bytes sprite_data = 7;
+            {
+              total_size +=
+                  1 * ::google::protobuf::internal::FromIntSize(this_._internal_sprite_data().size());
+              for (int i = 0, n = this_._internal_sprite_data().size(); i < n; ++i) {
+                total_size += ::google::protobuf::internal::WireFormatLite::BytesSize(
+                    this_._internal_sprite_data().Get(i));
+              }
+            }
           }
           cached_has_bits = this_._impl_._has_bits_[0];
-          if (cached_has_bits & 0x0000000fu) {
+          if (cached_has_bits & 0x0000001fu) {
             // optional bytes name = 4;
             if (cached_has_bits & 0x00000001u) {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::BytesSize(
@@ -4480,6 +4828,11 @@ PROTOBUF_NOINLINE void Appearance::Clear() {
               total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
                   this_._internal_id());
             }
+            // optional .rme.protobuf.appearances.APPEARANCE_TYPE appearance_type = 6;
+            if (cached_has_bits & 0x00000010u) {
+              total_size += 1 +
+                            ::_pbi::WireFormatLite::EnumSize(this_._internal_appearance_type());
+            }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
                                                      &this_._impl_._cached_size_);
@@ -4496,8 +4849,9 @@ void Appearance::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::goog
 
   _this->_internal_mutable_frame_group()->MergeFrom(
       from._internal_frame_group());
+  _this->_internal_mutable_sprite_data()->MergeFrom(from._internal_sprite_data());
   cached_has_bits = from._impl_._has_bits_[0];
-  if (cached_has_bits & 0x0000000fu) {
+  if (cached_has_bits & 0x0000001fu) {
     if (cached_has_bits & 0x00000001u) {
       _this->_internal_set_name(from._internal_name());
     }
@@ -4515,6 +4869,9 @@ void Appearance::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::goog
     }
     if (cached_has_bits & 0x00000008u) {
       _this->_impl_.id_ = from._impl_.id_;
+    }
+    if (cached_has_bits & 0x00000010u) {
+      _this->_impl_.appearance_type_ = from._impl_.appearance_type_;
     }
   }
   _this->_impl_._has_bits_[0] |= cached_has_bits;
@@ -4536,11 +4893,12 @@ void Appearance::InternalSwap(Appearance* PROTOBUF_RESTRICT other) {
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   _impl_.frame_group_.InternalSwap(&other->_impl_.frame_group_);
+  _impl_.sprite_data_.InternalSwap(&other->_impl_.sprite_data_);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.name_, &other->_impl_.name_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.description_, &other->_impl_.description_, arena);
   ::google::protobuf::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(Appearance, _impl_.id_)
-      + sizeof(Appearance::_impl_.id_)
+      PROTOBUF_FIELD_OFFSET(Appearance, _impl_.appearance_type_)
+      + sizeof(Appearance::_impl_.appearance_type_)
       - PROTOBUF_FIELD_OFFSET(Appearance, _impl_.flags_)>(
           reinterpret_cast<char*>(&_impl_.flags_),
           reinterpret_cast<char*>(&other->_impl_.flags_));
@@ -4644,13 +5002,16 @@ AppearanceFlags::AppearanceFlags(
   _impl_.proficiency_ = (cached_has_bits & 0x00020000u) ? ::google::protobuf::Message::CopyConstruct<::rme::protobuf::appearances::AppearanceFlagProficiency>(
                               arena, *from._impl_.proficiency_)
                         : nullptr;
+  _impl_.transparencylevel_ = (cached_has_bits & 0x00040000u) ? ::google::protobuf::Message::CopyConstruct<::rme::protobuf::appearances::AppearanceFlagTransparencyLevel>(
+                              arena, *from._impl_.transparencylevel_)
+                        : nullptr;
   ::memcpy(reinterpret_cast<char *>(&_impl_) +
                offsetof(Impl_, clip_),
            reinterpret_cast<const char *>(&from._impl_) +
                offsetof(Impl_, clip_),
-           offsetof(Impl_, weapon_type_) -
+           offsetof(Impl_, hook_east_) -
                offsetof(Impl_, clip_) +
-               sizeof(Impl_::weapon_type_));
+               sizeof(Impl_::hook_east_));
 
   // @@protoc_insertion_point(copy_constructor:rme.protobuf.appearances.AppearanceFlags)
 }
@@ -4666,9 +5027,9 @@ inline void AppearanceFlags::SharedCtor(::_pb::Arena* arena) {
   ::memset(reinterpret_cast<char *>(&_impl_) +
                offsetof(Impl_, bank_),
            0,
-           offsetof(Impl_, weapon_type_) -
+           offsetof(Impl_, hook_east_) -
                offsetof(Impl_, bank_) +
-               sizeof(Impl_::weapon_type_));
+               sizeof(Impl_::hook_east_));
 }
 AppearanceFlags::~AppearanceFlags() {
   // @@protoc_insertion_point(destructor:rme.protobuf.appearances.AppearanceFlags)
@@ -4696,6 +5057,7 @@ inline void AppearanceFlags::SharedDtor(MessageLite& self) {
   delete this_._impl_.skillwheel_gem_;
   delete this_._impl_.imbueable_;
   delete this_._impl_.proficiency_;
+  delete this_._impl_.transparencylevel_;
   this_._impl_.~Impl_();
 }
 
@@ -4751,16 +5113,16 @@ const ::google::protobuf::internal::ClassData* AppearanceFlags::GetClassData() c
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<5, 64, 21, 0, 9> AppearanceFlags::_table_ = {
+const ::_pbi::TcParseTable<5, 68, 22, 0, 11> AppearanceFlags::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_._has_bits_),
     0, // no _extensions_
-    64, 248,  // max_field_number, fast_idx_mask
+    72, 248,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
     0,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    64,  // num_field_entries
-    21,  // num_aux_entries
+    68,  // num_field_entries
+    22,  // num_aux_entries
     offsetof(decltype(_table_), aux_entries),
     _class_data_.base(),
     nullptr,  // post_loop_handler
@@ -4774,29 +5136,29 @@ const ::_pbi::TcParseTable<5, 64, 21, 0, 9> AppearanceFlags::_table_ = {
     {::_pbi::TcParser::FastMtS1,
      {10, 0, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.bank_)}},
     // optional bool clip = 2;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AppearanceFlags, _impl_.clip_), 18>(),
-     {16, 18, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.clip_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AppearanceFlags, _impl_.clip_), 19>(),
+     {16, 19, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.clip_)}},
     // optional bool bottom = 3;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AppearanceFlags, _impl_.bottom_), 19>(),
-     {24, 19, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.bottom_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AppearanceFlags, _impl_.bottom_), 20>(),
+     {24, 20, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.bottom_)}},
     // optional bool top = 4;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AppearanceFlags, _impl_.top_), 20>(),
-     {32, 20, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.top_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AppearanceFlags, _impl_.top_), 21>(),
+     {32, 21, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.top_)}},
     // optional bool container = 5;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AppearanceFlags, _impl_.container_), 21>(),
-     {40, 21, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.container_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AppearanceFlags, _impl_.container_), 22>(),
+     {40, 22, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.container_)}},
     // optional bool cumulative = 6;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AppearanceFlags, _impl_.cumulative_), 22>(),
-     {48, 22, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.cumulative_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AppearanceFlags, _impl_.cumulative_), 23>(),
+     {48, 23, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.cumulative_)}},
     // optional bool usable = 7;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AppearanceFlags, _impl_.usable_), 23>(),
-     {56, 23, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.usable_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AppearanceFlags, _impl_.usable_), 24>(),
+     {56, 24, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.usable_)}},
     // optional bool forceuse = 8;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AppearanceFlags, _impl_.forceuse_), 24>(),
-     {64, 24, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.forceuse_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AppearanceFlags, _impl_.forceuse_), 25>(),
+     {64, 25, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.forceuse_)}},
     // optional bool multiuse = 9;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AppearanceFlags, _impl_.multiuse_), 25>(),
-     {72, 25, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.multiuse_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AppearanceFlags, _impl_.multiuse_), 26>(),
+     {72, 26, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.multiuse_)}},
     // optional .rme.protobuf.appearances.AppearanceFlagWrite write = 10;
     {::_pbi::TcParser::FastMtS1,
      {82, 1, 1, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.write_)}},
@@ -4804,23 +5166,21 @@ const ::_pbi::TcParseTable<5, 64, 21, 0, 9> AppearanceFlags::_table_ = {
     {::_pbi::TcParser::FastMtS1,
      {90, 2, 2, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.write_once_)}},
     // optional bool liquidpool = 12;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AppearanceFlags, _impl_.liquidpool_), 26>(),
-     {96, 26, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.liquidpool_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AppearanceFlags, _impl_.liquidpool_), 27>(),
+     {96, 27, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.liquidpool_)}},
     // optional bool unpass = 13;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AppearanceFlags, _impl_.unpass_), 27>(),
-     {104, 27, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.unpass_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AppearanceFlags, _impl_.unpass_), 28>(),
+     {104, 28, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.unpass_)}},
     // optional bool unmove = 14;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AppearanceFlags, _impl_.unmove_), 28>(),
-     {112, 28, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.unmove_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AppearanceFlags, _impl_.unmove_), 29>(),
+     {112, 29, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.unmove_)}},
     // optional bool unsight = 15;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AppearanceFlags, _impl_.unsight_), 29>(),
-     {120, 29, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.unsight_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AppearanceFlags, _impl_.unsight_), 30>(),
+     {120, 30, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.unsight_)}},
     // optional bool avoid = 16;
     {::_pbi::TcParser::FastV8S2,
-     {384, 30, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.avoid_)}},
-    // optional bool no_movement_animation = 17;
-    {::_pbi::TcParser::FastV8S2,
-     {392, 31, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.no_movement_animation_)}},
+     {384, 31, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.avoid_)}},
+    {::_pbi::TcParser::MiniParse, {}},
     // optional .rme.protobuf.appearances.AppearanceFlagClothes clothes = 34;
     {::_pbi::TcParser::FastMtS2,
      {658, 9, 9, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.clothes_)}},
@@ -4862,36 +5222,36 @@ const ::_pbi::TcParseTable<5, 64, 21, 0, 9> AppearanceFlags::_table_ = {
     {::_pbi::TcParser::FastMtS2,
      {506, 8, 8, PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.lenshelp_)}},
   }}, {{
-    33, 0, 2,
-    0, 32, 0, 48,
+    33, 0, 3,
+    0, 32, 0, 48, 65310, 64,
     65535, 65535
   }}, {{
     // optional .rme.protobuf.appearances.AppearanceFlagBank bank = 1;
     {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.bank_), _Internal::kHasBitsOffset + 0, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
     // optional bool clip = 2;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.clip_), _Internal::kHasBitsOffset + 18, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.clip_), _Internal::kHasBitsOffset + 19, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool bottom = 3;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.bottom_), _Internal::kHasBitsOffset + 19, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.bottom_), _Internal::kHasBitsOffset + 20, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool top = 4;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.top_), _Internal::kHasBitsOffset + 20, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.top_), _Internal::kHasBitsOffset + 21, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool container = 5;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.container_), _Internal::kHasBitsOffset + 21, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.container_), _Internal::kHasBitsOffset + 22, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool cumulative = 6;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.cumulative_), _Internal::kHasBitsOffset + 22, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.cumulative_), _Internal::kHasBitsOffset + 23, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool usable = 7;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.usable_), _Internal::kHasBitsOffset + 23, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.usable_), _Internal::kHasBitsOffset + 24, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool forceuse = 8;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.forceuse_), _Internal::kHasBitsOffset + 24, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.forceuse_), _Internal::kHasBitsOffset + 25, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool multiuse = 9;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.multiuse_), _Internal::kHasBitsOffset + 25, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.multiuse_), _Internal::kHasBitsOffset + 26, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional .rme.protobuf.appearances.AppearanceFlagWrite write = 10;
     {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.write_), _Internal::kHasBitsOffset + 1, 1,
@@ -4900,46 +5260,46 @@ const ::_pbi::TcParseTable<5, 64, 21, 0, 9> AppearanceFlags::_table_ = {
     {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.write_once_), _Internal::kHasBitsOffset + 2, 2,
     (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
     // optional bool liquidpool = 12;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.liquidpool_), _Internal::kHasBitsOffset + 26, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.liquidpool_), _Internal::kHasBitsOffset + 27, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool unpass = 13;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.unpass_), _Internal::kHasBitsOffset + 27, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.unpass_), _Internal::kHasBitsOffset + 28, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool unmove = 14;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.unmove_), _Internal::kHasBitsOffset + 28, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.unmove_), _Internal::kHasBitsOffset + 29, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool unsight = 15;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.unsight_), _Internal::kHasBitsOffset + 29, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.unsight_), _Internal::kHasBitsOffset + 30, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool avoid = 16;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.avoid_), _Internal::kHasBitsOffset + 30, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.avoid_), _Internal::kHasBitsOffset + 31, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool no_movement_animation = 17;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.no_movement_animation_), _Internal::kHasBitsOffset + 31, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.no_movement_animation_), _Internal::kHasBitsOffset + 32, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool take = 18;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.take_), _Internal::kHasBitsOffset + 32, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.take_), _Internal::kHasBitsOffset + 33, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool liquidcontainer = 19;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.liquidcontainer_), _Internal::kHasBitsOffset + 33, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.liquidcontainer_), _Internal::kHasBitsOffset + 34, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool hang = 20;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.hang_), _Internal::kHasBitsOffset + 34, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.hang_), _Internal::kHasBitsOffset + 35, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional .rme.protobuf.appearances.AppearanceFlagHook hook = 21;
     {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.hook_), _Internal::kHasBitsOffset + 3, 3,
     (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
     // optional bool rotate = 22;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.rotate_), _Internal::kHasBitsOffset + 35, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.rotate_), _Internal::kHasBitsOffset + 36, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional .rme.protobuf.appearances.AppearanceFlagLight light = 23;
     {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.light_), _Internal::kHasBitsOffset + 4, 4,
     (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
     // optional bool dont_hide = 24;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.dont_hide_), _Internal::kHasBitsOffset + 36, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.dont_hide_), _Internal::kHasBitsOffset + 37, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool translucent = 25;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.translucent_), _Internal::kHasBitsOffset + 37, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.translucent_), _Internal::kHasBitsOffset + 38, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional .rme.protobuf.appearances.AppearanceFlagShift shift = 26;
     {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.shift_), _Internal::kHasBitsOffset + 5, 5,
@@ -4948,10 +5308,10 @@ const ::_pbi::TcParseTable<5, 64, 21, 0, 9> AppearanceFlags::_table_ = {
     {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.height_), _Internal::kHasBitsOffset + 6, 6,
     (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
     // optional bool lying_object = 28;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.lying_object_), _Internal::kHasBitsOffset + 38, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.lying_object_), _Internal::kHasBitsOffset + 39, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool animate_always = 29;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.animate_always_), _Internal::kHasBitsOffset + 39, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.animate_always_), _Internal::kHasBitsOffset + 40, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional .rme.protobuf.appearances.AppearanceFlagAutomap automap = 30;
     {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.automap_), _Internal::kHasBitsOffset + 7, 7,
@@ -4960,10 +5320,10 @@ const ::_pbi::TcParseTable<5, 64, 21, 0, 9> AppearanceFlags::_table_ = {
     {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.lenshelp_), _Internal::kHasBitsOffset + 8, 8,
     (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
     // optional bool fullbank = 32;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.fullbank_), _Internal::kHasBitsOffset + 40, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.fullbank_), _Internal::kHasBitsOffset + 41, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool ignore_look = 33;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.ignore_look_), _Internal::kHasBitsOffset + 41, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.ignore_look_), _Internal::kHasBitsOffset + 42, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional .rme.protobuf.appearances.AppearanceFlagClothes clothes = 34;
     {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.clothes_), _Internal::kHasBitsOffset + 9, 9,
@@ -4975,13 +5335,13 @@ const ::_pbi::TcParseTable<5, 64, 21, 0, 9> AppearanceFlags::_table_ = {
     {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.market_), _Internal::kHasBitsOffset + 11, 11,
     (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
     // optional bool wrap = 37;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.wrap_), _Internal::kHasBitsOffset + 42, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.wrap_), _Internal::kHasBitsOffset + 43, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool unwrap = 38;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.unwrap_), _Internal::kHasBitsOffset + 43, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.unwrap_), _Internal::kHasBitsOffset + 44, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool topeffect = 39;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.topeffect_), _Internal::kHasBitsOffset + 44, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.topeffect_), _Internal::kHasBitsOffset + 45, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // repeated .rme.protobuf.appearances.AppearanceFlagNPC npcsaledata = 40;
     {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.npcsaledata_), -1, 12,
@@ -4990,58 +5350,58 @@ const ::_pbi::TcParseTable<5, 64, 21, 0, 9> AppearanceFlags::_table_ = {
     {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.changedtoexpire_), _Internal::kHasBitsOffset + 12, 13,
     (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
     // optional bool corpse = 42;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.corpse_), _Internal::kHasBitsOffset + 45, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.corpse_), _Internal::kHasBitsOffset + 46, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool player_corpse = 43;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.player_corpse_), _Internal::kHasBitsOffset + 46, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.player_corpse_), _Internal::kHasBitsOffset + 47, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional .rme.protobuf.appearances.AppearanceFlagCyclopedia cyclopediaitem = 44;
     {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.cyclopediaitem_), _Internal::kHasBitsOffset + 13, 14,
     (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
     // optional bool ammo = 45;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.ammo_), _Internal::kHasBitsOffset + 47, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.ammo_), _Internal::kHasBitsOffset + 48, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool show_off_socket = 46;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.show_off_socket_), _Internal::kHasBitsOffset + 48, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.show_off_socket_), _Internal::kHasBitsOffset + 49, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool reportable = 47;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.reportable_), _Internal::kHasBitsOffset + 49, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.reportable_), _Internal::kHasBitsOffset + 50, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional .rme.protobuf.appearances.AppearanceFlagUpgradeClassification upgradeclassification = 48;
     {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.upgradeclassification_), _Internal::kHasBitsOffset + 14, 15,
     (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
     // optional bool reverse_addons_east = 49;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.reverse_addons_east_), _Internal::kHasBitsOffset + 50, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.reverse_addons_east_), _Internal::kHasBitsOffset + 51, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool reverse_addons_west = 50;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.reverse_addons_west_), _Internal::kHasBitsOffset + 51, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.reverse_addons_west_), _Internal::kHasBitsOffset + 52, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool reverse_addons_south = 51;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.reverse_addons_south_), _Internal::kHasBitsOffset + 52, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.reverse_addons_south_), _Internal::kHasBitsOffset + 53, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool reverse_addons_north = 52;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.reverse_addons_north_), _Internal::kHasBitsOffset + 53, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.reverse_addons_north_), _Internal::kHasBitsOffset + 54, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool wearout = 53;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.wearout_), _Internal::kHasBitsOffset + 54, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.wearout_), _Internal::kHasBitsOffset + 55, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool clockexpire = 54;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.clockexpire_), _Internal::kHasBitsOffset + 55, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.clockexpire_), _Internal::kHasBitsOffset + 56, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool expire = 55;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.expire_), _Internal::kHasBitsOffset + 56, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.expire_), _Internal::kHasBitsOffset + 57, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool expirestop = 56;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.expirestop_), _Internal::kHasBitsOffset + 57, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.expirestop_), _Internal::kHasBitsOffset + 58, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional bool wrapkit = 57;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.wrapkit_), _Internal::kHasBitsOffset + 58, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.wrapkit_), _Internal::kHasBitsOffset + 59, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional .rme.protobuf.appearances.AppearanceFlagSkillWheelGem skillwheel_gem = 58;
     {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.skillwheel_gem_), _Internal::kHasBitsOffset + 15, 16,
     (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
     // optional bool dual_wielding = 59;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.dual_wielding_), _Internal::kHasBitsOffset + 59, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.dual_wielding_), _Internal::kHasBitsOffset + 60, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // optional .rme.protobuf.appearances.AppearanceFlagImbueable imbueable = 60;
     {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.imbueable_), _Internal::kHasBitsOffset + 16, 17,
@@ -5050,14 +5410,26 @@ const ::_pbi::TcParseTable<5, 64, 21, 0, 9> AppearanceFlags::_table_ = {
     {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.proficiency_), _Internal::kHasBitsOffset + 17, 18,
     (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
     // repeated .rme.protobuf.appearances.VOCATION restrict_to_vocation = 62;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.restrict_to_vocation_), -1, 19,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.restrict_to_vocation_), -1, 20,
     (0 | ::_fl::kFcRepeated | ::_fl::kEnum)},
     // optional uint32 minimum_level = 63;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.minimum_level_), _Internal::kHasBitsOffset + 60, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.minimum_level_), _Internal::kHasBitsOffset + 63, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
     // optional .rme.protobuf.appearances.WEAPON_TYPE weapon_type = 64;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.weapon_type_), _Internal::kHasBitsOffset + 61, 20,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.weapon_type_), _Internal::kHasBitsOffset + 64, 21,
     (0 | ::_fl::kFcOptional | ::_fl::kEnumRange)},
+    // optional bool deco_item_kit = 65;
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.deco_item_kit_), _Internal::kHasBitsOffset + 61, 0,
+    (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // optional bool hook_south = 70;
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.hook_south_), _Internal::kHasBitsOffset + 62, 0,
+    (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // optional bool hook_east = 71;
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.hook_east_), _Internal::kHasBitsOffset + 65, 0,
+    (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // optional .rme.protobuf.appearances.AppearanceFlagTransparencyLevel transparencylevel = 72;
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.transparencylevel_), _Internal::kHasBitsOffset + 18, 19,
+    (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
   }}, {{
     {::_pbi::TcParser::GetTable<::rme::protobuf::appearances::AppearanceFlagBank>()},
     {::_pbi::TcParser::GetTable<::rme::protobuf::appearances::AppearanceFlagWrite>()},
@@ -5078,6 +5450,7 @@ const ::_pbi::TcParseTable<5, 64, 21, 0, 9> AppearanceFlags::_table_ = {
     {::_pbi::TcParser::GetTable<::rme::protobuf::appearances::AppearanceFlagSkillWheelGem>()},
     {::_pbi::TcParser::GetTable<::rme::protobuf::appearances::AppearanceFlagImbueable>()},
     {::_pbi::TcParser::GetTable<::rme::protobuf::appearances::AppearanceFlagProficiency>()},
+    {::_pbi::TcParser::GetTable<::rme::protobuf::appearances::AppearanceFlagTransparencyLevel>()},
     {::_pbi::FieldAuxEnumData{}, ::rme::protobuf::appearances::VOCATION_internal_data_},
     {0, 9},
   }}, {{
@@ -5162,7 +5535,7 @@ PROTOBUF_NOINLINE void AppearanceFlags::Clear() {
       _impl_.skillwheel_gem_->Clear();
     }
   }
-  if (cached_has_bits & 0x00030000u) {
+  if (cached_has_bits & 0x00070000u) {
     if (cached_has_bits & 0x00010000u) {
       ABSL_DCHECK(_impl_.imbueable_ != nullptr);
       _impl_.imbueable_->Clear();
@@ -5171,37 +5544,47 @@ PROTOBUF_NOINLINE void AppearanceFlags::Clear() {
       ABSL_DCHECK(_impl_.proficiency_ != nullptr);
       _impl_.proficiency_->Clear();
     }
+    if (cached_has_bits & 0x00040000u) {
+      ABSL_DCHECK(_impl_.transparencylevel_ != nullptr);
+      _impl_.transparencylevel_->Clear();
+    }
   }
-  if (cached_has_bits & 0x00fc0000u) {
+  if (cached_has_bits & 0x00f80000u) {
     ::memset(&_impl_.clip_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.usable_) -
-        reinterpret_cast<char*>(&_impl_.clip_)) + sizeof(_impl_.usable_));
+        reinterpret_cast<char*>(&_impl_.cumulative_) -
+        reinterpret_cast<char*>(&_impl_.clip_)) + sizeof(_impl_.cumulative_));
   }
   if (cached_has_bits & 0xff000000u) {
-    ::memset(&_impl_.forceuse_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.no_movement_animation_) -
-        reinterpret_cast<char*>(&_impl_.forceuse_)) + sizeof(_impl_.no_movement_animation_));
+    ::memset(&_impl_.usable_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.avoid_) -
+        reinterpret_cast<char*>(&_impl_.usable_)) + sizeof(_impl_.avoid_));
   }
   cached_has_bits = _impl_._has_bits_[1];
   if (cached_has_bits & 0x000000ffu) {
-    ::memset(&_impl_.take_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.animate_always_) -
-        reinterpret_cast<char*>(&_impl_.take_)) + sizeof(_impl_.animate_always_));
+    ::memset(&_impl_.no_movement_animation_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.lying_object_) -
+        reinterpret_cast<char*>(&_impl_.no_movement_animation_)) + sizeof(_impl_.lying_object_));
   }
   if (cached_has_bits & 0x0000ff00u) {
-    ::memset(&_impl_.fullbank_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.ammo_) -
-        reinterpret_cast<char*>(&_impl_.fullbank_)) + sizeof(_impl_.ammo_));
+    ::memset(&_impl_.animate_always_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.player_corpse_) -
+        reinterpret_cast<char*>(&_impl_.animate_always_)) + sizeof(_impl_.player_corpse_));
   }
   if (cached_has_bits & 0x00ff0000u) {
-    ::memset(&_impl_.show_off_socket_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.clockexpire_) -
-        reinterpret_cast<char*>(&_impl_.show_off_socket_)) + sizeof(_impl_.clockexpire_));
+    ::memset(&_impl_.ammo_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.wearout_) -
+        reinterpret_cast<char*>(&_impl_.ammo_)) + sizeof(_impl_.wearout_));
   }
-  if (cached_has_bits & 0x3f000000u) {
-    ::memset(&_impl_.expire_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.weapon_type_) -
-        reinterpret_cast<char*>(&_impl_.expire_)) + sizeof(_impl_.weapon_type_));
+  if (cached_has_bits & 0xff000000u) {
+    ::memset(&_impl_.clockexpire_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.minimum_level_) -
+        reinterpret_cast<char*>(&_impl_.clockexpire_)) + sizeof(_impl_.minimum_level_));
+  }
+  cached_has_bits = _impl_._has_bits_[2];
+  if (cached_has_bits & 0x00000003u) {
+    ::memset(&_impl_.weapon_type_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.hook_east_) -
+        reinterpret_cast<char*>(&_impl_.weapon_type_)) + sizeof(_impl_.hook_east_));
   }
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
@@ -5231,56 +5614,56 @@ PROTOBUF_NOINLINE void AppearanceFlags::Clear() {
           }
 
           // optional bool clip = 2;
-          if (cached_has_bits & 0x00040000u) {
+          if (cached_has_bits & 0x00080000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 2, this_._internal_clip(), target);
           }
 
           // optional bool bottom = 3;
-          if (cached_has_bits & 0x00080000u) {
+          if (cached_has_bits & 0x00100000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 3, this_._internal_bottom(), target);
           }
 
           // optional bool top = 4;
-          if (cached_has_bits & 0x00100000u) {
+          if (cached_has_bits & 0x00200000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 4, this_._internal_top(), target);
           }
 
           // optional bool container = 5;
-          if (cached_has_bits & 0x00200000u) {
+          if (cached_has_bits & 0x00400000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 5, this_._internal_container(), target);
           }
 
           // optional bool cumulative = 6;
-          if (cached_has_bits & 0x00400000u) {
+          if (cached_has_bits & 0x00800000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 6, this_._internal_cumulative(), target);
           }
 
           // optional bool usable = 7;
-          if (cached_has_bits & 0x00800000u) {
+          if (cached_has_bits & 0x01000000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 7, this_._internal_usable(), target);
           }
 
           // optional bool forceuse = 8;
-          if (cached_has_bits & 0x01000000u) {
+          if (cached_has_bits & 0x02000000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 8, this_._internal_forceuse(), target);
           }
 
           // optional bool multiuse = 9;
-          if (cached_has_bits & 0x02000000u) {
+          if (cached_has_bits & 0x04000000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 9, this_._internal_multiuse(), target);
@@ -5301,64 +5684,64 @@ PROTOBUF_NOINLINE void AppearanceFlags::Clear() {
           }
 
           // optional bool liquidpool = 12;
-          if (cached_has_bits & 0x04000000u) {
+          if (cached_has_bits & 0x08000000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 12, this_._internal_liquidpool(), target);
           }
 
           // optional bool unpass = 13;
-          if (cached_has_bits & 0x08000000u) {
+          if (cached_has_bits & 0x10000000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 13, this_._internal_unpass(), target);
           }
 
           // optional bool unmove = 14;
-          if (cached_has_bits & 0x10000000u) {
+          if (cached_has_bits & 0x20000000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 14, this_._internal_unmove(), target);
           }
 
           // optional bool unsight = 15;
-          if (cached_has_bits & 0x20000000u) {
+          if (cached_has_bits & 0x40000000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 15, this_._internal_unsight(), target);
           }
 
           // optional bool avoid = 16;
-          if (cached_has_bits & 0x40000000u) {
+          if (cached_has_bits & 0x80000000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 16, this_._internal_avoid(), target);
           }
 
+          cached_has_bits = this_._impl_._has_bits_[1];
           // optional bool no_movement_animation = 17;
-          if (cached_has_bits & 0x80000000u) {
+          if (cached_has_bits & 0x00000001u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 17, this_._internal_no_movement_animation(), target);
           }
 
-          cached_has_bits = this_._impl_._has_bits_[1];
           // optional bool take = 18;
-          if (cached_has_bits & 0x00000001u) {
+          if (cached_has_bits & 0x00000002u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 18, this_._internal_take(), target);
           }
 
           // optional bool liquidcontainer = 19;
-          if (cached_has_bits & 0x00000002u) {
+          if (cached_has_bits & 0x00000004u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 19, this_._internal_liquidcontainer(), target);
           }
 
           // optional bool hang = 20;
-          if (cached_has_bits & 0x00000004u) {
+          if (cached_has_bits & 0x00000008u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 20, this_._internal_hang(), target);
@@ -5374,7 +5757,7 @@ PROTOBUF_NOINLINE void AppearanceFlags::Clear() {
 
           cached_has_bits = this_._impl_._has_bits_[1];
           // optional bool rotate = 22;
-          if (cached_has_bits & 0x00000008u) {
+          if (cached_has_bits & 0x00000010u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 22, this_._internal_rotate(), target);
@@ -5390,14 +5773,14 @@ PROTOBUF_NOINLINE void AppearanceFlags::Clear() {
 
           cached_has_bits = this_._impl_._has_bits_[1];
           // optional bool dont_hide = 24;
-          if (cached_has_bits & 0x00000010u) {
+          if (cached_has_bits & 0x00000020u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 24, this_._internal_dont_hide(), target);
           }
 
           // optional bool translucent = 25;
-          if (cached_has_bits & 0x00000020u) {
+          if (cached_has_bits & 0x00000040u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 25, this_._internal_translucent(), target);
@@ -5420,14 +5803,14 @@ PROTOBUF_NOINLINE void AppearanceFlags::Clear() {
 
           cached_has_bits = this_._impl_._has_bits_[1];
           // optional bool lying_object = 28;
-          if (cached_has_bits & 0x00000040u) {
+          if (cached_has_bits & 0x00000080u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 28, this_._internal_lying_object(), target);
           }
 
           // optional bool animate_always = 29;
-          if (cached_has_bits & 0x00000080u) {
+          if (cached_has_bits & 0x00000100u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 29, this_._internal_animate_always(), target);
@@ -5450,14 +5833,14 @@ PROTOBUF_NOINLINE void AppearanceFlags::Clear() {
 
           cached_has_bits = this_._impl_._has_bits_[1];
           // optional bool fullbank = 32;
-          if (cached_has_bits & 0x00000100u) {
+          if (cached_has_bits & 0x00000200u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 32, this_._internal_fullbank(), target);
           }
 
           // optional bool ignore_look = 33;
-          if (cached_has_bits & 0x00000200u) {
+          if (cached_has_bits & 0x00000400u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 33, this_._internal_ignore_look(), target);
@@ -5487,21 +5870,21 @@ PROTOBUF_NOINLINE void AppearanceFlags::Clear() {
 
           cached_has_bits = this_._impl_._has_bits_[1];
           // optional bool wrap = 37;
-          if (cached_has_bits & 0x00000400u) {
+          if (cached_has_bits & 0x00000800u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 37, this_._internal_wrap(), target);
           }
 
           // optional bool unwrap = 38;
-          if (cached_has_bits & 0x00000800u) {
+          if (cached_has_bits & 0x00001000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 38, this_._internal_unwrap(), target);
           }
 
           // optional bool topeffect = 39;
-          if (cached_has_bits & 0x00001000u) {
+          if (cached_has_bits & 0x00002000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 39, this_._internal_topeffect(), target);
@@ -5528,14 +5911,14 @@ PROTOBUF_NOINLINE void AppearanceFlags::Clear() {
 
           cached_has_bits = this_._impl_._has_bits_[1];
           // optional bool corpse = 42;
-          if (cached_has_bits & 0x00002000u) {
+          if (cached_has_bits & 0x00004000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 42, this_._internal_corpse(), target);
           }
 
           // optional bool player_corpse = 43;
-          if (cached_has_bits & 0x00004000u) {
+          if (cached_has_bits & 0x00008000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 43, this_._internal_player_corpse(), target);
@@ -5551,21 +5934,21 @@ PROTOBUF_NOINLINE void AppearanceFlags::Clear() {
 
           cached_has_bits = this_._impl_._has_bits_[1];
           // optional bool ammo = 45;
-          if (cached_has_bits & 0x00008000u) {
+          if (cached_has_bits & 0x00010000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 45, this_._internal_ammo(), target);
           }
 
           // optional bool show_off_socket = 46;
-          if (cached_has_bits & 0x00010000u) {
+          if (cached_has_bits & 0x00020000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 46, this_._internal_show_off_socket(), target);
           }
 
           // optional bool reportable = 47;
-          if (cached_has_bits & 0x00020000u) {
+          if (cached_has_bits & 0x00040000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 47, this_._internal_reportable(), target);
@@ -5581,63 +5964,63 @@ PROTOBUF_NOINLINE void AppearanceFlags::Clear() {
 
           cached_has_bits = this_._impl_._has_bits_[1];
           // optional bool reverse_addons_east = 49;
-          if (cached_has_bits & 0x00040000u) {
+          if (cached_has_bits & 0x00080000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 49, this_._internal_reverse_addons_east(), target);
           }
 
           // optional bool reverse_addons_west = 50;
-          if (cached_has_bits & 0x00080000u) {
+          if (cached_has_bits & 0x00100000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 50, this_._internal_reverse_addons_west(), target);
           }
 
           // optional bool reverse_addons_south = 51;
-          if (cached_has_bits & 0x00100000u) {
+          if (cached_has_bits & 0x00200000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 51, this_._internal_reverse_addons_south(), target);
           }
 
           // optional bool reverse_addons_north = 52;
-          if (cached_has_bits & 0x00200000u) {
+          if (cached_has_bits & 0x00400000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 52, this_._internal_reverse_addons_north(), target);
           }
 
           // optional bool wearout = 53;
-          if (cached_has_bits & 0x00400000u) {
+          if (cached_has_bits & 0x00800000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 53, this_._internal_wearout(), target);
           }
 
           // optional bool clockexpire = 54;
-          if (cached_has_bits & 0x00800000u) {
+          if (cached_has_bits & 0x01000000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 54, this_._internal_clockexpire(), target);
           }
 
           // optional bool expire = 55;
-          if (cached_has_bits & 0x01000000u) {
+          if (cached_has_bits & 0x02000000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 55, this_._internal_expire(), target);
           }
 
           // optional bool expirestop = 56;
-          if (cached_has_bits & 0x02000000u) {
+          if (cached_has_bits & 0x04000000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 56, this_._internal_expirestop(), target);
           }
 
           // optional bool wrapkit = 57;
-          if (cached_has_bits & 0x04000000u) {
+          if (cached_has_bits & 0x08000000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 57, this_._internal_wrapkit(), target);
@@ -5653,7 +6036,7 @@ PROTOBUF_NOINLINE void AppearanceFlags::Clear() {
 
           cached_has_bits = this_._impl_._has_bits_[1];
           // optional bool dual_wielding = 59;
-          if (cached_has_bits & 0x08000000u) {
+          if (cached_has_bits & 0x10000000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
                 59, this_._internal_dual_wielding(), target);
@@ -5684,17 +6067,49 @@ PROTOBUF_NOINLINE void AppearanceFlags::Clear() {
 
           cached_has_bits = this_._impl_._has_bits_[1];
           // optional uint32 minimum_level = 63;
-          if (cached_has_bits & 0x10000000u) {
+          if (cached_has_bits & 0x80000000u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
                 63, this_._internal_minimum_level(), target);
           }
 
+          cached_has_bits = this_._impl_._has_bits_[2];
           // optional .rme.protobuf.appearances.WEAPON_TYPE weapon_type = 64;
-          if (cached_has_bits & 0x20000000u) {
+          if (cached_has_bits & 0x00000001u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteEnumToArray(
                 64, this_._internal_weapon_type(), target);
+          }
+
+          cached_has_bits = this_._impl_._has_bits_[1];
+          // optional bool deco_item_kit = 65;
+          if (cached_has_bits & 0x20000000u) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteBoolToArray(
+                65, this_._internal_deco_item_kit(), target);
+          }
+
+          // optional bool hook_south = 70;
+          if (cached_has_bits & 0x40000000u) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteBoolToArray(
+                70, this_._internal_hook_south(), target);
+          }
+
+          cached_has_bits = this_._impl_._has_bits_[2];
+          // optional bool hook_east = 71;
+          if (cached_has_bits & 0x00000002u) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteBoolToArray(
+                71, this_._internal_hook_east(), target);
+          }
+
+          cached_has_bits = this_._impl_._has_bits_[0];
+          // optional .rme.protobuf.appearances.AppearanceFlagTransparencyLevel transparencylevel = 72;
+          if (cached_has_bits & 0x00040000u) {
+            target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+                72, *this_._impl_.transparencylevel_, this_._impl_.transparencylevel_->GetCachedSize(), target,
+                stream);
           }
 
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
@@ -5834,194 +6249,214 @@ PROTOBUF_NOINLINE void AppearanceFlags::Clear() {
               total_size += 2 +
                             ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.proficiency_);
             }
-            // optional bool clip = 2;
+            // optional .rme.protobuf.appearances.AppearanceFlagTransparencyLevel transparencylevel = 72;
             if (cached_has_bits & 0x00040000u) {
-              total_size += 2;
+              total_size += 2 +
+                            ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.transparencylevel_);
             }
-            // optional bool bottom = 3;
+            // optional bool clip = 2;
             if (cached_has_bits & 0x00080000u) {
               total_size += 2;
             }
-            // optional bool top = 4;
+            // optional bool bottom = 3;
             if (cached_has_bits & 0x00100000u) {
               total_size += 2;
             }
-            // optional bool container = 5;
+            // optional bool top = 4;
             if (cached_has_bits & 0x00200000u) {
               total_size += 2;
             }
-            // optional bool cumulative = 6;
+            // optional bool container = 5;
             if (cached_has_bits & 0x00400000u) {
               total_size += 2;
             }
-            // optional bool usable = 7;
+            // optional bool cumulative = 6;
             if (cached_has_bits & 0x00800000u) {
               total_size += 2;
             }
           }
           if (cached_has_bits & 0xff000000u) {
-            // optional bool forceuse = 8;
+            // optional bool usable = 7;
             if (cached_has_bits & 0x01000000u) {
               total_size += 2;
             }
-            // optional bool multiuse = 9;
+            // optional bool forceuse = 8;
             if (cached_has_bits & 0x02000000u) {
               total_size += 2;
             }
-            // optional bool liquidpool = 12;
+            // optional bool multiuse = 9;
             if (cached_has_bits & 0x04000000u) {
               total_size += 2;
             }
-            // optional bool unpass = 13;
+            // optional bool liquidpool = 12;
             if (cached_has_bits & 0x08000000u) {
               total_size += 2;
             }
-            // optional bool unmove = 14;
+            // optional bool unpass = 13;
             if (cached_has_bits & 0x10000000u) {
               total_size += 2;
             }
-            // optional bool unsight = 15;
+            // optional bool unmove = 14;
             if (cached_has_bits & 0x20000000u) {
               total_size += 2;
             }
-            // optional bool avoid = 16;
+            // optional bool unsight = 15;
             if (cached_has_bits & 0x40000000u) {
-              total_size += 3;
+              total_size += 2;
             }
-            // optional bool no_movement_animation = 17;
+            // optional bool avoid = 16;
             if (cached_has_bits & 0x80000000u) {
               total_size += 3;
             }
           }
           cached_has_bits = this_._impl_._has_bits_[1];
           if (cached_has_bits & 0x000000ffu) {
-            // optional bool take = 18;
+            // optional bool no_movement_animation = 17;
             if (cached_has_bits & 0x00000001u) {
               total_size += 3;
             }
-            // optional bool liquidcontainer = 19;
+            // optional bool take = 18;
             if (cached_has_bits & 0x00000002u) {
               total_size += 3;
             }
-            // optional bool hang = 20;
+            // optional bool liquidcontainer = 19;
             if (cached_has_bits & 0x00000004u) {
               total_size += 3;
             }
-            // optional bool rotate = 22;
+            // optional bool hang = 20;
             if (cached_has_bits & 0x00000008u) {
               total_size += 3;
             }
-            // optional bool dont_hide = 24;
+            // optional bool rotate = 22;
             if (cached_has_bits & 0x00000010u) {
               total_size += 3;
             }
-            // optional bool translucent = 25;
+            // optional bool dont_hide = 24;
             if (cached_has_bits & 0x00000020u) {
               total_size += 3;
             }
-            // optional bool lying_object = 28;
+            // optional bool translucent = 25;
             if (cached_has_bits & 0x00000040u) {
               total_size += 3;
             }
-            // optional bool animate_always = 29;
+            // optional bool lying_object = 28;
             if (cached_has_bits & 0x00000080u) {
               total_size += 3;
             }
           }
           if (cached_has_bits & 0x0000ff00u) {
-            // optional bool fullbank = 32;
+            // optional bool animate_always = 29;
             if (cached_has_bits & 0x00000100u) {
               total_size += 3;
             }
-            // optional bool ignore_look = 33;
+            // optional bool fullbank = 32;
             if (cached_has_bits & 0x00000200u) {
               total_size += 3;
             }
-            // optional bool wrap = 37;
+            // optional bool ignore_look = 33;
             if (cached_has_bits & 0x00000400u) {
               total_size += 3;
             }
-            // optional bool unwrap = 38;
+            // optional bool wrap = 37;
             if (cached_has_bits & 0x00000800u) {
               total_size += 3;
             }
-            // optional bool topeffect = 39;
+            // optional bool unwrap = 38;
             if (cached_has_bits & 0x00001000u) {
               total_size += 3;
             }
-            // optional bool corpse = 42;
+            // optional bool topeffect = 39;
             if (cached_has_bits & 0x00002000u) {
               total_size += 3;
             }
-            // optional bool player_corpse = 43;
+            // optional bool corpse = 42;
             if (cached_has_bits & 0x00004000u) {
               total_size += 3;
             }
-            // optional bool ammo = 45;
+            // optional bool player_corpse = 43;
             if (cached_has_bits & 0x00008000u) {
               total_size += 3;
             }
           }
           if (cached_has_bits & 0x00ff0000u) {
-            // optional bool show_off_socket = 46;
+            // optional bool ammo = 45;
             if (cached_has_bits & 0x00010000u) {
               total_size += 3;
             }
-            // optional bool reportable = 47;
+            // optional bool show_off_socket = 46;
             if (cached_has_bits & 0x00020000u) {
               total_size += 3;
             }
-            // optional bool reverse_addons_east = 49;
+            // optional bool reportable = 47;
             if (cached_has_bits & 0x00040000u) {
               total_size += 3;
             }
-            // optional bool reverse_addons_west = 50;
+            // optional bool reverse_addons_east = 49;
             if (cached_has_bits & 0x00080000u) {
               total_size += 3;
             }
-            // optional bool reverse_addons_south = 51;
+            // optional bool reverse_addons_west = 50;
             if (cached_has_bits & 0x00100000u) {
               total_size += 3;
             }
-            // optional bool reverse_addons_north = 52;
+            // optional bool reverse_addons_south = 51;
             if (cached_has_bits & 0x00200000u) {
               total_size += 3;
             }
-            // optional bool wearout = 53;
+            // optional bool reverse_addons_north = 52;
             if (cached_has_bits & 0x00400000u) {
               total_size += 3;
             }
-            // optional bool clockexpire = 54;
+            // optional bool wearout = 53;
             if (cached_has_bits & 0x00800000u) {
               total_size += 3;
             }
           }
-          if (cached_has_bits & 0x3f000000u) {
-            // optional bool expire = 55;
+          if (cached_has_bits & 0xff000000u) {
+            // optional bool clockexpire = 54;
             if (cached_has_bits & 0x01000000u) {
               total_size += 3;
             }
-            // optional bool expirestop = 56;
+            // optional bool expire = 55;
             if (cached_has_bits & 0x02000000u) {
               total_size += 3;
             }
-            // optional bool wrapkit = 57;
+            // optional bool expirestop = 56;
             if (cached_has_bits & 0x04000000u) {
               total_size += 3;
             }
-            // optional bool dual_wielding = 59;
+            // optional bool wrapkit = 57;
             if (cached_has_bits & 0x08000000u) {
               total_size += 3;
             }
-            // optional uint32 minimum_level = 63;
+            // optional bool dual_wielding = 59;
             if (cached_has_bits & 0x10000000u) {
+              total_size += 3;
+            }
+            // optional bool deco_item_kit = 65;
+            if (cached_has_bits & 0x20000000u) {
+              total_size += 3;
+            }
+            // optional bool hook_south = 70;
+            if (cached_has_bits & 0x40000000u) {
+              total_size += 3;
+            }
+            // optional uint32 minimum_level = 63;
+            if (cached_has_bits & 0x80000000u) {
               total_size += 2 + ::_pbi::WireFormatLite::UInt32Size(
                                               this_._internal_minimum_level());
             }
+          }
+          cached_has_bits = this_._impl_._has_bits_[2];
+          if (cached_has_bits & 0x00000003u) {
             // optional .rme.protobuf.appearances.WEAPON_TYPE weapon_type = 64;
-            if (cached_has_bits & 0x20000000u) {
+            if (cached_has_bits & 0x00000001u) {
               total_size += 2 +
                             ::_pbi::WireFormatLite::EnumSize(this_._internal_weapon_type());
+            }
+            // optional bool hook_east = 71;
+            if (cached_has_bits & 0x00000002u) {
+              total_size += 3;
             }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
@@ -6209,147 +6644,168 @@ void AppearanceFlags::MergeImpl(::google::protobuf::MessageLite& to_msg, const :
       }
     }
     if (cached_has_bits & 0x00040000u) {
-      _this->_impl_.clip_ = from._impl_.clip_;
+      ABSL_DCHECK(from._impl_.transparencylevel_ != nullptr);
+      if (_this->_impl_.transparencylevel_ == nullptr) {
+        _this->_impl_.transparencylevel_ =
+            ::google::protobuf::Message::CopyConstruct<::rme::protobuf::appearances::AppearanceFlagTransparencyLevel>(arena, *from._impl_.transparencylevel_);
+      } else {
+        _this->_impl_.transparencylevel_->MergeFrom(*from._impl_.transparencylevel_);
+      }
     }
     if (cached_has_bits & 0x00080000u) {
-      _this->_impl_.bottom_ = from._impl_.bottom_;
+      _this->_impl_.clip_ = from._impl_.clip_;
     }
     if (cached_has_bits & 0x00100000u) {
-      _this->_impl_.top_ = from._impl_.top_;
+      _this->_impl_.bottom_ = from._impl_.bottom_;
     }
     if (cached_has_bits & 0x00200000u) {
-      _this->_impl_.container_ = from._impl_.container_;
+      _this->_impl_.top_ = from._impl_.top_;
     }
     if (cached_has_bits & 0x00400000u) {
-      _this->_impl_.cumulative_ = from._impl_.cumulative_;
+      _this->_impl_.container_ = from._impl_.container_;
     }
     if (cached_has_bits & 0x00800000u) {
-      _this->_impl_.usable_ = from._impl_.usable_;
+      _this->_impl_.cumulative_ = from._impl_.cumulative_;
     }
   }
   if (cached_has_bits & 0xff000000u) {
     if (cached_has_bits & 0x01000000u) {
-      _this->_impl_.forceuse_ = from._impl_.forceuse_;
+      _this->_impl_.usable_ = from._impl_.usable_;
     }
     if (cached_has_bits & 0x02000000u) {
-      _this->_impl_.multiuse_ = from._impl_.multiuse_;
+      _this->_impl_.forceuse_ = from._impl_.forceuse_;
     }
     if (cached_has_bits & 0x04000000u) {
-      _this->_impl_.liquidpool_ = from._impl_.liquidpool_;
+      _this->_impl_.multiuse_ = from._impl_.multiuse_;
     }
     if (cached_has_bits & 0x08000000u) {
-      _this->_impl_.unpass_ = from._impl_.unpass_;
+      _this->_impl_.liquidpool_ = from._impl_.liquidpool_;
     }
     if (cached_has_bits & 0x10000000u) {
-      _this->_impl_.unmove_ = from._impl_.unmove_;
+      _this->_impl_.unpass_ = from._impl_.unpass_;
     }
     if (cached_has_bits & 0x20000000u) {
-      _this->_impl_.unsight_ = from._impl_.unsight_;
+      _this->_impl_.unmove_ = from._impl_.unmove_;
     }
     if (cached_has_bits & 0x40000000u) {
-      _this->_impl_.avoid_ = from._impl_.avoid_;
+      _this->_impl_.unsight_ = from._impl_.unsight_;
     }
     if (cached_has_bits & 0x80000000u) {
-      _this->_impl_.no_movement_animation_ = from._impl_.no_movement_animation_;
+      _this->_impl_.avoid_ = from._impl_.avoid_;
     }
   }
   cached_has_bits = from._impl_._has_bits_[1];
   if (cached_has_bits & 0x000000ffu) {
     if (cached_has_bits & 0x00000001u) {
-      _this->_impl_.take_ = from._impl_.take_;
+      _this->_impl_.no_movement_animation_ = from._impl_.no_movement_animation_;
     }
     if (cached_has_bits & 0x00000002u) {
-      _this->_impl_.liquidcontainer_ = from._impl_.liquidcontainer_;
+      _this->_impl_.take_ = from._impl_.take_;
     }
     if (cached_has_bits & 0x00000004u) {
-      _this->_impl_.hang_ = from._impl_.hang_;
+      _this->_impl_.liquidcontainer_ = from._impl_.liquidcontainer_;
     }
     if (cached_has_bits & 0x00000008u) {
-      _this->_impl_.rotate_ = from._impl_.rotate_;
+      _this->_impl_.hang_ = from._impl_.hang_;
     }
     if (cached_has_bits & 0x00000010u) {
-      _this->_impl_.dont_hide_ = from._impl_.dont_hide_;
+      _this->_impl_.rotate_ = from._impl_.rotate_;
     }
     if (cached_has_bits & 0x00000020u) {
-      _this->_impl_.translucent_ = from._impl_.translucent_;
+      _this->_impl_.dont_hide_ = from._impl_.dont_hide_;
     }
     if (cached_has_bits & 0x00000040u) {
-      _this->_impl_.lying_object_ = from._impl_.lying_object_;
+      _this->_impl_.translucent_ = from._impl_.translucent_;
     }
     if (cached_has_bits & 0x00000080u) {
-      _this->_impl_.animate_always_ = from._impl_.animate_always_;
+      _this->_impl_.lying_object_ = from._impl_.lying_object_;
     }
   }
   if (cached_has_bits & 0x0000ff00u) {
     if (cached_has_bits & 0x00000100u) {
-      _this->_impl_.fullbank_ = from._impl_.fullbank_;
+      _this->_impl_.animate_always_ = from._impl_.animate_always_;
     }
     if (cached_has_bits & 0x00000200u) {
-      _this->_impl_.ignore_look_ = from._impl_.ignore_look_;
+      _this->_impl_.fullbank_ = from._impl_.fullbank_;
     }
     if (cached_has_bits & 0x00000400u) {
-      _this->_impl_.wrap_ = from._impl_.wrap_;
+      _this->_impl_.ignore_look_ = from._impl_.ignore_look_;
     }
     if (cached_has_bits & 0x00000800u) {
-      _this->_impl_.unwrap_ = from._impl_.unwrap_;
+      _this->_impl_.wrap_ = from._impl_.wrap_;
     }
     if (cached_has_bits & 0x00001000u) {
-      _this->_impl_.topeffect_ = from._impl_.topeffect_;
+      _this->_impl_.unwrap_ = from._impl_.unwrap_;
     }
     if (cached_has_bits & 0x00002000u) {
-      _this->_impl_.corpse_ = from._impl_.corpse_;
+      _this->_impl_.topeffect_ = from._impl_.topeffect_;
     }
     if (cached_has_bits & 0x00004000u) {
-      _this->_impl_.player_corpse_ = from._impl_.player_corpse_;
+      _this->_impl_.corpse_ = from._impl_.corpse_;
     }
     if (cached_has_bits & 0x00008000u) {
-      _this->_impl_.ammo_ = from._impl_.ammo_;
+      _this->_impl_.player_corpse_ = from._impl_.player_corpse_;
     }
   }
   if (cached_has_bits & 0x00ff0000u) {
     if (cached_has_bits & 0x00010000u) {
-      _this->_impl_.show_off_socket_ = from._impl_.show_off_socket_;
+      _this->_impl_.ammo_ = from._impl_.ammo_;
     }
     if (cached_has_bits & 0x00020000u) {
-      _this->_impl_.reportable_ = from._impl_.reportable_;
+      _this->_impl_.show_off_socket_ = from._impl_.show_off_socket_;
     }
     if (cached_has_bits & 0x00040000u) {
-      _this->_impl_.reverse_addons_east_ = from._impl_.reverse_addons_east_;
+      _this->_impl_.reportable_ = from._impl_.reportable_;
     }
     if (cached_has_bits & 0x00080000u) {
-      _this->_impl_.reverse_addons_west_ = from._impl_.reverse_addons_west_;
+      _this->_impl_.reverse_addons_east_ = from._impl_.reverse_addons_east_;
     }
     if (cached_has_bits & 0x00100000u) {
-      _this->_impl_.reverse_addons_south_ = from._impl_.reverse_addons_south_;
+      _this->_impl_.reverse_addons_west_ = from._impl_.reverse_addons_west_;
     }
     if (cached_has_bits & 0x00200000u) {
-      _this->_impl_.reverse_addons_north_ = from._impl_.reverse_addons_north_;
+      _this->_impl_.reverse_addons_south_ = from._impl_.reverse_addons_south_;
     }
     if (cached_has_bits & 0x00400000u) {
-      _this->_impl_.wearout_ = from._impl_.wearout_;
+      _this->_impl_.reverse_addons_north_ = from._impl_.reverse_addons_north_;
     }
     if (cached_has_bits & 0x00800000u) {
-      _this->_impl_.clockexpire_ = from._impl_.clockexpire_;
+      _this->_impl_.wearout_ = from._impl_.wearout_;
     }
   }
-  if (cached_has_bits & 0x3f000000u) {
+  if (cached_has_bits & 0xff000000u) {
     if (cached_has_bits & 0x01000000u) {
-      _this->_impl_.expire_ = from._impl_.expire_;
+      _this->_impl_.clockexpire_ = from._impl_.clockexpire_;
     }
     if (cached_has_bits & 0x02000000u) {
-      _this->_impl_.expirestop_ = from._impl_.expirestop_;
+      _this->_impl_.expire_ = from._impl_.expire_;
     }
     if (cached_has_bits & 0x04000000u) {
-      _this->_impl_.wrapkit_ = from._impl_.wrapkit_;
+      _this->_impl_.expirestop_ = from._impl_.expirestop_;
     }
     if (cached_has_bits & 0x08000000u) {
-      _this->_impl_.dual_wielding_ = from._impl_.dual_wielding_;
+      _this->_impl_.wrapkit_ = from._impl_.wrapkit_;
     }
     if (cached_has_bits & 0x10000000u) {
-      _this->_impl_.minimum_level_ = from._impl_.minimum_level_;
+      _this->_impl_.dual_wielding_ = from._impl_.dual_wielding_;
     }
     if (cached_has_bits & 0x20000000u) {
+      _this->_impl_.deco_item_kit_ = from._impl_.deco_item_kit_;
+    }
+    if (cached_has_bits & 0x40000000u) {
+      _this->_impl_.hook_south_ = from._impl_.hook_south_;
+    }
+    if (cached_has_bits & 0x80000000u) {
+      _this->_impl_.minimum_level_ = from._impl_.minimum_level_;
+    }
+  }
+  cached_has_bits = from._impl_._has_bits_[2];
+  if (cached_has_bits & 0x00000003u) {
+    if (cached_has_bits & 0x00000001u) {
       _this->_impl_.weapon_type_ = from._impl_.weapon_type_;
+    }
+    if (cached_has_bits & 0x00000002u) {
+      _this->_impl_.hook_east_ = from._impl_.hook_east_;
     }
   }
   _this->_impl_._has_bits_.Or(from._impl_._has_bits_);
@@ -6369,11 +6825,12 @@ void AppearanceFlags::InternalSwap(AppearanceFlags* PROTOBUF_RESTRICT other) {
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   swap(_impl_._has_bits_[1], other->_impl_._has_bits_[1]);
+  swap(_impl_._has_bits_[2], other->_impl_._has_bits_[2]);
   _impl_.npcsaledata_.InternalSwap(&other->_impl_.npcsaledata_);
   _impl_.restrict_to_vocation_.InternalSwap(&other->_impl_.restrict_to_vocation_);
   ::google::protobuf::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.weapon_type_)
-      + sizeof(AppearanceFlags::_impl_.weapon_type_)
+      PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.hook_east_)
+      + sizeof(AppearanceFlags::_impl_.hook_east_)
       - PROTOBUF_FIELD_OFFSET(AppearanceFlags, _impl_.bank_)>(
           reinterpret_cast<char*>(&_impl_.bank_),
           reinterpret_cast<char*>(&other->_impl_.bank_));
@@ -8437,7 +8894,8 @@ inline PROTOBUF_NDEBUG_INLINE AppearanceFlagMarket::Impl_::Impl_(
     const Impl_& from, const ::rme::protobuf::appearances::AppearanceFlagMarket& from_msg)
       : _has_bits_{from._has_bits_},
         _cached_size_{0},
-        restrict_to_profession_{visibility, arena, from.restrict_to_profession_} {}
+        restrict_to_profession_{visibility, arena, from.restrict_to_profession_},
+        name_(arena, from.name_) {}
 
 AppearanceFlagMarket::AppearanceFlagMarket(
     ::google::protobuf::Arena* arena,
@@ -8456,9 +8914,9 @@ AppearanceFlagMarket::AppearanceFlagMarket(
                offsetof(Impl_, trade_as_object_id_),
            reinterpret_cast<const char *>(&from._impl_) +
                offsetof(Impl_, trade_as_object_id_),
-           offsetof(Impl_, category_) -
+           offsetof(Impl_, vocation_) -
                offsetof(Impl_, trade_as_object_id_) +
-               sizeof(Impl_::category_));
+               sizeof(Impl_::vocation_));
 
   // @@protoc_insertion_point(copy_constructor:rme.protobuf.appearances.AppearanceFlagMarket)
 }
@@ -8467,7 +8925,9 @@ inline PROTOBUF_NDEBUG_INLINE AppearanceFlagMarket::Impl_::Impl_(
     ::google::protobuf::Arena* arena)
       : _cached_size_{0},
         restrict_to_profession_{visibility, arena},
-        category_{static_cast< ::rme::protobuf::appearances::ITEM_CATEGORY >(1)} {}
+        name_(arena),
+        category_{static_cast< ::rme::protobuf::appearances::ITEM_CATEGORY >(1)},
+        vocation_{static_cast< ::rme::protobuf::appearances::VOCATION >(-1)} {}
 
 inline void AppearanceFlagMarket::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
@@ -8486,6 +8946,7 @@ inline void AppearanceFlagMarket::SharedDtor(MessageLite& self) {
   AppearanceFlagMarket& this_ = static_cast<AppearanceFlagMarket&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.name_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -8537,16 +8998,16 @@ const ::google::protobuf::internal::ClassData* AppearanceFlagMarket::GetClassDat
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<3, 5, 2, 0, 2> AppearanceFlagMarket::_table_ = {
+const ::_pbi::TcParseTable<3, 7, 3, 58, 2> AppearanceFlagMarket::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_._has_bits_),
     0, // no _extensions_
-    6, 56,  // max_field_number, fast_idx_mask
+    8, 56,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294967240,  // skipmap
+    4294967048,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    5,  // num_field_entries
-    2,  // num_aux_entries
+    7,  // num_field_entries
+    3,  // num_aux_entries
     offsetof(decltype(_table_), aux_entries),
     _class_data_.base(),
     nullptr,  // post_loop_handler
@@ -8555,46 +9016,60 @@ const ::_pbi::TcParseTable<3, 5, 2, 0, 2> AppearanceFlagMarket::_table_ = {
     ::_pbi::TcParser::GetTable<::rme::protobuf::appearances::AppearanceFlagMarket>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
-    {::_pbi::TcParser::MiniParse, {}},
+    // optional .rme.protobuf.appearances.VOCATION vocation = 8;
+    {::_pbi::TcParser::FastEvS1,
+     {64, 5, 2, PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.vocation_)}},
     // optional .rme.protobuf.appearances.ITEM_CATEGORY category = 1;
     {::_pbi::TcParser::FastEr1S1,
-     {8, 3, 26, PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.category_)}},
+     {8, 4, 32, PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.category_)}},
     // optional uint32 trade_as_object_id = 2;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(AppearanceFlagMarket, _impl_.trade_as_object_id_), 0>(),
-     {16, 0, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.trade_as_object_id_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(AppearanceFlagMarket, _impl_.trade_as_object_id_), 1>(),
+     {16, 1, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.trade_as_object_id_)}},
     // optional uint32 show_as_object_id = 3;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(AppearanceFlagMarket, _impl_.show_as_object_id_), 1>(),
-     {24, 1, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.show_as_object_id_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(AppearanceFlagMarket, _impl_.show_as_object_id_), 2>(),
+     {24, 2, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.show_as_object_id_)}},
     {::_pbi::TcParser::MiniParse, {}},
     // repeated .rme.protobuf.appearances.PLAYER_PROFESSION restrict_to_profession = 5;
     {::_pbi::TcParser::FastEvR1,
      {40, 63, 1, PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.restrict_to_profession_)}},
     // optional uint32 minimum_level = 6;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(AppearanceFlagMarket, _impl_.minimum_level_), 2>(),
-     {48, 2, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.minimum_level_)}},
-    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(AppearanceFlagMarket, _impl_.minimum_level_), 3>(),
+     {48, 3, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.minimum_level_)}},
+    // optional string name = 7;
+    {::_pbi::TcParser::FastSS1,
+     {58, 0, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.name_)}},
   }}, {{
     65535, 65535
   }}, {{
     // optional .rme.protobuf.appearances.ITEM_CATEGORY category = 1;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.category_), _Internal::kHasBitsOffset + 3, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.category_), _Internal::kHasBitsOffset + 4, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kEnumRange)},
     // optional uint32 trade_as_object_id = 2;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.trade_as_object_id_), _Internal::kHasBitsOffset + 0, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.trade_as_object_id_), _Internal::kHasBitsOffset + 1, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
     // optional uint32 show_as_object_id = 3;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.show_as_object_id_), _Internal::kHasBitsOffset + 1, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.show_as_object_id_), _Internal::kHasBitsOffset + 2, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
     // repeated .rme.protobuf.appearances.PLAYER_PROFESSION restrict_to_profession = 5;
     {PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.restrict_to_profession_), -1, 1,
     (0 | ::_fl::kFcRepeated | ::_fl::kEnum)},
     // optional uint32 minimum_level = 6;
-    {PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.minimum_level_), _Internal::kHasBitsOffset + 2, 0,
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.minimum_level_), _Internal::kHasBitsOffset + 3, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    // optional string name = 7;
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.name_), _Internal::kHasBitsOffset + 0, 0,
+    (0 | ::_fl::kFcOptional | ::_fl::kRawString | ::_fl::kRepAString)},
+    // optional .rme.protobuf.appearances.VOCATION vocation = 8;
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.vocation_), _Internal::kHasBitsOffset + 5, 2,
+    (0 | ::_fl::kFcOptional | ::_fl::kEnum)},
   }}, {{
-    {1, 26},
+    {1, 32},
     {::_pbi::FieldAuxEnumData{}, ::rme::protobuf::appearances::PLAYER_PROFESSION_internal_data_},
+    {::_pbi::FieldAuxEnumData{}, ::rme::protobuf::appearances::VOCATION_internal_data_},
   }}, {{
+    "\55\0\0\0\0\0\4\0"
+    "rme.protobuf.appearances.AppearanceFlagMarket"
+    "name"
   }},
 };
 
@@ -8607,11 +9082,15 @@ PROTOBUF_NOINLINE void AppearanceFlagMarket::Clear() {
 
   _impl_.restrict_to_profession_.Clear();
   cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x0000000fu) {
+  if (cached_has_bits & 0x00000001u) {
+    _impl_.name_.ClearNonDefaultToEmpty();
+  }
+  if (cached_has_bits & 0x0000003eu) {
     ::memset(&_impl_.trade_as_object_id_, 0, static_cast<::size_t>(
         reinterpret_cast<char*>(&_impl_.minimum_level_) -
         reinterpret_cast<char*>(&_impl_.trade_as_object_id_)) + sizeof(_impl_.minimum_level_));
     _impl_.category_ = 1;
+    _impl_.vocation_ = -1;
   }
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
@@ -8634,21 +9113,21 @@ PROTOBUF_NOINLINE void AppearanceFlagMarket::Clear() {
 
           cached_has_bits = this_._impl_._has_bits_[0];
           // optional .rme.protobuf.appearances.ITEM_CATEGORY category = 1;
-          if (cached_has_bits & 0x00000008u) {
+          if (cached_has_bits & 0x00000010u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteEnumToArray(
                 1, this_._internal_category(), target);
           }
 
           // optional uint32 trade_as_object_id = 2;
-          if (cached_has_bits & 0x00000001u) {
+          if (cached_has_bits & 0x00000002u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
                 2, this_._internal_trade_as_object_id(), target);
           }
 
           // optional uint32 show_as_object_id = 3;
-          if (cached_has_bits & 0x00000002u) {
+          if (cached_has_bits & 0x00000004u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
                 3, this_._internal_show_as_object_id(), target);
@@ -8663,10 +9142,25 @@ PROTOBUF_NOINLINE void AppearanceFlagMarket::Clear() {
           }
 
           // optional uint32 minimum_level = 6;
-          if (cached_has_bits & 0x00000004u) {
+          if (cached_has_bits & 0x00000008u) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
                 6, this_._internal_minimum_level(), target);
+          }
+
+          // optional string name = 7;
+          if (cached_has_bits & 0x00000001u) {
+            const std::string& _s = this_._internal_name();
+            ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(_s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormat::SERIALIZE,
+                                        "rme.protobuf.appearances.AppearanceFlagMarket.name");
+            target = stream->WriteStringMaybeAliased(7, _s, target);
+          }
+
+          // optional .rme.protobuf.appearances.VOCATION vocation = 8;
+          if (cached_has_bits & 0x00000020u) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteEnumToArray(
+                8, this_._internal_vocation(), target);
           }
 
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
@@ -8704,26 +9198,36 @@ PROTOBUF_NOINLINE void AppearanceFlagMarket::Clear() {
             }
           }
           cached_has_bits = this_._impl_._has_bits_[0];
-          if (cached_has_bits & 0x0000000fu) {
-            // optional uint32 trade_as_object_id = 2;
+          if (cached_has_bits & 0x0000003fu) {
+            // optional string name = 7;
             if (cached_has_bits & 0x00000001u) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_name());
+            }
+            // optional uint32 trade_as_object_id = 2;
+            if (cached_has_bits & 0x00000002u) {
               total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
                   this_._internal_trade_as_object_id());
             }
             // optional uint32 show_as_object_id = 3;
-            if (cached_has_bits & 0x00000002u) {
+            if (cached_has_bits & 0x00000004u) {
               total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
                   this_._internal_show_as_object_id());
             }
             // optional uint32 minimum_level = 6;
-            if (cached_has_bits & 0x00000004u) {
+            if (cached_has_bits & 0x00000008u) {
               total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
                   this_._internal_minimum_level());
             }
             // optional .rme.protobuf.appearances.ITEM_CATEGORY category = 1;
-            if (cached_has_bits & 0x00000008u) {
+            if (cached_has_bits & 0x00000010u) {
               total_size += 1 +
                             ::_pbi::WireFormatLite::EnumSize(this_._internal_category());
+            }
+            // optional .rme.protobuf.appearances.VOCATION vocation = 8;
+            if (cached_has_bits & 0x00000020u) {
+              total_size += 1 +
+                            ::_pbi::WireFormatLite::EnumSize(this_._internal_vocation());
             }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
@@ -8740,18 +9244,24 @@ void AppearanceFlagMarket::MergeImpl(::google::protobuf::MessageLite& to_msg, co
 
   _this->_internal_mutable_restrict_to_profession()->MergeFrom(from._internal_restrict_to_profession());
   cached_has_bits = from._impl_._has_bits_[0];
-  if (cached_has_bits & 0x0000000fu) {
+  if (cached_has_bits & 0x0000003fu) {
     if (cached_has_bits & 0x00000001u) {
-      _this->_impl_.trade_as_object_id_ = from._impl_.trade_as_object_id_;
+      _this->_internal_set_name(from._internal_name());
     }
     if (cached_has_bits & 0x00000002u) {
-      _this->_impl_.show_as_object_id_ = from._impl_.show_as_object_id_;
+      _this->_impl_.trade_as_object_id_ = from._impl_.trade_as_object_id_;
     }
     if (cached_has_bits & 0x00000004u) {
-      _this->_impl_.minimum_level_ = from._impl_.minimum_level_;
+      _this->_impl_.show_as_object_id_ = from._impl_.show_as_object_id_;
     }
     if (cached_has_bits & 0x00000008u) {
+      _this->_impl_.minimum_level_ = from._impl_.minimum_level_;
+    }
+    if (cached_has_bits & 0x00000010u) {
       _this->_impl_.category_ = from._impl_.category_;
+    }
+    if (cached_has_bits & 0x00000020u) {
+      _this->_impl_.vocation_ = from._impl_.vocation_;
     }
   }
   _this->_impl_._has_bits_[0] |= cached_has_bits;
@@ -8768,12 +9278,15 @@ void AppearanceFlagMarket::CopyFrom(const AppearanceFlagMarket& from) {
 
 void AppearanceFlagMarket::InternalSwap(AppearanceFlagMarket* PROTOBUF_RESTRICT other) {
   using std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   _impl_.restrict_to_profession_.InternalSwap(&other->_impl_.restrict_to_profession_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.name_, &other->_impl_.name_, arena);
   ::google::protobuf::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.category_)
-      + sizeof(AppearanceFlagMarket::_impl_.category_)
+      PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.vocation_)
+      + sizeof(AppearanceFlagMarket::_impl_.vocation_)
       - PROTOBUF_FIELD_OFFSET(AppearanceFlagMarket, _impl_.trade_as_object_id_)>(
           reinterpret_cast<char*>(&_impl_.trade_as_object_id_),
           reinterpret_cast<char*>(&other->_impl_.trade_as_object_id_));
@@ -10253,6 +10766,223 @@ void AppearanceFlagCyclopedia::InternalSwap(AppearanceFlagCyclopedia* PROTOBUF_R
 }
 
 ::google::protobuf::Metadata AppearanceFlagCyclopedia::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class AppearanceFlagTransparencyLevel::_Internal {
+ public:
+  using HasBits =
+      decltype(std::declval<AppearanceFlagTransparencyLevel>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+      8 * PROTOBUF_FIELD_OFFSET(AppearanceFlagTransparencyLevel, _impl_._has_bits_);
+};
+
+AppearanceFlagTransparencyLevel::AppearanceFlagTransparencyLevel(::google::protobuf::Arena* arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:rme.protobuf.appearances.AppearanceFlagTransparencyLevel)
+}
+AppearanceFlagTransparencyLevel::AppearanceFlagTransparencyLevel(
+    ::google::protobuf::Arena* arena, const AppearanceFlagTransparencyLevel& from)
+    : AppearanceFlagTransparencyLevel(arena) {
+  MergeFrom(from);
+}
+inline PROTOBUF_NDEBUG_INLINE AppearanceFlagTransparencyLevel::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility,
+    ::google::protobuf::Arena* arena)
+      : _cached_size_{0} {}
+
+inline void AppearanceFlagTransparencyLevel::SharedCtor(::_pb::Arena* arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  _impl_.level_ = {};
+}
+AppearanceFlagTransparencyLevel::~AppearanceFlagTransparencyLevel() {
+  // @@protoc_insertion_point(destructor:rme.protobuf.appearances.AppearanceFlagTransparencyLevel)
+  SharedDtor(*this);
+}
+inline void AppearanceFlagTransparencyLevel::SharedDtor(MessageLite& self) {
+  AppearanceFlagTransparencyLevel& this_ = static_cast<AppearanceFlagTransparencyLevel&>(self);
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.~Impl_();
+}
+
+inline void* AppearanceFlagTransparencyLevel::PlacementNew_(const void*, void* mem,
+                                        ::google::protobuf::Arena* arena) {
+  return ::new (mem) AppearanceFlagTransparencyLevel(arena);
+}
+constexpr auto AppearanceFlagTransparencyLevel::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(AppearanceFlagTransparencyLevel),
+                                            alignof(AppearanceFlagTransparencyLevel));
+}
+PROTOBUF_CONSTINIT
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::google::protobuf::internal::ClassDataFull AppearanceFlagTransparencyLevel::_class_data_ = {
+    ::google::protobuf::internal::ClassData{
+        &_AppearanceFlagTransparencyLevel_default_instance_._instance,
+        &_table_.header,
+        nullptr,  // OnDemandRegisterArenaDtor
+        nullptr,  // IsInitialized
+        &AppearanceFlagTransparencyLevel::MergeImpl,
+        ::google::protobuf::Message::GetNewImpl<AppearanceFlagTransparencyLevel>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        &AppearanceFlagTransparencyLevel::SharedDtor,
+        ::google::protobuf::Message::GetClearImpl<AppearanceFlagTransparencyLevel>(), &AppearanceFlagTransparencyLevel::ByteSizeLong,
+            &AppearanceFlagTransparencyLevel::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+        PROTOBUF_FIELD_OFFSET(AppearanceFlagTransparencyLevel, _impl_._cached_size_),
+        false,
+    },
+    &AppearanceFlagTransparencyLevel::kDescriptorMethods,
+    &descriptor_table_appearances_2eproto,
+    nullptr,  // tracker
+};
+const ::google::protobuf::internal::ClassData* AppearanceFlagTransparencyLevel::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(_class_data_.tc_table);
+  return _class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<0, 1, 0, 0, 2> AppearanceFlagTransparencyLevel::_table_ = {
+  {
+    PROTOBUF_FIELD_OFFSET(AppearanceFlagTransparencyLevel, _impl_._has_bits_),
+    0, // no _extensions_
+    1, 0,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967294,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    1,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    _class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::rme::protobuf::appearances::AppearanceFlagTransparencyLevel>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    // optional uint32 level = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(AppearanceFlagTransparencyLevel, _impl_.level_), 0>(),
+     {8, 0, 0, PROTOBUF_FIELD_OFFSET(AppearanceFlagTransparencyLevel, _impl_.level_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // optional uint32 level = 1;
+    {PROTOBUF_FIELD_OFFSET(AppearanceFlagTransparencyLevel, _impl_.level_), _Internal::kHasBitsOffset + 0, 0,
+    (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+  }},
+  // no aux_entries
+  {{
+  }},
+};
+
+PROTOBUF_NOINLINE void AppearanceFlagTransparencyLevel::Clear() {
+// @@protoc_insertion_point(message_clear_start:rme.protobuf.appearances.AppearanceFlagTransparencyLevel)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.level_ = 0u;
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::uint8_t* AppearanceFlagTransparencyLevel::_InternalSerialize(
+            const MessageLite& base, ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) {
+          const AppearanceFlagTransparencyLevel& this_ = static_cast<const AppearanceFlagTransparencyLevel&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::uint8_t* AppearanceFlagTransparencyLevel::_InternalSerialize(
+            ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+          const AppearanceFlagTransparencyLevel& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(serialize_to_array_start:rme.protobuf.appearances.AppearanceFlagTransparencyLevel)
+          ::uint32_t cached_has_bits = 0;
+          (void)cached_has_bits;
+
+          cached_has_bits = this_._impl_._has_bits_[0];
+          // optional uint32 level = 1;
+          if (cached_has_bits & 0x00000001u) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
+                1, this_._internal_level(), target);
+          }
+
+          if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+            target =
+                ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+                    this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+          }
+          // @@protoc_insertion_point(serialize_to_array_end:rme.protobuf.appearances.AppearanceFlagTransparencyLevel)
+          return target;
+        }
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::size_t AppearanceFlagTransparencyLevel::ByteSizeLong(const MessageLite& base) {
+          const AppearanceFlagTransparencyLevel& this_ = static_cast<const AppearanceFlagTransparencyLevel&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::size_t AppearanceFlagTransparencyLevel::ByteSizeLong() const {
+          const AppearanceFlagTransparencyLevel& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(message_byte_size_start:rme.protobuf.appearances.AppearanceFlagTransparencyLevel)
+          ::size_t total_size = 0;
+
+          ::uint32_t cached_has_bits = 0;
+          // Prevent compiler warnings about cached_has_bits being unused
+          (void)cached_has_bits;
+
+           {
+            // optional uint32 level = 1;
+            cached_has_bits = this_._impl_._has_bits_[0];
+            if (cached_has_bits & 0x00000001u) {
+              total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+                  this_._internal_level());
+            }
+          }
+          return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                                     &this_._impl_._cached_size_);
+        }
+
+void AppearanceFlagTransparencyLevel::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
+  auto* const _this = static_cast<AppearanceFlagTransparencyLevel*>(&to_msg);
+  auto& from = static_cast<const AppearanceFlagTransparencyLevel&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:rme.protobuf.appearances.AppearanceFlagTransparencyLevel)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    _this->_impl_.level_ = from._impl_.level_;
+  }
+  _this->_impl_._has_bits_[0] |= cached_has_bits;
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void AppearanceFlagTransparencyLevel::CopyFrom(const AppearanceFlagTransparencyLevel& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:rme.protobuf.appearances.AppearanceFlagTransparencyLevel)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void AppearanceFlagTransparencyLevel::InternalSwap(AppearanceFlagTransparencyLevel* PROTOBUF_RESTRICT other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+        swap(_impl_.level_, other->_impl_.level_);
+}
+
+::google::protobuf::Metadata AppearanceFlagTransparencyLevel::GetMetadata() const {
   return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
 }
 // ===================================================================
