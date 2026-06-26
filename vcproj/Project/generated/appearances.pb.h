@@ -106,6 +106,9 @@ extern AppearanceFlagShiftDefaultTypeInternal _AppearanceFlagShift_default_insta
 class AppearanceFlagSkillWheelGem;
 struct AppearanceFlagSkillWheelGemDefaultTypeInternal;
 extern AppearanceFlagSkillWheelGemDefaultTypeInternal _AppearanceFlagSkillWheelGem_default_instance_;
+class AppearanceFlagTransparencyLevel;
+struct AppearanceFlagTransparencyLevelDefaultTypeInternal;
+extern AppearanceFlagTransparencyLevelDefaultTypeInternal _AppearanceFlagTransparencyLevel_default_instance_;
 class AppearanceFlagUpgradeClassification;
 struct AppearanceFlagUpgradeClassificationDefaultTypeInternal;
 extern AppearanceFlagUpgradeClassificationDefaultTypeInternal _AppearanceFlagUpgradeClassification_default_instance_;
@@ -211,14 +214,20 @@ enum ITEM_CATEGORY : int {
   ITEM_CATEGORY_TIBIA_COINS = 23,
   ITEM_CATEGORY_CREATURE_PRODUCTS = 24,
   ITEM_CATEGORY_QUIVER = 25,
-  ITEM_CATEGORY_SOULCORES = 26,
+  ITEM_CATEGORY_TWOHANDWEAPON = 26,
+  ITEM_CATEGORY_HELMETS = 27,
+  ITEM_CATEGORY_BACKPACK = 28,
+  ITEM_CATEGORY_ONEHANDWEAPON = 29,
+  ITEM_CATEGORY_ARROW = 30,
+  ITEM_CATEGORY_SOULCORES = 31,
+  ITEM_CATEGORY_FISTS = 32,
 };
 
 bool ITEM_CATEGORY_IsValid(int value);
 extern const uint32_t ITEM_CATEGORY_internal_data_[];
 constexpr ITEM_CATEGORY ITEM_CATEGORY_MIN = static_cast<ITEM_CATEGORY>(1);
-constexpr ITEM_CATEGORY ITEM_CATEGORY_MAX = static_cast<ITEM_CATEGORY>(26);
-constexpr int ITEM_CATEGORY_ARRAYSIZE = 26 + 1;
+constexpr ITEM_CATEGORY ITEM_CATEGORY_MAX = static_cast<ITEM_CATEGORY>(32);
+constexpr int ITEM_CATEGORY_ARRAYSIZE = 32 + 1;
 const ::google::protobuf::EnumDescriptor*
 ITEM_CATEGORY_descriptor();
 template <typename T>
@@ -231,7 +240,7 @@ const std::string& ITEM_CATEGORY_Name(T value) {
 template <>
 inline const std::string& ITEM_CATEGORY_Name(ITEM_CATEGORY value) {
   return ::google::protobuf::internal::NameOfDenseEnum<ITEM_CATEGORY_descriptor,
-                                                 1, 26>(
+                                                 1, 32>(
       static_cast<int>(value));
 }
 inline bool ITEM_CATEGORY_Parse(absl::string_view name, ITEM_CATEGORY* value) {
@@ -302,6 +311,35 @@ inline bool ANIMATION_LOOP_TYPE_Parse(absl::string_view name, ANIMATION_LOOP_TYP
   return ::google::protobuf::internal::ParseNamedEnum<ANIMATION_LOOP_TYPE>(
       ANIMATION_LOOP_TYPE_descriptor(), name, value);
 }
+enum ANIMATION_ANIMATION_MODE : int {
+  ANIMATION_ASYNCHRONIZED = 0,
+  ANIMATION_SYNCHRONIZED = 1,
+};
+
+bool ANIMATION_ANIMATION_MODE_IsValid(int value);
+extern const uint32_t ANIMATION_ANIMATION_MODE_internal_data_[];
+constexpr ANIMATION_ANIMATION_MODE ANIMATION_ANIMATION_MODE_MIN = static_cast<ANIMATION_ANIMATION_MODE>(0);
+constexpr ANIMATION_ANIMATION_MODE ANIMATION_ANIMATION_MODE_MAX = static_cast<ANIMATION_ANIMATION_MODE>(1);
+constexpr int ANIMATION_ANIMATION_MODE_ARRAYSIZE = 1 + 1;
+const ::google::protobuf::EnumDescriptor*
+ANIMATION_ANIMATION_MODE_descriptor();
+template <typename T>
+const std::string& ANIMATION_ANIMATION_MODE_Name(T value) {
+  static_assert(std::is_same<T, ANIMATION_ANIMATION_MODE>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to ANIMATION_ANIMATION_MODE_Name().");
+  return ANIMATION_ANIMATION_MODE_Name(static_cast<ANIMATION_ANIMATION_MODE>(value));
+}
+template <>
+inline const std::string& ANIMATION_ANIMATION_MODE_Name(ANIMATION_ANIMATION_MODE value) {
+  return ::google::protobuf::internal::NameOfDenseEnum<ANIMATION_ANIMATION_MODE_descriptor,
+                                                 0, 1>(
+      static_cast<int>(value));
+}
+inline bool ANIMATION_ANIMATION_MODE_Parse(absl::string_view name, ANIMATION_ANIMATION_MODE* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<ANIMATION_ANIMATION_MODE>(
+      ANIMATION_ANIMATION_MODE_descriptor(), name, value);
+}
 enum HOOK_TYPE : int {
   HOOK_TYPE_SOUTH = 1,
   HOOK_TYPE_EAST = 2,
@@ -330,6 +368,37 @@ inline const std::string& HOOK_TYPE_Name(HOOK_TYPE value) {
 inline bool HOOK_TYPE_Parse(absl::string_view name, HOOK_TYPE* value) {
   return ::google::protobuf::internal::ParseNamedEnum<HOOK_TYPE>(
       HOOK_TYPE_descriptor(), name, value);
+}
+enum APPEARANCE_TYPE : int {
+  APPEARANCE_OBJECT = 1,
+  APPEARANCE_OUTFIT = 2,
+  APPEARANCE_EFFECT = 3,
+  APPEARANCE_MISSILE = 4,
+};
+
+bool APPEARANCE_TYPE_IsValid(int value);
+extern const uint32_t APPEARANCE_TYPE_internal_data_[];
+constexpr APPEARANCE_TYPE APPEARANCE_TYPE_MIN = static_cast<APPEARANCE_TYPE>(1);
+constexpr APPEARANCE_TYPE APPEARANCE_TYPE_MAX = static_cast<APPEARANCE_TYPE>(4);
+constexpr int APPEARANCE_TYPE_ARRAYSIZE = 4 + 1;
+const ::google::protobuf::EnumDescriptor*
+APPEARANCE_TYPE_descriptor();
+template <typename T>
+const std::string& APPEARANCE_TYPE_Name(T value) {
+  static_assert(std::is_same<T, APPEARANCE_TYPE>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to APPEARANCE_TYPE_Name().");
+  return APPEARANCE_TYPE_Name(static_cast<APPEARANCE_TYPE>(value));
+}
+template <>
+inline const std::string& APPEARANCE_TYPE_Name(APPEARANCE_TYPE value) {
+  return ::google::protobuf::internal::NameOfDenseEnum<APPEARANCE_TYPE_descriptor,
+                                                 1, 4>(
+      static_cast<int>(value));
+}
+inline bool APPEARANCE_TYPE_Parse(absl::string_view name, APPEARANCE_TYPE* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<APPEARANCE_TYPE>(
+      APPEARANCE_TYPE_descriptor(), name, value);
 }
 enum WEAPON_TYPE : int {
   WEAPON_TYPE_NOWEAPON = 0,
@@ -702,7 +771,7 @@ class SpecialMeaningAppearanceIds final : public ::google::protobuf::Message
     return reinterpret_cast<const SpecialMeaningAppearanceIds*>(
         &_SpecialMeaningAppearanceIds_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 25;
+  static constexpr int kIndexInFileMessages = 26;
   friend void swap(SpecialMeaningAppearanceIds& a, SpecialMeaningAppearanceIds& b) { a.Swap(&b); }
   inline void Swap(SpecialMeaningAppearanceIds* other) {
     if (other == this) return;
@@ -1938,6 +2007,198 @@ class AppearanceFlagUpgradeClassification final : public ::google::protobuf::Mes
 };
 // -------------------------------------------------------------------
 
+class AppearanceFlagTransparencyLevel final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:rme.protobuf.appearances.AppearanceFlagTransparencyLevel) */ {
+ public:
+  inline AppearanceFlagTransparencyLevel() : AppearanceFlagTransparencyLevel(nullptr) {}
+  ~AppearanceFlagTransparencyLevel() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(AppearanceFlagTransparencyLevel* msg, std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(AppearanceFlagTransparencyLevel));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR AppearanceFlagTransparencyLevel(
+      ::google::protobuf::internal::ConstantInitialized);
+
+  inline AppearanceFlagTransparencyLevel(const AppearanceFlagTransparencyLevel& from) : AppearanceFlagTransparencyLevel(nullptr, from) {}
+  inline AppearanceFlagTransparencyLevel(AppearanceFlagTransparencyLevel&& from) noexcept
+      : AppearanceFlagTransparencyLevel(nullptr, std::move(from)) {}
+  inline AppearanceFlagTransparencyLevel& operator=(const AppearanceFlagTransparencyLevel& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline AppearanceFlagTransparencyLevel& operator=(AppearanceFlagTransparencyLevel&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const AppearanceFlagTransparencyLevel& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const AppearanceFlagTransparencyLevel* internal_default_instance() {
+    return reinterpret_cast<const AppearanceFlagTransparencyLevel*>(
+        &_AppearanceFlagTransparencyLevel_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 25;
+  friend void swap(AppearanceFlagTransparencyLevel& a, AppearanceFlagTransparencyLevel& b) { a.Swap(&b); }
+  inline void Swap(AppearanceFlagTransparencyLevel* other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(AppearanceFlagTransparencyLevel* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  AppearanceFlagTransparencyLevel* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<AppearanceFlagTransparencyLevel>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const AppearanceFlagTransparencyLevel& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const AppearanceFlagTransparencyLevel& from) { AppearanceFlagTransparencyLevel::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(
+      ::google::protobuf::MessageLite& to_msg,
+      const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* _InternalSerialize(
+      const MessageLite& msg, ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(AppearanceFlagTransparencyLevel* other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(
+      ::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "rme.protobuf.appearances.AppearanceFlagTransparencyLevel"; }
+
+ protected:
+  explicit AppearanceFlagTransparencyLevel(::google::protobuf::Arena* arena);
+  AppearanceFlagTransparencyLevel(::google::protobuf::Arena* arena, const AppearanceFlagTransparencyLevel& from);
+  AppearanceFlagTransparencyLevel(::google::protobuf::Arena* arena, AppearanceFlagTransparencyLevel&& from) noexcept
+      : AppearanceFlagTransparencyLevel(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
+  static void* PlacementNew_(const void*, void* mem,
+                             ::google::protobuf::Arena* arena);
+  static constexpr auto InternalNewImpl_();
+  static const ::google::protobuf::internal::ClassDataFull _class_data_;
+
+ public:
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kLevelFieldNumber = 1,
+  };
+  // optional uint32 level = 1;
+  bool has_level() const;
+  void clear_level() ;
+  ::uint32_t level() const;
+  void set_level(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_level() const;
+  void _internal_set_level(::uint32_t value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:rme.protobuf.appearances.AppearanceFlagTransparencyLevel)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<
+      0, 1, 0,
+      0, 2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(
+        ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena);
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena, const Impl_& from,
+                          const AppearanceFlagTransparencyLevel& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::uint32_t level_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_appearances_2eproto;
+};
+// -------------------------------------------------------------------
+
 class AppearanceFlagSkillWheelGem final : public ::google::protobuf::Message
 /* @@protoc_insertion_point(class_definition:rme.protobuf.appearances.AppearanceFlagSkillWheelGem) */ {
  public:
@@ -1997,7 +2258,7 @@ class AppearanceFlagSkillWheelGem final : public ::google::protobuf::Message
     return reinterpret_cast<const AppearanceFlagSkillWheelGem*>(
         &_AppearanceFlagSkillWheelGem_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 26;
+  static constexpr int kIndexInFileMessages = 27;
   friend void swap(AppearanceFlagSkillWheelGem& a, AppearanceFlagSkillWheelGem& b) { a.Swap(&b); }
   inline void Swap(AppearanceFlagSkillWheelGem* other) {
     if (other == this) return;
@@ -2407,7 +2668,7 @@ class AppearanceFlagProficiency final : public ::google::protobuf::Message
     return reinterpret_cast<const AppearanceFlagProficiency*>(
         &_AppearanceFlagProficiency_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 28;
+  static constexpr int kIndexInFileMessages = 29;
   friend void swap(AppearanceFlagProficiency& a, AppearanceFlagProficiency& b) { a.Swap(&b); }
   inline void Swap(AppearanceFlagProficiency* other) {
     if (other == this) return;
@@ -2962,10 +3223,12 @@ class AppearanceFlagMarket final : public ::google::protobuf::Message
   // accessors -------------------------------------------------------
   enum : int {
     kRestrictToProfessionFieldNumber = 5,
+    kNameFieldNumber = 7,
     kTradeAsObjectIdFieldNumber = 2,
     kShowAsObjectIdFieldNumber = 3,
     kMinimumLevelFieldNumber = 6,
     kCategoryFieldNumber = 1,
+    kVocationFieldNumber = 8,
   };
   // repeated .rme.protobuf.appearances.PLAYER_PROFESSION restrict_to_profession = 5;
   int restrict_to_profession_size() const;
@@ -2984,6 +3247,23 @@ class AppearanceFlagMarket final : public ::google::protobuf::Message
   private:
   const ::google::protobuf::RepeatedField<int>& _internal_restrict_to_profession() const;
   ::google::protobuf::RepeatedField<int>* _internal_mutable_restrict_to_profession();
+
+  public:
+  // optional string name = 7;
+  bool has_name() const;
+  void clear_name() ;
+  const std::string& name() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_name(Arg_&& arg, Args_... args);
+  std::string* mutable_name();
+  PROTOBUF_NODISCARD std::string* release_name();
+  void set_allocated_name(std::string* value);
+
+  private:
+  const std::string& _internal_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_name(
+      const std::string& value);
+  std::string* _internal_mutable_name();
 
   public:
   // optional uint32 trade_as_object_id = 2;
@@ -3030,13 +3310,24 @@ class AppearanceFlagMarket final : public ::google::protobuf::Message
   void _internal_set_category(::rme::protobuf::appearances::ITEM_CATEGORY value);
 
   public:
+  // optional .rme.protobuf.appearances.VOCATION vocation = 8;
+  bool has_vocation() const;
+  void clear_vocation() ;
+  ::rme::protobuf::appearances::VOCATION vocation() const;
+  void set_vocation(::rme::protobuf::appearances::VOCATION value);
+
+  private:
+  ::rme::protobuf::appearances::VOCATION _internal_vocation() const;
+  void _internal_set_vocation(::rme::protobuf::appearances::VOCATION value);
+
+  public:
   // @@protoc_insertion_point(class_scope:rme.protobuf.appearances.AppearanceFlagMarket)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      3, 5, 2,
-      0, 2>
+      3, 7, 3,
+      58, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -3056,10 +3347,12 @@ class AppearanceFlagMarket final : public ::google::protobuf::Message
     ::google::protobuf::internal::HasBits<1> _has_bits_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     ::google::protobuf::RepeatedField<int> restrict_to_profession_;
+    ::google::protobuf::internal::ArenaStringPtr name_;
     ::uint32_t trade_as_object_id_;
     ::uint32_t show_as_object_id_;
     ::uint32_t minimum_level_;
     int category_;
+    int vocation_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
   union { Impl_ _impl_; };
@@ -3523,7 +3816,7 @@ class AppearanceFlagImbueable final : public ::google::protobuf::Message
     return reinterpret_cast<const AppearanceFlagImbueable*>(
         &_AppearanceFlagImbueable_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 27;
+  static constexpr int kIndexInFileMessages = 28;
   friend void swap(AppearanceFlagImbueable& a, AppearanceFlagImbueable& b) { a.Swap(&b); }
   inline void Swap(AppearanceFlagImbueable* other) {
     if (other == this) return;
@@ -5343,6 +5636,7 @@ class SpriteAnimation final : public ::google::protobuf::Message
     kSynchronizedFieldNumber = 2,
     kRandomStartPhaseFieldNumber = 3,
     kLoopCountFieldNumber = 5,
+    kAnimationModeFieldNumber = 7,
     kLoopTypeFieldNumber = 4,
   };
   // repeated .rme.protobuf.appearances.SpritePhase sprite_phase = 6;
@@ -5406,6 +5700,17 @@ class SpriteAnimation final : public ::google::protobuf::Message
   void _internal_set_loop_count(::uint32_t value);
 
   public:
+  // optional .rme.protobuf.appearances.ANIMATION_ANIMATION_MODE animation_mode = 7;
+  bool has_animation_mode() const;
+  void clear_animation_mode() ;
+  ::rme::protobuf::appearances::ANIMATION_ANIMATION_MODE animation_mode() const;
+  void set_animation_mode(::rme::protobuf::appearances::ANIMATION_ANIMATION_MODE value);
+
+  private:
+  ::rme::protobuf::appearances::ANIMATION_ANIMATION_MODE _internal_animation_mode() const;
+  void _internal_set_animation_mode(::rme::protobuf::appearances::ANIMATION_ANIMATION_MODE value);
+
+  public:
   // optional .rme.protobuf.appearances.ANIMATION_LOOP_TYPE loop_type = 4;
   bool has_loop_type() const;
   void clear_loop_type() ;
@@ -5422,7 +5727,7 @@ class SpriteAnimation final : public ::google::protobuf::Message
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      3, 6, 2,
+      3, 7, 3,
       0, 2>
       _table_;
 
@@ -5447,6 +5752,7 @@ class SpriteAnimation final : public ::google::protobuf::Message
     bool synchronized_;
     bool random_start_phase_;
     ::uint32_t loop_count_;
+    int animation_mode_;
     int loop_type_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -5621,6 +5927,7 @@ class AppearanceFlags final : public ::google::protobuf::Message
     kSkillwheelGemFieldNumber = 58,
     kImbueableFieldNumber = 60,
     kProficiencyFieldNumber = 61,
+    kTransparencylevelFieldNumber = 72,
     kClipFieldNumber = 2,
     kBottomFieldNumber = 3,
     kTopFieldNumber = 4,
@@ -5663,8 +5970,11 @@ class AppearanceFlags final : public ::google::protobuf::Message
     kExpirestopFieldNumber = 56,
     kWrapkitFieldNumber = 57,
     kDualWieldingFieldNumber = 59,
+    kDecoItemKitFieldNumber = 65,
+    kHookSouthFieldNumber = 70,
     kMinimumLevelFieldNumber = 63,
     kWeaponTypeFieldNumber = 64,
+    kHookEastFieldNumber = 71,
   };
   // repeated .rme.protobuf.appearances.AppearanceFlagNPC npcsaledata = 40;
   int npcsaledata_size() const;
@@ -5970,6 +6280,21 @@ class AppearanceFlags final : public ::google::protobuf::Message
   private:
   const ::rme::protobuf::appearances::AppearanceFlagProficiency& _internal_proficiency() const;
   ::rme::protobuf::appearances::AppearanceFlagProficiency* _internal_mutable_proficiency();
+
+  public:
+  // optional .rme.protobuf.appearances.AppearanceFlagTransparencyLevel transparencylevel = 72;
+  bool has_transparencylevel() const;
+  void clear_transparencylevel() ;
+  const ::rme::protobuf::appearances::AppearanceFlagTransparencyLevel& transparencylevel() const;
+  PROTOBUF_NODISCARD ::rme::protobuf::appearances::AppearanceFlagTransparencyLevel* release_transparencylevel();
+  ::rme::protobuf::appearances::AppearanceFlagTransparencyLevel* mutable_transparencylevel();
+  void set_allocated_transparencylevel(::rme::protobuf::appearances::AppearanceFlagTransparencyLevel* value);
+  void unsafe_arena_set_allocated_transparencylevel(::rme::protobuf::appearances::AppearanceFlagTransparencyLevel* value);
+  ::rme::protobuf::appearances::AppearanceFlagTransparencyLevel* unsafe_arena_release_transparencylevel();
+
+  private:
+  const ::rme::protobuf::appearances::AppearanceFlagTransparencyLevel& _internal_transparencylevel() const;
+  ::rme::protobuf::appearances::AppearanceFlagTransparencyLevel* _internal_mutable_transparencylevel();
 
   public:
   // optional bool clip = 2;
@@ -6434,6 +6759,28 @@ class AppearanceFlags final : public ::google::protobuf::Message
   void _internal_set_dual_wielding(bool value);
 
   public:
+  // optional bool deco_item_kit = 65;
+  bool has_deco_item_kit() const;
+  void clear_deco_item_kit() ;
+  bool deco_item_kit() const;
+  void set_deco_item_kit(bool value);
+
+  private:
+  bool _internal_deco_item_kit() const;
+  void _internal_set_deco_item_kit(bool value);
+
+  public:
+  // optional bool hook_south = 70;
+  bool has_hook_south() const;
+  void clear_hook_south() ;
+  bool hook_south() const;
+  void set_hook_south(bool value);
+
+  private:
+  bool _internal_hook_south() const;
+  void _internal_set_hook_south(bool value);
+
+  public:
   // optional uint32 minimum_level = 63;
   bool has_minimum_level() const;
   void clear_minimum_level() ;
@@ -6456,13 +6803,24 @@ class AppearanceFlags final : public ::google::protobuf::Message
   void _internal_set_weapon_type(::rme::protobuf::appearances::WEAPON_TYPE value);
 
   public:
+  // optional bool hook_east = 71;
+  bool has_hook_east() const;
+  void clear_hook_east() ;
+  bool hook_east() const;
+  void set_hook_east(bool value);
+
+  private:
+  bool _internal_hook_east() const;
+  void _internal_set_hook_east(bool value);
+
+  public:
   // @@protoc_insertion_point(class_scope:rme.protobuf.appearances.AppearanceFlags)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      5, 64, 21,
-      0, 9>
+      5, 68, 22,
+      0, 11>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -6479,7 +6837,7 @@ class AppearanceFlags final : public ::google::protobuf::Message
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
                           const AppearanceFlags& from_msg);
-    ::google::protobuf::internal::HasBits<2> _has_bits_;
+    ::google::protobuf::internal::HasBits<3> _has_bits_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     ::google::protobuf::RepeatedPtrField< ::rme::protobuf::appearances::AppearanceFlagNPC > npcsaledata_;
     ::google::protobuf::RepeatedField<int> restrict_to_vocation_;
@@ -6501,6 +6859,7 @@ class AppearanceFlags final : public ::google::protobuf::Message
     ::rme::protobuf::appearances::AppearanceFlagSkillWheelGem* skillwheel_gem_;
     ::rme::protobuf::appearances::AppearanceFlagImbueable* imbueable_;
     ::rme::protobuf::appearances::AppearanceFlagProficiency* proficiency_;
+    ::rme::protobuf::appearances::AppearanceFlagTransparencyLevel* transparencylevel_;
     bool clip_;
     bool bottom_;
     bool top_;
@@ -6543,8 +6902,11 @@ class AppearanceFlags final : public ::google::protobuf::Message
     bool expirestop_;
     bool wrapkit_;
     bool dual_wielding_;
+    bool deco_item_kit_;
+    bool hook_south_;
     ::uint32_t minimum_level_;
     int weapon_type_;
+    bool hook_east_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
   union { Impl_ _impl_; };
@@ -6706,7 +7068,14 @@ class SpriteInfo final : public ::google::protobuf::Message
     kPatternDepthFieldNumber = 3,
     kLayersFieldNumber = 4,
     kBoundingSquareFieldNumber = 7,
+    kPatternSizeFieldNumber = 10,
+    kPatternLayersFieldNumber = 11,
+    kPatternXFieldNumber = 12,
     kIsOpaqueFieldNumber = 8,
+    kIsAnimationFieldNumber = 16,
+    kPatternYFieldNumber = 13,
+    kPatternZFieldNumber = 14,
+    kPatternFramesFieldNumber = 15,
   };
   // repeated uint32 sprite_id = 5;
   int sprite_id_size() const;
@@ -6813,6 +7182,39 @@ class SpriteInfo final : public ::google::protobuf::Message
   void _internal_set_bounding_square(::uint32_t value);
 
   public:
+  // optional uint32 pattern_size = 10;
+  bool has_pattern_size() const;
+  void clear_pattern_size() ;
+  ::uint32_t pattern_size() const;
+  void set_pattern_size(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_pattern_size() const;
+  void _internal_set_pattern_size(::uint32_t value);
+
+  public:
+  // optional uint32 pattern_layers = 11;
+  bool has_pattern_layers() const;
+  void clear_pattern_layers() ;
+  ::uint32_t pattern_layers() const;
+  void set_pattern_layers(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_pattern_layers() const;
+  void _internal_set_pattern_layers(::uint32_t value);
+
+  public:
+  // optional uint32 pattern_x = 12;
+  bool has_pattern_x() const;
+  void clear_pattern_x() ;
+  ::uint32_t pattern_x() const;
+  void set_pattern_x(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_pattern_x() const;
+  void _internal_set_pattern_x(::uint32_t value);
+
+  public:
   // optional bool is_opaque = 8;
   bool has_is_opaque() const;
   void clear_is_opaque() ;
@@ -6824,12 +7226,56 @@ class SpriteInfo final : public ::google::protobuf::Message
   void _internal_set_is_opaque(bool value);
 
   public:
+  // optional bool is_animation = 16;
+  bool has_is_animation() const;
+  void clear_is_animation() ;
+  bool is_animation() const;
+  void set_is_animation(bool value);
+
+  private:
+  bool _internal_is_animation() const;
+  void _internal_set_is_animation(bool value);
+
+  public:
+  // optional uint32 pattern_y = 13;
+  bool has_pattern_y() const;
+  void clear_pattern_y() ;
+  ::uint32_t pattern_y() const;
+  void set_pattern_y(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_pattern_y() const;
+  void _internal_set_pattern_y(::uint32_t value);
+
+  public:
+  // optional uint32 pattern_z = 14;
+  bool has_pattern_z() const;
+  void clear_pattern_z() ;
+  ::uint32_t pattern_z() const;
+  void set_pattern_z(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_pattern_z() const;
+  void _internal_set_pattern_z(::uint32_t value);
+
+  public:
+  // optional uint32 pattern_frames = 15;
+  bool has_pattern_frames() const;
+  void clear_pattern_frames() ;
+  ::uint32_t pattern_frames() const;
+  void set_pattern_frames(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_pattern_frames() const;
+  void _internal_set_pattern_frames(::uint32_t value);
+
+  public:
   // @@protoc_insertion_point(class_scope:rme.protobuf.appearances.SpriteInfo)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      4, 9, 2,
+      4, 16, 2,
       0, 2>
       _table_;
 
@@ -6857,7 +7303,14 @@ class SpriteInfo final : public ::google::protobuf::Message
     ::uint32_t pattern_depth_;
     ::uint32_t layers_;
     ::uint32_t bounding_square_;
+    ::uint32_t pattern_size_;
+    ::uint32_t pattern_layers_;
+    ::uint32_t pattern_x_;
     bool is_opaque_;
+    bool is_animation_;
+    ::uint32_t pattern_y_;
+    ::uint32_t pattern_z_;
+    ::uint32_t pattern_frames_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
   union { Impl_ _impl_; };
@@ -7234,10 +7687,12 @@ class Appearance final : public ::google::protobuf::Message
   // accessors -------------------------------------------------------
   enum : int {
     kFrameGroupFieldNumber = 2,
+    kSpriteDataFieldNumber = 7,
     kNameFieldNumber = 4,
     kDescriptionFieldNumber = 5,
     kFlagsFieldNumber = 3,
     kIdFieldNumber = 1,
+    kAppearanceTypeFieldNumber = 6,
   };
   // repeated .rme.protobuf.appearances.FrameGroup frame_group = 2;
   int frame_group_size() const;
@@ -7256,6 +7711,28 @@ class Appearance final : public ::google::protobuf::Message
   const ::rme::protobuf::appearances::FrameGroup& frame_group(int index) const;
   ::rme::protobuf::appearances::FrameGroup* add_frame_group();
   const ::google::protobuf::RepeatedPtrField<::rme::protobuf::appearances::FrameGroup>& frame_group() const;
+  // repeated bytes sprite_data = 7;
+  int sprite_data_size() const;
+  private:
+  int _internal_sprite_data_size() const;
+
+  public:
+  void clear_sprite_data() ;
+  const std::string& sprite_data(int index) const;
+  std::string* mutable_sprite_data(int index);
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_sprite_data(int index, Arg_&& value, Args_... args);
+  std::string* add_sprite_data();
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void add_sprite_data(Arg_&& value, Args_... args);
+  const ::google::protobuf::RepeatedPtrField<std::string>& sprite_data() const;
+  ::google::protobuf::RepeatedPtrField<std::string>* mutable_sprite_data();
+
+  private:
+  const ::google::protobuf::RepeatedPtrField<std::string>& _internal_sprite_data() const;
+  ::google::protobuf::RepeatedPtrField<std::string>* _internal_mutable_sprite_data();
+
+  public:
   // optional bytes name = 4;
   bool has_name() const;
   void clear_name() ;
@@ -7316,12 +7793,23 @@ class Appearance final : public ::google::protobuf::Message
   void _internal_set_id(::uint32_t value);
 
   public:
+  // optional .rme.protobuf.appearances.APPEARANCE_TYPE appearance_type = 6;
+  bool has_appearance_type() const;
+  void clear_appearance_type() ;
+  ::rme::protobuf::appearances::APPEARANCE_TYPE appearance_type() const;
+  void set_appearance_type(::rme::protobuf::appearances::APPEARANCE_TYPE value);
+
+  private:
+  ::rme::protobuf::appearances::APPEARANCE_TYPE _internal_appearance_type() const;
+  void _internal_set_appearance_type(::rme::protobuf::appearances::APPEARANCE_TYPE value);
+
+  public:
   // @@protoc_insertion_point(class_scope:rme.protobuf.appearances.Appearance)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      3, 5, 2,
+      3, 7, 3,
       0, 2>
       _table_;
 
@@ -7342,10 +7830,12 @@ class Appearance final : public ::google::protobuf::Message
     ::google::protobuf::internal::HasBits<1> _has_bits_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     ::google::protobuf::RepeatedPtrField< ::rme::protobuf::appearances::FrameGroup > frame_group_;
+    ::google::protobuf::RepeatedPtrField<std::string> sprite_data_;
     ::google::protobuf::internal::ArenaStringPtr name_;
     ::google::protobuf::internal::ArenaStringPtr description_;
     ::rme::protobuf::appearances::AppearanceFlags* flags_;
     ::uint32_t id_;
+    int appearance_type_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
   union { Impl_ _impl_; };
@@ -8170,13 +8660,13 @@ inline void SpriteAnimation::_internal_set_random_start_phase(bool value) {
 
 // optional .rme.protobuf.appearances.ANIMATION_LOOP_TYPE loop_type = 4;
 inline bool SpriteAnimation::has_loop_type() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000010u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000020u) != 0;
   return value;
 }
 inline void SpriteAnimation::clear_loop_type() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.loop_type_ = -1;
-  _impl_._has_bits_[0] &= ~0x00000010u;
+  _impl_._has_bits_[0] &= ~0x00000020u;
 }
 inline ::rme::protobuf::appearances::ANIMATION_LOOP_TYPE SpriteAnimation::loop_type() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.SpriteAnimation.loop_type)
@@ -8184,7 +8674,7 @@ inline ::rme::protobuf::appearances::ANIMATION_LOOP_TYPE SpriteAnimation::loop_t
 }
 inline void SpriteAnimation::set_loop_type(::rme::protobuf::appearances::ANIMATION_LOOP_TYPE value) {
   _internal_set_loop_type(value);
-  _impl_._has_bits_[0] |= 0x00000010u;
+  _impl_._has_bits_[0] |= 0x00000020u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.SpriteAnimation.loop_type)
 }
 inline ::rme::protobuf::appearances::ANIMATION_LOOP_TYPE SpriteAnimation::_internal_loop_type() const {
@@ -8272,6 +8762,35 @@ inline ::google::protobuf::RepeatedPtrField<::rme::protobuf::appearances::Sprite
 SpriteAnimation::_internal_mutable_sprite_phase() {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return &_impl_.sprite_phase_;
+}
+
+// optional .rme.protobuf.appearances.ANIMATION_ANIMATION_MODE animation_mode = 7;
+inline bool SpriteAnimation::has_animation_mode() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000010u) != 0;
+  return value;
+}
+inline void SpriteAnimation::clear_animation_mode() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.animation_mode_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000010u;
+}
+inline ::rme::protobuf::appearances::ANIMATION_ANIMATION_MODE SpriteAnimation::animation_mode() const {
+  // @@protoc_insertion_point(field_get:rme.protobuf.appearances.SpriteAnimation.animation_mode)
+  return _internal_animation_mode();
+}
+inline void SpriteAnimation::set_animation_mode(::rme::protobuf::appearances::ANIMATION_ANIMATION_MODE value) {
+  _internal_set_animation_mode(value);
+  _impl_._has_bits_[0] |= 0x00000010u;
+  // @@protoc_insertion_point(field_set:rme.protobuf.appearances.SpriteAnimation.animation_mode)
+}
+inline ::rme::protobuf::appearances::ANIMATION_ANIMATION_MODE SpriteAnimation::_internal_animation_mode() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return static_cast<::rme::protobuf::appearances::ANIMATION_ANIMATION_MODE>(_impl_.animation_mode_);
+}
+inline void SpriteAnimation::_internal_set_animation_mode(::rme::protobuf::appearances::ANIMATION_ANIMATION_MODE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  assert(::rme::protobuf::appearances::ANIMATION_ANIMATION_MODE_IsValid(value));
+  _impl_.animation_mode_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -8677,13 +9196,13 @@ inline void SpriteInfo::set_allocated_animation(::rme::protobuf::appearances::Sp
 
 // optional bool is_opaque = 8;
 inline bool SpriteInfo::has_is_opaque() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000040u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000200u) != 0;
   return value;
 }
 inline void SpriteInfo::clear_is_opaque() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.is_opaque_ = false;
-  _impl_._has_bits_[0] &= ~0x00000040u;
+  _impl_._has_bits_[0] &= ~0x00000200u;
 }
 inline bool SpriteInfo::is_opaque() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.SpriteInfo.is_opaque)
@@ -8691,7 +9210,7 @@ inline bool SpriteInfo::is_opaque() const {
 }
 inline void SpriteInfo::set_is_opaque(bool value) {
   _internal_set_is_opaque(value);
-  _impl_._has_bits_[0] |= 0x00000040u;
+  _impl_._has_bits_[0] |= 0x00000200u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.SpriteInfo.is_opaque)
 }
 inline bool SpriteInfo::_internal_is_opaque() const {
@@ -8750,6 +9269,202 @@ inline ::google::protobuf::RepeatedPtrField<::rme::protobuf::appearances::Box>*
 SpriteInfo::_internal_mutable_bounding_box_per_direction() {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return &_impl_.bounding_box_per_direction_;
+}
+
+// optional uint32 pattern_size = 10;
+inline bool SpriteInfo::has_pattern_size() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000040u) != 0;
+  return value;
+}
+inline void SpriteInfo::clear_pattern_size() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.pattern_size_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00000040u;
+}
+inline ::uint32_t SpriteInfo::pattern_size() const {
+  // @@protoc_insertion_point(field_get:rme.protobuf.appearances.SpriteInfo.pattern_size)
+  return _internal_pattern_size();
+}
+inline void SpriteInfo::set_pattern_size(::uint32_t value) {
+  _internal_set_pattern_size(value);
+  _impl_._has_bits_[0] |= 0x00000040u;
+  // @@protoc_insertion_point(field_set:rme.protobuf.appearances.SpriteInfo.pattern_size)
+}
+inline ::uint32_t SpriteInfo::_internal_pattern_size() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.pattern_size_;
+}
+inline void SpriteInfo::_internal_set_pattern_size(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.pattern_size_ = value;
+}
+
+// optional uint32 pattern_layers = 11;
+inline bool SpriteInfo::has_pattern_layers() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000080u) != 0;
+  return value;
+}
+inline void SpriteInfo::clear_pattern_layers() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.pattern_layers_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00000080u;
+}
+inline ::uint32_t SpriteInfo::pattern_layers() const {
+  // @@protoc_insertion_point(field_get:rme.protobuf.appearances.SpriteInfo.pattern_layers)
+  return _internal_pattern_layers();
+}
+inline void SpriteInfo::set_pattern_layers(::uint32_t value) {
+  _internal_set_pattern_layers(value);
+  _impl_._has_bits_[0] |= 0x00000080u;
+  // @@protoc_insertion_point(field_set:rme.protobuf.appearances.SpriteInfo.pattern_layers)
+}
+inline ::uint32_t SpriteInfo::_internal_pattern_layers() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.pattern_layers_;
+}
+inline void SpriteInfo::_internal_set_pattern_layers(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.pattern_layers_ = value;
+}
+
+// optional uint32 pattern_x = 12;
+inline bool SpriteInfo::has_pattern_x() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000100u) != 0;
+  return value;
+}
+inline void SpriteInfo::clear_pattern_x() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.pattern_x_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00000100u;
+}
+inline ::uint32_t SpriteInfo::pattern_x() const {
+  // @@protoc_insertion_point(field_get:rme.protobuf.appearances.SpriteInfo.pattern_x)
+  return _internal_pattern_x();
+}
+inline void SpriteInfo::set_pattern_x(::uint32_t value) {
+  _internal_set_pattern_x(value);
+  _impl_._has_bits_[0] |= 0x00000100u;
+  // @@protoc_insertion_point(field_set:rme.protobuf.appearances.SpriteInfo.pattern_x)
+}
+inline ::uint32_t SpriteInfo::_internal_pattern_x() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.pattern_x_;
+}
+inline void SpriteInfo::_internal_set_pattern_x(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.pattern_x_ = value;
+}
+
+// optional uint32 pattern_y = 13;
+inline bool SpriteInfo::has_pattern_y() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000800u) != 0;
+  return value;
+}
+inline void SpriteInfo::clear_pattern_y() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.pattern_y_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00000800u;
+}
+inline ::uint32_t SpriteInfo::pattern_y() const {
+  // @@protoc_insertion_point(field_get:rme.protobuf.appearances.SpriteInfo.pattern_y)
+  return _internal_pattern_y();
+}
+inline void SpriteInfo::set_pattern_y(::uint32_t value) {
+  _internal_set_pattern_y(value);
+  _impl_._has_bits_[0] |= 0x00000800u;
+  // @@protoc_insertion_point(field_set:rme.protobuf.appearances.SpriteInfo.pattern_y)
+}
+inline ::uint32_t SpriteInfo::_internal_pattern_y() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.pattern_y_;
+}
+inline void SpriteInfo::_internal_set_pattern_y(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.pattern_y_ = value;
+}
+
+// optional uint32 pattern_z = 14;
+inline bool SpriteInfo::has_pattern_z() const {
+  bool value = (_impl_._has_bits_[0] & 0x00001000u) != 0;
+  return value;
+}
+inline void SpriteInfo::clear_pattern_z() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.pattern_z_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00001000u;
+}
+inline ::uint32_t SpriteInfo::pattern_z() const {
+  // @@protoc_insertion_point(field_get:rme.protobuf.appearances.SpriteInfo.pattern_z)
+  return _internal_pattern_z();
+}
+inline void SpriteInfo::set_pattern_z(::uint32_t value) {
+  _internal_set_pattern_z(value);
+  _impl_._has_bits_[0] |= 0x00001000u;
+  // @@protoc_insertion_point(field_set:rme.protobuf.appearances.SpriteInfo.pattern_z)
+}
+inline ::uint32_t SpriteInfo::_internal_pattern_z() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.pattern_z_;
+}
+inline void SpriteInfo::_internal_set_pattern_z(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.pattern_z_ = value;
+}
+
+// optional uint32 pattern_frames = 15;
+inline bool SpriteInfo::has_pattern_frames() const {
+  bool value = (_impl_._has_bits_[0] & 0x00002000u) != 0;
+  return value;
+}
+inline void SpriteInfo::clear_pattern_frames() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.pattern_frames_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00002000u;
+}
+inline ::uint32_t SpriteInfo::pattern_frames() const {
+  // @@protoc_insertion_point(field_get:rme.protobuf.appearances.SpriteInfo.pattern_frames)
+  return _internal_pattern_frames();
+}
+inline void SpriteInfo::set_pattern_frames(::uint32_t value) {
+  _internal_set_pattern_frames(value);
+  _impl_._has_bits_[0] |= 0x00002000u;
+  // @@protoc_insertion_point(field_set:rme.protobuf.appearances.SpriteInfo.pattern_frames)
+}
+inline ::uint32_t SpriteInfo::_internal_pattern_frames() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.pattern_frames_;
+}
+inline void SpriteInfo::_internal_set_pattern_frames(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.pattern_frames_ = value;
+}
+
+// optional bool is_animation = 16;
+inline bool SpriteInfo::has_is_animation() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000400u) != 0;
+  return value;
+}
+inline void SpriteInfo::clear_is_animation() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.is_animation_ = false;
+  _impl_._has_bits_[0] &= ~0x00000400u;
+}
+inline bool SpriteInfo::is_animation() const {
+  // @@protoc_insertion_point(field_get:rme.protobuf.appearances.SpriteInfo.is_animation)
+  return _internal_is_animation();
+}
+inline void SpriteInfo::set_is_animation(bool value) {
+  _internal_set_is_animation(value);
+  _impl_._has_bits_[0] |= 0x00000400u;
+  // @@protoc_insertion_point(field_set:rme.protobuf.appearances.SpriteInfo.is_animation)
+}
+inline bool SpriteInfo::_internal_is_animation() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.is_animation_;
+}
+inline void SpriteInfo::_internal_set_is_animation(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.is_animation_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -9224,6 +9939,99 @@ inline void Appearance::set_allocated_description(std::string* value) {
   // @@protoc_insertion_point(field_set_allocated:rme.protobuf.appearances.Appearance.description)
 }
 
+// optional .rme.protobuf.appearances.APPEARANCE_TYPE appearance_type = 6;
+inline bool Appearance::has_appearance_type() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000010u) != 0;
+  return value;
+}
+inline void Appearance::clear_appearance_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.appearance_type_ = 1;
+  _impl_._has_bits_[0] &= ~0x00000010u;
+}
+inline ::rme::protobuf::appearances::APPEARANCE_TYPE Appearance::appearance_type() const {
+  // @@protoc_insertion_point(field_get:rme.protobuf.appearances.Appearance.appearance_type)
+  return _internal_appearance_type();
+}
+inline void Appearance::set_appearance_type(::rme::protobuf::appearances::APPEARANCE_TYPE value) {
+  _internal_set_appearance_type(value);
+  _impl_._has_bits_[0] |= 0x00000010u;
+  // @@protoc_insertion_point(field_set:rme.protobuf.appearances.Appearance.appearance_type)
+}
+inline ::rme::protobuf::appearances::APPEARANCE_TYPE Appearance::_internal_appearance_type() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return static_cast<::rme::protobuf::appearances::APPEARANCE_TYPE>(_impl_.appearance_type_);
+}
+inline void Appearance::_internal_set_appearance_type(::rme::protobuf::appearances::APPEARANCE_TYPE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  assert(::rme::protobuf::appearances::APPEARANCE_TYPE_IsValid(value));
+  _impl_.appearance_type_ = value;
+}
+
+// repeated bytes sprite_data = 7;
+inline int Appearance::_internal_sprite_data_size() const {
+  return _internal_sprite_data().size();
+}
+inline int Appearance::sprite_data_size() const {
+  return _internal_sprite_data_size();
+}
+inline void Appearance::clear_sprite_data() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.sprite_data_.Clear();
+}
+inline std::string* Appearance::add_sprite_data() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  std::string* _s = _internal_mutable_sprite_data()->Add();
+  // @@protoc_insertion_point(field_add_mutable:rme.protobuf.appearances.Appearance.sprite_data)
+  return _s;
+}
+inline const std::string& Appearance::sprite_data(int index) const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:rme.protobuf.appearances.Appearance.sprite_data)
+  return _internal_sprite_data().Get(index);
+}
+inline std::string* Appearance::mutable_sprite_data(int index)
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable:rme.protobuf.appearances.Appearance.sprite_data)
+  return _internal_mutable_sprite_data()->Mutable(index);
+}
+template <typename Arg_, typename... Args_>
+inline void Appearance::set_sprite_data(int index, Arg_&& value, Args_... args) {
+  ::google::protobuf::internal::AssignToString(
+      *_internal_mutable_sprite_data()->Mutable(index),
+      std::forward<Arg_>(value), args... , ::google::protobuf::internal::BytesTag{});
+  // @@protoc_insertion_point(field_set:rme.protobuf.appearances.Appearance.sprite_data)
+}
+template <typename Arg_, typename... Args_>
+inline void Appearance::add_sprite_data(Arg_&& value, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::google::protobuf::internal::AddToRepeatedPtrField(*_internal_mutable_sprite_data(),
+                               std::forward<Arg_>(value),
+                               args... , ::google::protobuf::internal::BytesTag{});
+  // @@protoc_insertion_point(field_add:rme.protobuf.appearances.Appearance.sprite_data)
+}
+inline const ::google::protobuf::RepeatedPtrField<std::string>&
+Appearance::sprite_data() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_list:rme.protobuf.appearances.Appearance.sprite_data)
+  return _internal_sprite_data();
+}
+inline ::google::protobuf::RepeatedPtrField<std::string>*
+Appearance::mutable_sprite_data() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable_list:rme.protobuf.appearances.Appearance.sprite_data)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _internal_mutable_sprite_data();
+}
+inline const ::google::protobuf::RepeatedPtrField<std::string>&
+Appearance::_internal_sprite_data() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.sprite_data_;
+}
+inline ::google::protobuf::RepeatedPtrField<std::string>*
+Appearance::_internal_mutable_sprite_data() {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return &_impl_.sprite_data_;
+}
+
 // -------------------------------------------------------------------
 
 // AppearanceFlags
@@ -9326,13 +10134,13 @@ inline void AppearanceFlags::set_allocated_bank(::rme::protobuf::appearances::Ap
 
 // optional bool clip = 2;
 inline bool AppearanceFlags::has_clip() const {
-  bool value = (_impl_._has_bits_[0] & 0x00040000u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00080000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_clip() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.clip_ = false;
-  _impl_._has_bits_[0] &= ~0x00040000u;
+  _impl_._has_bits_[0] &= ~0x00080000u;
 }
 inline bool AppearanceFlags::clip() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.clip)
@@ -9340,7 +10148,7 @@ inline bool AppearanceFlags::clip() const {
 }
 inline void AppearanceFlags::set_clip(bool value) {
   _internal_set_clip(value);
-  _impl_._has_bits_[0] |= 0x00040000u;
+  _impl_._has_bits_[0] |= 0x00080000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.clip)
 }
 inline bool AppearanceFlags::_internal_clip() const {
@@ -9354,13 +10162,13 @@ inline void AppearanceFlags::_internal_set_clip(bool value) {
 
 // optional bool bottom = 3;
 inline bool AppearanceFlags::has_bottom() const {
-  bool value = (_impl_._has_bits_[0] & 0x00080000u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00100000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_bottom() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.bottom_ = false;
-  _impl_._has_bits_[0] &= ~0x00080000u;
+  _impl_._has_bits_[0] &= ~0x00100000u;
 }
 inline bool AppearanceFlags::bottom() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.bottom)
@@ -9368,7 +10176,7 @@ inline bool AppearanceFlags::bottom() const {
 }
 inline void AppearanceFlags::set_bottom(bool value) {
   _internal_set_bottom(value);
-  _impl_._has_bits_[0] |= 0x00080000u;
+  _impl_._has_bits_[0] |= 0x00100000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.bottom)
 }
 inline bool AppearanceFlags::_internal_bottom() const {
@@ -9382,13 +10190,13 @@ inline void AppearanceFlags::_internal_set_bottom(bool value) {
 
 // optional bool top = 4;
 inline bool AppearanceFlags::has_top() const {
-  bool value = (_impl_._has_bits_[0] & 0x00100000u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00200000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_top() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.top_ = false;
-  _impl_._has_bits_[0] &= ~0x00100000u;
+  _impl_._has_bits_[0] &= ~0x00200000u;
 }
 inline bool AppearanceFlags::top() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.top)
@@ -9396,7 +10204,7 @@ inline bool AppearanceFlags::top() const {
 }
 inline void AppearanceFlags::set_top(bool value) {
   _internal_set_top(value);
-  _impl_._has_bits_[0] |= 0x00100000u;
+  _impl_._has_bits_[0] |= 0x00200000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.top)
 }
 inline bool AppearanceFlags::_internal_top() const {
@@ -9410,13 +10218,13 @@ inline void AppearanceFlags::_internal_set_top(bool value) {
 
 // optional bool container = 5;
 inline bool AppearanceFlags::has_container() const {
-  bool value = (_impl_._has_bits_[0] & 0x00200000u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00400000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_container() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.container_ = false;
-  _impl_._has_bits_[0] &= ~0x00200000u;
+  _impl_._has_bits_[0] &= ~0x00400000u;
 }
 inline bool AppearanceFlags::container() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.container)
@@ -9424,7 +10232,7 @@ inline bool AppearanceFlags::container() const {
 }
 inline void AppearanceFlags::set_container(bool value) {
   _internal_set_container(value);
-  _impl_._has_bits_[0] |= 0x00200000u;
+  _impl_._has_bits_[0] |= 0x00400000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.container)
 }
 inline bool AppearanceFlags::_internal_container() const {
@@ -9438,13 +10246,13 @@ inline void AppearanceFlags::_internal_set_container(bool value) {
 
 // optional bool cumulative = 6;
 inline bool AppearanceFlags::has_cumulative() const {
-  bool value = (_impl_._has_bits_[0] & 0x00400000u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00800000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_cumulative() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.cumulative_ = false;
-  _impl_._has_bits_[0] &= ~0x00400000u;
+  _impl_._has_bits_[0] &= ~0x00800000u;
 }
 inline bool AppearanceFlags::cumulative() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.cumulative)
@@ -9452,7 +10260,7 @@ inline bool AppearanceFlags::cumulative() const {
 }
 inline void AppearanceFlags::set_cumulative(bool value) {
   _internal_set_cumulative(value);
-  _impl_._has_bits_[0] |= 0x00400000u;
+  _impl_._has_bits_[0] |= 0x00800000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.cumulative)
 }
 inline bool AppearanceFlags::_internal_cumulative() const {
@@ -9466,13 +10274,13 @@ inline void AppearanceFlags::_internal_set_cumulative(bool value) {
 
 // optional bool usable = 7;
 inline bool AppearanceFlags::has_usable() const {
-  bool value = (_impl_._has_bits_[0] & 0x00800000u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x01000000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_usable() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.usable_ = false;
-  _impl_._has_bits_[0] &= ~0x00800000u;
+  _impl_._has_bits_[0] &= ~0x01000000u;
 }
 inline bool AppearanceFlags::usable() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.usable)
@@ -9480,7 +10288,7 @@ inline bool AppearanceFlags::usable() const {
 }
 inline void AppearanceFlags::set_usable(bool value) {
   _internal_set_usable(value);
-  _impl_._has_bits_[0] |= 0x00800000u;
+  _impl_._has_bits_[0] |= 0x01000000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.usable)
 }
 inline bool AppearanceFlags::_internal_usable() const {
@@ -9494,13 +10302,13 @@ inline void AppearanceFlags::_internal_set_usable(bool value) {
 
 // optional bool forceuse = 8;
 inline bool AppearanceFlags::has_forceuse() const {
-  bool value = (_impl_._has_bits_[0] & 0x01000000u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x02000000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_forceuse() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.forceuse_ = false;
-  _impl_._has_bits_[0] &= ~0x01000000u;
+  _impl_._has_bits_[0] &= ~0x02000000u;
 }
 inline bool AppearanceFlags::forceuse() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.forceuse)
@@ -9508,7 +10316,7 @@ inline bool AppearanceFlags::forceuse() const {
 }
 inline void AppearanceFlags::set_forceuse(bool value) {
   _internal_set_forceuse(value);
-  _impl_._has_bits_[0] |= 0x01000000u;
+  _impl_._has_bits_[0] |= 0x02000000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.forceuse)
 }
 inline bool AppearanceFlags::_internal_forceuse() const {
@@ -9522,13 +10330,13 @@ inline void AppearanceFlags::_internal_set_forceuse(bool value) {
 
 // optional bool multiuse = 9;
 inline bool AppearanceFlags::has_multiuse() const {
-  bool value = (_impl_._has_bits_[0] & 0x02000000u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x04000000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_multiuse() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.multiuse_ = false;
-  _impl_._has_bits_[0] &= ~0x02000000u;
+  _impl_._has_bits_[0] &= ~0x04000000u;
 }
 inline bool AppearanceFlags::multiuse() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.multiuse)
@@ -9536,7 +10344,7 @@ inline bool AppearanceFlags::multiuse() const {
 }
 inline void AppearanceFlags::set_multiuse(bool value) {
   _internal_set_multiuse(value);
-  _impl_._has_bits_[0] |= 0x02000000u;
+  _impl_._has_bits_[0] |= 0x04000000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.multiuse)
 }
 inline bool AppearanceFlags::_internal_multiuse() const {
@@ -9742,13 +10550,13 @@ inline void AppearanceFlags::set_allocated_write_once(::rme::protobuf::appearanc
 
 // optional bool liquidpool = 12;
 inline bool AppearanceFlags::has_liquidpool() const {
-  bool value = (_impl_._has_bits_[0] & 0x04000000u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x08000000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_liquidpool() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.liquidpool_ = false;
-  _impl_._has_bits_[0] &= ~0x04000000u;
+  _impl_._has_bits_[0] &= ~0x08000000u;
 }
 inline bool AppearanceFlags::liquidpool() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.liquidpool)
@@ -9756,7 +10564,7 @@ inline bool AppearanceFlags::liquidpool() const {
 }
 inline void AppearanceFlags::set_liquidpool(bool value) {
   _internal_set_liquidpool(value);
-  _impl_._has_bits_[0] |= 0x04000000u;
+  _impl_._has_bits_[0] |= 0x08000000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.liquidpool)
 }
 inline bool AppearanceFlags::_internal_liquidpool() const {
@@ -9770,13 +10578,13 @@ inline void AppearanceFlags::_internal_set_liquidpool(bool value) {
 
 // optional bool unpass = 13;
 inline bool AppearanceFlags::has_unpass() const {
-  bool value = (_impl_._has_bits_[0] & 0x08000000u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x10000000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_unpass() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.unpass_ = false;
-  _impl_._has_bits_[0] &= ~0x08000000u;
+  _impl_._has_bits_[0] &= ~0x10000000u;
 }
 inline bool AppearanceFlags::unpass() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.unpass)
@@ -9784,7 +10592,7 @@ inline bool AppearanceFlags::unpass() const {
 }
 inline void AppearanceFlags::set_unpass(bool value) {
   _internal_set_unpass(value);
-  _impl_._has_bits_[0] |= 0x08000000u;
+  _impl_._has_bits_[0] |= 0x10000000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.unpass)
 }
 inline bool AppearanceFlags::_internal_unpass() const {
@@ -9798,13 +10606,13 @@ inline void AppearanceFlags::_internal_set_unpass(bool value) {
 
 // optional bool unmove = 14;
 inline bool AppearanceFlags::has_unmove() const {
-  bool value = (_impl_._has_bits_[0] & 0x10000000u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x20000000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_unmove() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.unmove_ = false;
-  _impl_._has_bits_[0] &= ~0x10000000u;
+  _impl_._has_bits_[0] &= ~0x20000000u;
 }
 inline bool AppearanceFlags::unmove() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.unmove)
@@ -9812,7 +10620,7 @@ inline bool AppearanceFlags::unmove() const {
 }
 inline void AppearanceFlags::set_unmove(bool value) {
   _internal_set_unmove(value);
-  _impl_._has_bits_[0] |= 0x10000000u;
+  _impl_._has_bits_[0] |= 0x20000000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.unmove)
 }
 inline bool AppearanceFlags::_internal_unmove() const {
@@ -9826,13 +10634,13 @@ inline void AppearanceFlags::_internal_set_unmove(bool value) {
 
 // optional bool unsight = 15;
 inline bool AppearanceFlags::has_unsight() const {
-  bool value = (_impl_._has_bits_[0] & 0x20000000u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x40000000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_unsight() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.unsight_ = false;
-  _impl_._has_bits_[0] &= ~0x20000000u;
+  _impl_._has_bits_[0] &= ~0x40000000u;
 }
 inline bool AppearanceFlags::unsight() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.unsight)
@@ -9840,7 +10648,7 @@ inline bool AppearanceFlags::unsight() const {
 }
 inline void AppearanceFlags::set_unsight(bool value) {
   _internal_set_unsight(value);
-  _impl_._has_bits_[0] |= 0x20000000u;
+  _impl_._has_bits_[0] |= 0x40000000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.unsight)
 }
 inline bool AppearanceFlags::_internal_unsight() const {
@@ -9854,13 +10662,13 @@ inline void AppearanceFlags::_internal_set_unsight(bool value) {
 
 // optional bool avoid = 16;
 inline bool AppearanceFlags::has_avoid() const {
-  bool value = (_impl_._has_bits_[0] & 0x40000000u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x80000000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_avoid() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.avoid_ = false;
-  _impl_._has_bits_[0] &= ~0x40000000u;
+  _impl_._has_bits_[0] &= ~0x80000000u;
 }
 inline bool AppearanceFlags::avoid() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.avoid)
@@ -9868,7 +10676,7 @@ inline bool AppearanceFlags::avoid() const {
 }
 inline void AppearanceFlags::set_avoid(bool value) {
   _internal_set_avoid(value);
-  _impl_._has_bits_[0] |= 0x40000000u;
+  _impl_._has_bits_[0] |= 0x80000000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.avoid)
 }
 inline bool AppearanceFlags::_internal_avoid() const {
@@ -9882,13 +10690,13 @@ inline void AppearanceFlags::_internal_set_avoid(bool value) {
 
 // optional bool no_movement_animation = 17;
 inline bool AppearanceFlags::has_no_movement_animation() const {
-  bool value = (_impl_._has_bits_[0] & 0x80000000u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x00000001u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_no_movement_animation() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.no_movement_animation_ = false;
-  _impl_._has_bits_[0] &= ~0x80000000u;
+  _impl_._has_bits_[1] &= ~0x00000001u;
 }
 inline bool AppearanceFlags::no_movement_animation() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.no_movement_animation)
@@ -9896,7 +10704,7 @@ inline bool AppearanceFlags::no_movement_animation() const {
 }
 inline void AppearanceFlags::set_no_movement_animation(bool value) {
   _internal_set_no_movement_animation(value);
-  _impl_._has_bits_[0] |= 0x80000000u;
+  _impl_._has_bits_[1] |= 0x00000001u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.no_movement_animation)
 }
 inline bool AppearanceFlags::_internal_no_movement_animation() const {
@@ -9910,13 +10718,13 @@ inline void AppearanceFlags::_internal_set_no_movement_animation(bool value) {
 
 // optional bool take = 18;
 inline bool AppearanceFlags::has_take() const {
-  bool value = (_impl_._has_bits_[1] & 0x00000001u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x00000002u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_take() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.take_ = false;
-  _impl_._has_bits_[1] &= ~0x00000001u;
+  _impl_._has_bits_[1] &= ~0x00000002u;
 }
 inline bool AppearanceFlags::take() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.take)
@@ -9924,7 +10732,7 @@ inline bool AppearanceFlags::take() const {
 }
 inline void AppearanceFlags::set_take(bool value) {
   _internal_set_take(value);
-  _impl_._has_bits_[1] |= 0x00000001u;
+  _impl_._has_bits_[1] |= 0x00000002u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.take)
 }
 inline bool AppearanceFlags::_internal_take() const {
@@ -9938,13 +10746,13 @@ inline void AppearanceFlags::_internal_set_take(bool value) {
 
 // optional bool liquidcontainer = 19;
 inline bool AppearanceFlags::has_liquidcontainer() const {
-  bool value = (_impl_._has_bits_[1] & 0x00000002u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x00000004u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_liquidcontainer() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.liquidcontainer_ = false;
-  _impl_._has_bits_[1] &= ~0x00000002u;
+  _impl_._has_bits_[1] &= ~0x00000004u;
 }
 inline bool AppearanceFlags::liquidcontainer() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.liquidcontainer)
@@ -9952,7 +10760,7 @@ inline bool AppearanceFlags::liquidcontainer() const {
 }
 inline void AppearanceFlags::set_liquidcontainer(bool value) {
   _internal_set_liquidcontainer(value);
-  _impl_._has_bits_[1] |= 0x00000002u;
+  _impl_._has_bits_[1] |= 0x00000004u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.liquidcontainer)
 }
 inline bool AppearanceFlags::_internal_liquidcontainer() const {
@@ -9966,13 +10774,13 @@ inline void AppearanceFlags::_internal_set_liquidcontainer(bool value) {
 
 // optional bool hang = 20;
 inline bool AppearanceFlags::has_hang() const {
-  bool value = (_impl_._has_bits_[1] & 0x00000004u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x00000008u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_hang() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.hang_ = false;
-  _impl_._has_bits_[1] &= ~0x00000004u;
+  _impl_._has_bits_[1] &= ~0x00000008u;
 }
 inline bool AppearanceFlags::hang() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.hang)
@@ -9980,7 +10788,7 @@ inline bool AppearanceFlags::hang() const {
 }
 inline void AppearanceFlags::set_hang(bool value) {
   _internal_set_hang(value);
-  _impl_._has_bits_[1] |= 0x00000004u;
+  _impl_._has_bits_[1] |= 0x00000008u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.hang)
 }
 inline bool AppearanceFlags::_internal_hang() const {
@@ -10090,13 +10898,13 @@ inline void AppearanceFlags::set_allocated_hook(::rme::protobuf::appearances::Ap
 
 // optional bool rotate = 22;
 inline bool AppearanceFlags::has_rotate() const {
-  bool value = (_impl_._has_bits_[1] & 0x00000008u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x00000010u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_rotate() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.rotate_ = false;
-  _impl_._has_bits_[1] &= ~0x00000008u;
+  _impl_._has_bits_[1] &= ~0x00000010u;
 }
 inline bool AppearanceFlags::rotate() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.rotate)
@@ -10104,7 +10912,7 @@ inline bool AppearanceFlags::rotate() const {
 }
 inline void AppearanceFlags::set_rotate(bool value) {
   _internal_set_rotate(value);
-  _impl_._has_bits_[1] |= 0x00000008u;
+  _impl_._has_bits_[1] |= 0x00000010u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.rotate)
 }
 inline bool AppearanceFlags::_internal_rotate() const {
@@ -10214,13 +11022,13 @@ inline void AppearanceFlags::set_allocated_light(::rme::protobuf::appearances::A
 
 // optional bool dont_hide = 24;
 inline bool AppearanceFlags::has_dont_hide() const {
-  bool value = (_impl_._has_bits_[1] & 0x00000010u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x00000020u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_dont_hide() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.dont_hide_ = false;
-  _impl_._has_bits_[1] &= ~0x00000010u;
+  _impl_._has_bits_[1] &= ~0x00000020u;
 }
 inline bool AppearanceFlags::dont_hide() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.dont_hide)
@@ -10228,7 +11036,7 @@ inline bool AppearanceFlags::dont_hide() const {
 }
 inline void AppearanceFlags::set_dont_hide(bool value) {
   _internal_set_dont_hide(value);
-  _impl_._has_bits_[1] |= 0x00000010u;
+  _impl_._has_bits_[1] |= 0x00000020u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.dont_hide)
 }
 inline bool AppearanceFlags::_internal_dont_hide() const {
@@ -10242,13 +11050,13 @@ inline void AppearanceFlags::_internal_set_dont_hide(bool value) {
 
 // optional bool translucent = 25;
 inline bool AppearanceFlags::has_translucent() const {
-  bool value = (_impl_._has_bits_[1] & 0x00000020u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x00000040u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_translucent() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.translucent_ = false;
-  _impl_._has_bits_[1] &= ~0x00000020u;
+  _impl_._has_bits_[1] &= ~0x00000040u;
 }
 inline bool AppearanceFlags::translucent() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.translucent)
@@ -10256,7 +11064,7 @@ inline bool AppearanceFlags::translucent() const {
 }
 inline void AppearanceFlags::set_translucent(bool value) {
   _internal_set_translucent(value);
-  _impl_._has_bits_[1] |= 0x00000020u;
+  _impl_._has_bits_[1] |= 0x00000040u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.translucent)
 }
 inline bool AppearanceFlags::_internal_translucent() const {
@@ -10462,13 +11270,13 @@ inline void AppearanceFlags::set_allocated_height(::rme::protobuf::appearances::
 
 // optional bool lying_object = 28;
 inline bool AppearanceFlags::has_lying_object() const {
-  bool value = (_impl_._has_bits_[1] & 0x00000040u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x00000080u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_lying_object() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.lying_object_ = false;
-  _impl_._has_bits_[1] &= ~0x00000040u;
+  _impl_._has_bits_[1] &= ~0x00000080u;
 }
 inline bool AppearanceFlags::lying_object() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.lying_object)
@@ -10476,7 +11284,7 @@ inline bool AppearanceFlags::lying_object() const {
 }
 inline void AppearanceFlags::set_lying_object(bool value) {
   _internal_set_lying_object(value);
-  _impl_._has_bits_[1] |= 0x00000040u;
+  _impl_._has_bits_[1] |= 0x00000080u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.lying_object)
 }
 inline bool AppearanceFlags::_internal_lying_object() const {
@@ -10490,13 +11298,13 @@ inline void AppearanceFlags::_internal_set_lying_object(bool value) {
 
 // optional bool animate_always = 29;
 inline bool AppearanceFlags::has_animate_always() const {
-  bool value = (_impl_._has_bits_[1] & 0x00000080u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x00000100u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_animate_always() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.animate_always_ = false;
-  _impl_._has_bits_[1] &= ~0x00000080u;
+  _impl_._has_bits_[1] &= ~0x00000100u;
 }
 inline bool AppearanceFlags::animate_always() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.animate_always)
@@ -10504,7 +11312,7 @@ inline bool AppearanceFlags::animate_always() const {
 }
 inline void AppearanceFlags::set_animate_always(bool value) {
   _internal_set_animate_always(value);
-  _impl_._has_bits_[1] |= 0x00000080u;
+  _impl_._has_bits_[1] |= 0x00000100u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.animate_always)
 }
 inline bool AppearanceFlags::_internal_animate_always() const {
@@ -10710,13 +11518,13 @@ inline void AppearanceFlags::set_allocated_lenshelp(::rme::protobuf::appearances
 
 // optional bool fullbank = 32;
 inline bool AppearanceFlags::has_fullbank() const {
-  bool value = (_impl_._has_bits_[1] & 0x00000100u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x00000200u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_fullbank() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.fullbank_ = false;
-  _impl_._has_bits_[1] &= ~0x00000100u;
+  _impl_._has_bits_[1] &= ~0x00000200u;
 }
 inline bool AppearanceFlags::fullbank() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.fullbank)
@@ -10724,7 +11532,7 @@ inline bool AppearanceFlags::fullbank() const {
 }
 inline void AppearanceFlags::set_fullbank(bool value) {
   _internal_set_fullbank(value);
-  _impl_._has_bits_[1] |= 0x00000100u;
+  _impl_._has_bits_[1] |= 0x00000200u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.fullbank)
 }
 inline bool AppearanceFlags::_internal_fullbank() const {
@@ -10738,13 +11546,13 @@ inline void AppearanceFlags::_internal_set_fullbank(bool value) {
 
 // optional bool ignore_look = 33;
 inline bool AppearanceFlags::has_ignore_look() const {
-  bool value = (_impl_._has_bits_[1] & 0x00000200u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x00000400u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_ignore_look() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.ignore_look_ = false;
-  _impl_._has_bits_[1] &= ~0x00000200u;
+  _impl_._has_bits_[1] &= ~0x00000400u;
 }
 inline bool AppearanceFlags::ignore_look() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.ignore_look)
@@ -10752,7 +11560,7 @@ inline bool AppearanceFlags::ignore_look() const {
 }
 inline void AppearanceFlags::set_ignore_look(bool value) {
   _internal_set_ignore_look(value);
-  _impl_._has_bits_[1] |= 0x00000200u;
+  _impl_._has_bits_[1] |= 0x00000400u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.ignore_look)
 }
 inline bool AppearanceFlags::_internal_ignore_look() const {
@@ -11054,13 +11862,13 @@ inline void AppearanceFlags::set_allocated_market(::rme::protobuf::appearances::
 
 // optional bool wrap = 37;
 inline bool AppearanceFlags::has_wrap() const {
-  bool value = (_impl_._has_bits_[1] & 0x00000400u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x00000800u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_wrap() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.wrap_ = false;
-  _impl_._has_bits_[1] &= ~0x00000400u;
+  _impl_._has_bits_[1] &= ~0x00000800u;
 }
 inline bool AppearanceFlags::wrap() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.wrap)
@@ -11068,7 +11876,7 @@ inline bool AppearanceFlags::wrap() const {
 }
 inline void AppearanceFlags::set_wrap(bool value) {
   _internal_set_wrap(value);
-  _impl_._has_bits_[1] |= 0x00000400u;
+  _impl_._has_bits_[1] |= 0x00000800u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.wrap)
 }
 inline bool AppearanceFlags::_internal_wrap() const {
@@ -11082,13 +11890,13 @@ inline void AppearanceFlags::_internal_set_wrap(bool value) {
 
 // optional bool unwrap = 38;
 inline bool AppearanceFlags::has_unwrap() const {
-  bool value = (_impl_._has_bits_[1] & 0x00000800u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x00001000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_unwrap() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.unwrap_ = false;
-  _impl_._has_bits_[1] &= ~0x00000800u;
+  _impl_._has_bits_[1] &= ~0x00001000u;
 }
 inline bool AppearanceFlags::unwrap() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.unwrap)
@@ -11096,7 +11904,7 @@ inline bool AppearanceFlags::unwrap() const {
 }
 inline void AppearanceFlags::set_unwrap(bool value) {
   _internal_set_unwrap(value);
-  _impl_._has_bits_[1] |= 0x00000800u;
+  _impl_._has_bits_[1] |= 0x00001000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.unwrap)
 }
 inline bool AppearanceFlags::_internal_unwrap() const {
@@ -11110,13 +11918,13 @@ inline void AppearanceFlags::_internal_set_unwrap(bool value) {
 
 // optional bool topeffect = 39;
 inline bool AppearanceFlags::has_topeffect() const {
-  bool value = (_impl_._has_bits_[1] & 0x00001000u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x00002000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_topeffect() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.topeffect_ = false;
-  _impl_._has_bits_[1] &= ~0x00001000u;
+  _impl_._has_bits_[1] &= ~0x00002000u;
 }
 inline bool AppearanceFlags::topeffect() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.topeffect)
@@ -11124,7 +11932,7 @@ inline bool AppearanceFlags::topeffect() const {
 }
 inline void AppearanceFlags::set_topeffect(bool value) {
   _internal_set_topeffect(value);
-  _impl_._has_bits_[1] |= 0x00001000u;
+  _impl_._has_bits_[1] |= 0x00002000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.topeffect)
 }
 inline bool AppearanceFlags::_internal_topeffect() const {
@@ -11283,13 +12091,13 @@ inline void AppearanceFlags::set_allocated_changedtoexpire(::rme::protobuf::appe
 
 // optional bool corpse = 42;
 inline bool AppearanceFlags::has_corpse() const {
-  bool value = (_impl_._has_bits_[1] & 0x00002000u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x00004000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_corpse() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.corpse_ = false;
-  _impl_._has_bits_[1] &= ~0x00002000u;
+  _impl_._has_bits_[1] &= ~0x00004000u;
 }
 inline bool AppearanceFlags::corpse() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.corpse)
@@ -11297,7 +12105,7 @@ inline bool AppearanceFlags::corpse() const {
 }
 inline void AppearanceFlags::set_corpse(bool value) {
   _internal_set_corpse(value);
-  _impl_._has_bits_[1] |= 0x00002000u;
+  _impl_._has_bits_[1] |= 0x00004000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.corpse)
 }
 inline bool AppearanceFlags::_internal_corpse() const {
@@ -11311,13 +12119,13 @@ inline void AppearanceFlags::_internal_set_corpse(bool value) {
 
 // optional bool player_corpse = 43;
 inline bool AppearanceFlags::has_player_corpse() const {
-  bool value = (_impl_._has_bits_[1] & 0x00004000u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x00008000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_player_corpse() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.player_corpse_ = false;
-  _impl_._has_bits_[1] &= ~0x00004000u;
+  _impl_._has_bits_[1] &= ~0x00008000u;
 }
 inline bool AppearanceFlags::player_corpse() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.player_corpse)
@@ -11325,7 +12133,7 @@ inline bool AppearanceFlags::player_corpse() const {
 }
 inline void AppearanceFlags::set_player_corpse(bool value) {
   _internal_set_player_corpse(value);
-  _impl_._has_bits_[1] |= 0x00004000u;
+  _impl_._has_bits_[1] |= 0x00008000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.player_corpse)
 }
 inline bool AppearanceFlags::_internal_player_corpse() const {
@@ -11435,13 +12243,13 @@ inline void AppearanceFlags::set_allocated_cyclopediaitem(::rme::protobuf::appea
 
 // optional bool ammo = 45;
 inline bool AppearanceFlags::has_ammo() const {
-  bool value = (_impl_._has_bits_[1] & 0x00008000u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x00010000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_ammo() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.ammo_ = false;
-  _impl_._has_bits_[1] &= ~0x00008000u;
+  _impl_._has_bits_[1] &= ~0x00010000u;
 }
 inline bool AppearanceFlags::ammo() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.ammo)
@@ -11449,7 +12257,7 @@ inline bool AppearanceFlags::ammo() const {
 }
 inline void AppearanceFlags::set_ammo(bool value) {
   _internal_set_ammo(value);
-  _impl_._has_bits_[1] |= 0x00008000u;
+  _impl_._has_bits_[1] |= 0x00010000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.ammo)
 }
 inline bool AppearanceFlags::_internal_ammo() const {
@@ -11463,13 +12271,13 @@ inline void AppearanceFlags::_internal_set_ammo(bool value) {
 
 // optional bool show_off_socket = 46;
 inline bool AppearanceFlags::has_show_off_socket() const {
-  bool value = (_impl_._has_bits_[1] & 0x00010000u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x00020000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_show_off_socket() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.show_off_socket_ = false;
-  _impl_._has_bits_[1] &= ~0x00010000u;
+  _impl_._has_bits_[1] &= ~0x00020000u;
 }
 inline bool AppearanceFlags::show_off_socket() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.show_off_socket)
@@ -11477,7 +12285,7 @@ inline bool AppearanceFlags::show_off_socket() const {
 }
 inline void AppearanceFlags::set_show_off_socket(bool value) {
   _internal_set_show_off_socket(value);
-  _impl_._has_bits_[1] |= 0x00010000u;
+  _impl_._has_bits_[1] |= 0x00020000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.show_off_socket)
 }
 inline bool AppearanceFlags::_internal_show_off_socket() const {
@@ -11491,13 +12299,13 @@ inline void AppearanceFlags::_internal_set_show_off_socket(bool value) {
 
 // optional bool reportable = 47;
 inline bool AppearanceFlags::has_reportable() const {
-  bool value = (_impl_._has_bits_[1] & 0x00020000u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x00040000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_reportable() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.reportable_ = false;
-  _impl_._has_bits_[1] &= ~0x00020000u;
+  _impl_._has_bits_[1] &= ~0x00040000u;
 }
 inline bool AppearanceFlags::reportable() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.reportable)
@@ -11505,7 +12313,7 @@ inline bool AppearanceFlags::reportable() const {
 }
 inline void AppearanceFlags::set_reportable(bool value) {
   _internal_set_reportable(value);
-  _impl_._has_bits_[1] |= 0x00020000u;
+  _impl_._has_bits_[1] |= 0x00040000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.reportable)
 }
 inline bool AppearanceFlags::_internal_reportable() const {
@@ -11615,13 +12423,13 @@ inline void AppearanceFlags::set_allocated_upgradeclassification(::rme::protobuf
 
 // optional bool reverse_addons_east = 49;
 inline bool AppearanceFlags::has_reverse_addons_east() const {
-  bool value = (_impl_._has_bits_[1] & 0x00040000u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x00080000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_reverse_addons_east() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.reverse_addons_east_ = false;
-  _impl_._has_bits_[1] &= ~0x00040000u;
+  _impl_._has_bits_[1] &= ~0x00080000u;
 }
 inline bool AppearanceFlags::reverse_addons_east() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.reverse_addons_east)
@@ -11629,7 +12437,7 @@ inline bool AppearanceFlags::reverse_addons_east() const {
 }
 inline void AppearanceFlags::set_reverse_addons_east(bool value) {
   _internal_set_reverse_addons_east(value);
-  _impl_._has_bits_[1] |= 0x00040000u;
+  _impl_._has_bits_[1] |= 0x00080000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.reverse_addons_east)
 }
 inline bool AppearanceFlags::_internal_reverse_addons_east() const {
@@ -11643,13 +12451,13 @@ inline void AppearanceFlags::_internal_set_reverse_addons_east(bool value) {
 
 // optional bool reverse_addons_west = 50;
 inline bool AppearanceFlags::has_reverse_addons_west() const {
-  bool value = (_impl_._has_bits_[1] & 0x00080000u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x00100000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_reverse_addons_west() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.reverse_addons_west_ = false;
-  _impl_._has_bits_[1] &= ~0x00080000u;
+  _impl_._has_bits_[1] &= ~0x00100000u;
 }
 inline bool AppearanceFlags::reverse_addons_west() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.reverse_addons_west)
@@ -11657,7 +12465,7 @@ inline bool AppearanceFlags::reverse_addons_west() const {
 }
 inline void AppearanceFlags::set_reverse_addons_west(bool value) {
   _internal_set_reverse_addons_west(value);
-  _impl_._has_bits_[1] |= 0x00080000u;
+  _impl_._has_bits_[1] |= 0x00100000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.reverse_addons_west)
 }
 inline bool AppearanceFlags::_internal_reverse_addons_west() const {
@@ -11671,13 +12479,13 @@ inline void AppearanceFlags::_internal_set_reverse_addons_west(bool value) {
 
 // optional bool reverse_addons_south = 51;
 inline bool AppearanceFlags::has_reverse_addons_south() const {
-  bool value = (_impl_._has_bits_[1] & 0x00100000u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x00200000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_reverse_addons_south() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.reverse_addons_south_ = false;
-  _impl_._has_bits_[1] &= ~0x00100000u;
+  _impl_._has_bits_[1] &= ~0x00200000u;
 }
 inline bool AppearanceFlags::reverse_addons_south() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.reverse_addons_south)
@@ -11685,7 +12493,7 @@ inline bool AppearanceFlags::reverse_addons_south() const {
 }
 inline void AppearanceFlags::set_reverse_addons_south(bool value) {
   _internal_set_reverse_addons_south(value);
-  _impl_._has_bits_[1] |= 0x00100000u;
+  _impl_._has_bits_[1] |= 0x00200000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.reverse_addons_south)
 }
 inline bool AppearanceFlags::_internal_reverse_addons_south() const {
@@ -11699,13 +12507,13 @@ inline void AppearanceFlags::_internal_set_reverse_addons_south(bool value) {
 
 // optional bool reverse_addons_north = 52;
 inline bool AppearanceFlags::has_reverse_addons_north() const {
-  bool value = (_impl_._has_bits_[1] & 0x00200000u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x00400000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_reverse_addons_north() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.reverse_addons_north_ = false;
-  _impl_._has_bits_[1] &= ~0x00200000u;
+  _impl_._has_bits_[1] &= ~0x00400000u;
 }
 inline bool AppearanceFlags::reverse_addons_north() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.reverse_addons_north)
@@ -11713,7 +12521,7 @@ inline bool AppearanceFlags::reverse_addons_north() const {
 }
 inline void AppearanceFlags::set_reverse_addons_north(bool value) {
   _internal_set_reverse_addons_north(value);
-  _impl_._has_bits_[1] |= 0x00200000u;
+  _impl_._has_bits_[1] |= 0x00400000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.reverse_addons_north)
 }
 inline bool AppearanceFlags::_internal_reverse_addons_north() const {
@@ -11727,13 +12535,13 @@ inline void AppearanceFlags::_internal_set_reverse_addons_north(bool value) {
 
 // optional bool wearout = 53;
 inline bool AppearanceFlags::has_wearout() const {
-  bool value = (_impl_._has_bits_[1] & 0x00400000u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x00800000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_wearout() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.wearout_ = false;
-  _impl_._has_bits_[1] &= ~0x00400000u;
+  _impl_._has_bits_[1] &= ~0x00800000u;
 }
 inline bool AppearanceFlags::wearout() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.wearout)
@@ -11741,7 +12549,7 @@ inline bool AppearanceFlags::wearout() const {
 }
 inline void AppearanceFlags::set_wearout(bool value) {
   _internal_set_wearout(value);
-  _impl_._has_bits_[1] |= 0x00400000u;
+  _impl_._has_bits_[1] |= 0x00800000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.wearout)
 }
 inline bool AppearanceFlags::_internal_wearout() const {
@@ -11755,13 +12563,13 @@ inline void AppearanceFlags::_internal_set_wearout(bool value) {
 
 // optional bool clockexpire = 54;
 inline bool AppearanceFlags::has_clockexpire() const {
-  bool value = (_impl_._has_bits_[1] & 0x00800000u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x01000000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_clockexpire() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.clockexpire_ = false;
-  _impl_._has_bits_[1] &= ~0x00800000u;
+  _impl_._has_bits_[1] &= ~0x01000000u;
 }
 inline bool AppearanceFlags::clockexpire() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.clockexpire)
@@ -11769,7 +12577,7 @@ inline bool AppearanceFlags::clockexpire() const {
 }
 inline void AppearanceFlags::set_clockexpire(bool value) {
   _internal_set_clockexpire(value);
-  _impl_._has_bits_[1] |= 0x00800000u;
+  _impl_._has_bits_[1] |= 0x01000000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.clockexpire)
 }
 inline bool AppearanceFlags::_internal_clockexpire() const {
@@ -11783,13 +12591,13 @@ inline void AppearanceFlags::_internal_set_clockexpire(bool value) {
 
 // optional bool expire = 55;
 inline bool AppearanceFlags::has_expire() const {
-  bool value = (_impl_._has_bits_[1] & 0x01000000u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x02000000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_expire() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.expire_ = false;
-  _impl_._has_bits_[1] &= ~0x01000000u;
+  _impl_._has_bits_[1] &= ~0x02000000u;
 }
 inline bool AppearanceFlags::expire() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.expire)
@@ -11797,7 +12605,7 @@ inline bool AppearanceFlags::expire() const {
 }
 inline void AppearanceFlags::set_expire(bool value) {
   _internal_set_expire(value);
-  _impl_._has_bits_[1] |= 0x01000000u;
+  _impl_._has_bits_[1] |= 0x02000000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.expire)
 }
 inline bool AppearanceFlags::_internal_expire() const {
@@ -11811,13 +12619,13 @@ inline void AppearanceFlags::_internal_set_expire(bool value) {
 
 // optional bool expirestop = 56;
 inline bool AppearanceFlags::has_expirestop() const {
-  bool value = (_impl_._has_bits_[1] & 0x02000000u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x04000000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_expirestop() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.expirestop_ = false;
-  _impl_._has_bits_[1] &= ~0x02000000u;
+  _impl_._has_bits_[1] &= ~0x04000000u;
 }
 inline bool AppearanceFlags::expirestop() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.expirestop)
@@ -11825,7 +12633,7 @@ inline bool AppearanceFlags::expirestop() const {
 }
 inline void AppearanceFlags::set_expirestop(bool value) {
   _internal_set_expirestop(value);
-  _impl_._has_bits_[1] |= 0x02000000u;
+  _impl_._has_bits_[1] |= 0x04000000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.expirestop)
 }
 inline bool AppearanceFlags::_internal_expirestop() const {
@@ -11839,13 +12647,13 @@ inline void AppearanceFlags::_internal_set_expirestop(bool value) {
 
 // optional bool wrapkit = 57;
 inline bool AppearanceFlags::has_wrapkit() const {
-  bool value = (_impl_._has_bits_[1] & 0x04000000u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x08000000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_wrapkit() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.wrapkit_ = false;
-  _impl_._has_bits_[1] &= ~0x04000000u;
+  _impl_._has_bits_[1] &= ~0x08000000u;
 }
 inline bool AppearanceFlags::wrapkit() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.wrapkit)
@@ -11853,7 +12661,7 @@ inline bool AppearanceFlags::wrapkit() const {
 }
 inline void AppearanceFlags::set_wrapkit(bool value) {
   _internal_set_wrapkit(value);
-  _impl_._has_bits_[1] |= 0x04000000u;
+  _impl_._has_bits_[1] |= 0x08000000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.wrapkit)
 }
 inline bool AppearanceFlags::_internal_wrapkit() const {
@@ -11963,13 +12771,13 @@ inline void AppearanceFlags::set_allocated_skillwheel_gem(::rme::protobuf::appea
 
 // optional bool dual_wielding = 59;
 inline bool AppearanceFlags::has_dual_wielding() const {
-  bool value = (_impl_._has_bits_[1] & 0x08000000u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x10000000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_dual_wielding() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.dual_wielding_ = false;
-  _impl_._has_bits_[1] &= ~0x08000000u;
+  _impl_._has_bits_[1] &= ~0x10000000u;
 }
 inline bool AppearanceFlags::dual_wielding() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.dual_wielding)
@@ -11977,7 +12785,7 @@ inline bool AppearanceFlags::dual_wielding() const {
 }
 inline void AppearanceFlags::set_dual_wielding(bool value) {
   _internal_set_dual_wielding(value);
-  _impl_._has_bits_[1] |= 0x08000000u;
+  _impl_._has_bits_[1] |= 0x10000000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.dual_wielding)
 }
 inline bool AppearanceFlags::_internal_dual_wielding() const {
@@ -12230,13 +13038,13 @@ inline ::google::protobuf::RepeatedField<int>* AppearanceFlags::_internal_mutabl
 
 // optional uint32 minimum_level = 63;
 inline bool AppearanceFlags::has_minimum_level() const {
-  bool value = (_impl_._has_bits_[1] & 0x10000000u) != 0;
+  bool value = (_impl_._has_bits_[1] & 0x80000000u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_minimum_level() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.minimum_level_ = 0u;
-  _impl_._has_bits_[1] &= ~0x10000000u;
+  _impl_._has_bits_[1] &= ~0x80000000u;
 }
 inline ::uint32_t AppearanceFlags::minimum_level() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.minimum_level)
@@ -12244,7 +13052,7 @@ inline ::uint32_t AppearanceFlags::minimum_level() const {
 }
 inline void AppearanceFlags::set_minimum_level(::uint32_t value) {
   _internal_set_minimum_level(value);
-  _impl_._has_bits_[1] |= 0x10000000u;
+  _impl_._has_bits_[1] |= 0x80000000u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.minimum_level)
 }
 inline ::uint32_t AppearanceFlags::_internal_minimum_level() const {
@@ -12258,13 +13066,13 @@ inline void AppearanceFlags::_internal_set_minimum_level(::uint32_t value) {
 
 // optional .rme.protobuf.appearances.WEAPON_TYPE weapon_type = 64;
 inline bool AppearanceFlags::has_weapon_type() const {
-  bool value = (_impl_._has_bits_[1] & 0x20000000u) != 0;
+  bool value = (_impl_._has_bits_[2] & 0x00000001u) != 0;
   return value;
 }
 inline void AppearanceFlags::clear_weapon_type() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.weapon_type_ = 0;
-  _impl_._has_bits_[1] &= ~0x20000000u;
+  _impl_._has_bits_[2] &= ~0x00000001u;
 }
 inline ::rme::protobuf::appearances::WEAPON_TYPE AppearanceFlags::weapon_type() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.weapon_type)
@@ -12272,7 +13080,7 @@ inline ::rme::protobuf::appearances::WEAPON_TYPE AppearanceFlags::weapon_type() 
 }
 inline void AppearanceFlags::set_weapon_type(::rme::protobuf::appearances::WEAPON_TYPE value) {
   _internal_set_weapon_type(value);
-  _impl_._has_bits_[1] |= 0x20000000u;
+  _impl_._has_bits_[2] |= 0x00000001u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.weapon_type)
 }
 inline ::rme::protobuf::appearances::WEAPON_TYPE AppearanceFlags::_internal_weapon_type() const {
@@ -12283,6 +13091,186 @@ inline void AppearanceFlags::_internal_set_weapon_type(::rme::protobuf::appearan
   ::google::protobuf::internal::TSanWrite(&_impl_);
   assert(::rme::protobuf::appearances::WEAPON_TYPE_IsValid(value));
   _impl_.weapon_type_ = value;
+}
+
+// optional bool deco_item_kit = 65;
+inline bool AppearanceFlags::has_deco_item_kit() const {
+  bool value = (_impl_._has_bits_[1] & 0x20000000u) != 0;
+  return value;
+}
+inline void AppearanceFlags::clear_deco_item_kit() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.deco_item_kit_ = false;
+  _impl_._has_bits_[1] &= ~0x20000000u;
+}
+inline bool AppearanceFlags::deco_item_kit() const {
+  // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.deco_item_kit)
+  return _internal_deco_item_kit();
+}
+inline void AppearanceFlags::set_deco_item_kit(bool value) {
+  _internal_set_deco_item_kit(value);
+  _impl_._has_bits_[1] |= 0x20000000u;
+  // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.deco_item_kit)
+}
+inline bool AppearanceFlags::_internal_deco_item_kit() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.deco_item_kit_;
+}
+inline void AppearanceFlags::_internal_set_deco_item_kit(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.deco_item_kit_ = value;
+}
+
+// optional bool hook_south = 70;
+inline bool AppearanceFlags::has_hook_south() const {
+  bool value = (_impl_._has_bits_[1] & 0x40000000u) != 0;
+  return value;
+}
+inline void AppearanceFlags::clear_hook_south() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.hook_south_ = false;
+  _impl_._has_bits_[1] &= ~0x40000000u;
+}
+inline bool AppearanceFlags::hook_south() const {
+  // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.hook_south)
+  return _internal_hook_south();
+}
+inline void AppearanceFlags::set_hook_south(bool value) {
+  _internal_set_hook_south(value);
+  _impl_._has_bits_[1] |= 0x40000000u;
+  // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.hook_south)
+}
+inline bool AppearanceFlags::_internal_hook_south() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.hook_south_;
+}
+inline void AppearanceFlags::_internal_set_hook_south(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.hook_south_ = value;
+}
+
+// optional bool hook_east = 71;
+inline bool AppearanceFlags::has_hook_east() const {
+  bool value = (_impl_._has_bits_[2] & 0x00000002u) != 0;
+  return value;
+}
+inline void AppearanceFlags::clear_hook_east() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.hook_east_ = false;
+  _impl_._has_bits_[2] &= ~0x00000002u;
+}
+inline bool AppearanceFlags::hook_east() const {
+  // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.hook_east)
+  return _internal_hook_east();
+}
+inline void AppearanceFlags::set_hook_east(bool value) {
+  _internal_set_hook_east(value);
+  _impl_._has_bits_[2] |= 0x00000002u;
+  // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlags.hook_east)
+}
+inline bool AppearanceFlags::_internal_hook_east() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.hook_east_;
+}
+inline void AppearanceFlags::_internal_set_hook_east(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.hook_east_ = value;
+}
+
+// optional .rme.protobuf.appearances.AppearanceFlagTransparencyLevel transparencylevel = 72;
+inline bool AppearanceFlags::has_transparencylevel() const {
+  bool value = (_impl_._has_bits_[0] & 0x00040000u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.transparencylevel_ != nullptr);
+  return value;
+}
+inline void AppearanceFlags::clear_transparencylevel() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (_impl_.transparencylevel_ != nullptr) _impl_.transparencylevel_->Clear();
+  _impl_._has_bits_[0] &= ~0x00040000u;
+}
+inline const ::rme::protobuf::appearances::AppearanceFlagTransparencyLevel& AppearanceFlags::_internal_transparencylevel() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  const ::rme::protobuf::appearances::AppearanceFlagTransparencyLevel* p = _impl_.transparencylevel_;
+  return p != nullptr ? *p : reinterpret_cast<const ::rme::protobuf::appearances::AppearanceFlagTransparencyLevel&>(::rme::protobuf::appearances::_AppearanceFlagTransparencyLevel_default_instance_);
+}
+inline const ::rme::protobuf::appearances::AppearanceFlagTransparencyLevel& AppearanceFlags::transparencylevel() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlags.transparencylevel)
+  return _internal_transparencylevel();
+}
+inline void AppearanceFlags::unsafe_arena_set_allocated_transparencylevel(::rme::protobuf::appearances::AppearanceFlagTransparencyLevel* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (GetArena() == nullptr) {
+    delete reinterpret_cast<::google::protobuf::MessageLite*>(_impl_.transparencylevel_);
+  }
+  _impl_.transparencylevel_ = reinterpret_cast<::rme::protobuf::appearances::AppearanceFlagTransparencyLevel*>(value);
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00040000u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00040000u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:rme.protobuf.appearances.AppearanceFlags.transparencylevel)
+}
+inline ::rme::protobuf::appearances::AppearanceFlagTransparencyLevel* AppearanceFlags::release_transparencylevel() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+
+  _impl_._has_bits_[0] &= ~0x00040000u;
+  ::rme::protobuf::appearances::AppearanceFlagTransparencyLevel* released = _impl_.transparencylevel_;
+  _impl_.transparencylevel_ = nullptr;
+  if (::google::protobuf::internal::DebugHardenForceCopyInRelease()) {
+    auto* old = reinterpret_cast<::google::protobuf::MessageLite*>(released);
+    released = ::google::protobuf::internal::DuplicateIfNonNull(released);
+    if (GetArena() == nullptr) {
+      delete old;
+    }
+  } else {
+    if (GetArena() != nullptr) {
+      released = ::google::protobuf::internal::DuplicateIfNonNull(released);
+    }
+  }
+  return released;
+}
+inline ::rme::protobuf::appearances::AppearanceFlagTransparencyLevel* AppearanceFlags::unsafe_arena_release_transparencylevel() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:rme.protobuf.appearances.AppearanceFlags.transparencylevel)
+
+  _impl_._has_bits_[0] &= ~0x00040000u;
+  ::rme::protobuf::appearances::AppearanceFlagTransparencyLevel* temp = _impl_.transparencylevel_;
+  _impl_.transparencylevel_ = nullptr;
+  return temp;
+}
+inline ::rme::protobuf::appearances::AppearanceFlagTransparencyLevel* AppearanceFlags::_internal_mutable_transparencylevel() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (_impl_.transparencylevel_ == nullptr) {
+    auto* p = ::google::protobuf::Message::DefaultConstruct<::rme::protobuf::appearances::AppearanceFlagTransparencyLevel>(GetArena());
+    _impl_.transparencylevel_ = reinterpret_cast<::rme::protobuf::appearances::AppearanceFlagTransparencyLevel*>(p);
+  }
+  return _impl_.transparencylevel_;
+}
+inline ::rme::protobuf::appearances::AppearanceFlagTransparencyLevel* AppearanceFlags::mutable_transparencylevel() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  _impl_._has_bits_[0] |= 0x00040000u;
+  ::rme::protobuf::appearances::AppearanceFlagTransparencyLevel* _msg = _internal_mutable_transparencylevel();
+  // @@protoc_insertion_point(field_mutable:rme.protobuf.appearances.AppearanceFlags.transparencylevel)
+  return _msg;
+}
+inline void AppearanceFlags::set_allocated_transparencylevel(::rme::protobuf::appearances::AppearanceFlagTransparencyLevel* value) {
+  ::google::protobuf::Arena* message_arena = GetArena();
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (message_arena == nullptr) {
+    delete (_impl_.transparencylevel_);
+  }
+
+  if (value != nullptr) {
+    ::google::protobuf::Arena* submessage_arena = (value)->GetArena();
+    if (message_arena != submessage_arena) {
+      value = ::google::protobuf::internal::GetOwnedMessage(message_arena, value, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00040000u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00040000u;
+  }
+
+  _impl_.transparencylevel_ = reinterpret_cast<::rme::protobuf::appearances::AppearanceFlagTransparencyLevel*>(value);
+  // @@protoc_insertion_point(field_set_allocated:rme.protobuf.appearances.AppearanceFlags.transparencylevel)
 }
 
 // -------------------------------------------------------------------
@@ -12636,13 +13624,13 @@ inline void AppearanceFlagDefaultAction::_internal_set_action(::rme::protobuf::a
 
 // optional .rme.protobuf.appearances.ITEM_CATEGORY category = 1;
 inline bool AppearanceFlagMarket::has_category() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000008u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000010u) != 0;
   return value;
 }
 inline void AppearanceFlagMarket::clear_category() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.category_ = 1;
-  _impl_._has_bits_[0] &= ~0x00000008u;
+  _impl_._has_bits_[0] &= ~0x00000010u;
 }
 inline ::rme::protobuf::appearances::ITEM_CATEGORY AppearanceFlagMarket::category() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlagMarket.category)
@@ -12650,7 +13638,7 @@ inline ::rme::protobuf::appearances::ITEM_CATEGORY AppearanceFlagMarket::categor
 }
 inline void AppearanceFlagMarket::set_category(::rme::protobuf::appearances::ITEM_CATEGORY value) {
   _internal_set_category(value);
-  _impl_._has_bits_[0] |= 0x00000008u;
+  _impl_._has_bits_[0] |= 0x00000010u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlagMarket.category)
 }
 inline ::rme::protobuf::appearances::ITEM_CATEGORY AppearanceFlagMarket::_internal_category() const {
@@ -12665,13 +13653,13 @@ inline void AppearanceFlagMarket::_internal_set_category(::rme::protobuf::appear
 
 // optional uint32 trade_as_object_id = 2;
 inline bool AppearanceFlagMarket::has_trade_as_object_id() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
   return value;
 }
 inline void AppearanceFlagMarket::clear_trade_as_object_id() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.trade_as_object_id_ = 0u;
-  _impl_._has_bits_[0] &= ~0x00000001u;
+  _impl_._has_bits_[0] &= ~0x00000002u;
 }
 inline ::uint32_t AppearanceFlagMarket::trade_as_object_id() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlagMarket.trade_as_object_id)
@@ -12679,7 +13667,7 @@ inline ::uint32_t AppearanceFlagMarket::trade_as_object_id() const {
 }
 inline void AppearanceFlagMarket::set_trade_as_object_id(::uint32_t value) {
   _internal_set_trade_as_object_id(value);
-  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_._has_bits_[0] |= 0x00000002u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlagMarket.trade_as_object_id)
 }
 inline ::uint32_t AppearanceFlagMarket::_internal_trade_as_object_id() const {
@@ -12693,13 +13681,13 @@ inline void AppearanceFlagMarket::_internal_set_trade_as_object_id(::uint32_t va
 
 // optional uint32 show_as_object_id = 3;
 inline bool AppearanceFlagMarket::has_show_as_object_id() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
   return value;
 }
 inline void AppearanceFlagMarket::clear_show_as_object_id() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.show_as_object_id_ = 0u;
-  _impl_._has_bits_[0] &= ~0x00000002u;
+  _impl_._has_bits_[0] &= ~0x00000004u;
 }
 inline ::uint32_t AppearanceFlagMarket::show_as_object_id() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlagMarket.show_as_object_id)
@@ -12707,7 +13695,7 @@ inline ::uint32_t AppearanceFlagMarket::show_as_object_id() const {
 }
 inline void AppearanceFlagMarket::set_show_as_object_id(::uint32_t value) {
   _internal_set_show_as_object_id(value);
-  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_._has_bits_[0] |= 0x00000004u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlagMarket.show_as_object_id)
 }
 inline ::uint32_t AppearanceFlagMarket::_internal_show_as_object_id() const {
@@ -12768,13 +13756,13 @@ inline ::google::protobuf::RepeatedField<int>* AppearanceFlagMarket::_internal_m
 
 // optional uint32 minimum_level = 6;
 inline bool AppearanceFlagMarket::has_minimum_level() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000008u) != 0;
   return value;
 }
 inline void AppearanceFlagMarket::clear_minimum_level() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.minimum_level_ = 0u;
-  _impl_._has_bits_[0] &= ~0x00000004u;
+  _impl_._has_bits_[0] &= ~0x00000008u;
 }
 inline ::uint32_t AppearanceFlagMarket::minimum_level() const {
   // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlagMarket.minimum_level)
@@ -12782,7 +13770,7 @@ inline ::uint32_t AppearanceFlagMarket::minimum_level() const {
 }
 inline void AppearanceFlagMarket::set_minimum_level(::uint32_t value) {
   _internal_set_minimum_level(value);
-  _impl_._has_bits_[0] |= 0x00000004u;
+  _impl_._has_bits_[0] |= 0x00000008u;
   // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlagMarket.minimum_level)
 }
 inline ::uint32_t AppearanceFlagMarket::_internal_minimum_level() const {
@@ -12792,6 +13780,104 @@ inline ::uint32_t AppearanceFlagMarket::_internal_minimum_level() const {
 inline void AppearanceFlagMarket::_internal_set_minimum_level(::uint32_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.minimum_level_ = value;
+}
+
+// optional string name = 7;
+inline bool AppearanceFlagMarket::has_name() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline void AppearanceFlagMarket::clear_name() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.name_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const std::string& AppearanceFlagMarket::name() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlagMarket.name)
+  return _internal_name();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void AppearanceFlagMarket::set_name(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.name_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlagMarket.name)
+}
+inline std::string* AppearanceFlagMarket::mutable_name() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_name();
+  // @@protoc_insertion_point(field_mutable:rme.protobuf.appearances.AppearanceFlagMarket.name)
+  return _s;
+}
+inline const std::string& AppearanceFlagMarket::_internal_name() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.name_.Get();
+}
+inline void AppearanceFlagMarket::_internal_set_name(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.name_.Set(value, GetArena());
+}
+inline std::string* AppearanceFlagMarket::_internal_mutable_name() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000001u;
+  return _impl_.name_.Mutable( GetArena());
+}
+inline std::string* AppearanceFlagMarket::release_name() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:rme.protobuf.appearances.AppearanceFlagMarket.name)
+  if ((_impl_._has_bits_[0] & 0x00000001u) == 0) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  auto* released = _impl_.name_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.name_.Set("", GetArena());
+  }
+  return released;
+}
+inline void AppearanceFlagMarket::set_allocated_name(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.name_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.name_.IsDefault()) {
+    _impl_.name_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:rme.protobuf.appearances.AppearanceFlagMarket.name)
+}
+
+// optional .rme.protobuf.appearances.VOCATION vocation = 8;
+inline bool AppearanceFlagMarket::has_vocation() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000020u) != 0;
+  return value;
+}
+inline void AppearanceFlagMarket::clear_vocation() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.vocation_ = -1;
+  _impl_._has_bits_[0] &= ~0x00000020u;
+}
+inline ::rme::protobuf::appearances::VOCATION AppearanceFlagMarket::vocation() const {
+  // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlagMarket.vocation)
+  return _internal_vocation();
+}
+inline void AppearanceFlagMarket::set_vocation(::rme::protobuf::appearances::VOCATION value) {
+  _internal_set_vocation(value);
+  _impl_._has_bits_[0] |= 0x00000020u;
+  // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlagMarket.vocation)
+}
+inline ::rme::protobuf::appearances::VOCATION AppearanceFlagMarket::_internal_vocation() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return static_cast<::rme::protobuf::appearances::VOCATION>(_impl_.vocation_);
+}
+inline void AppearanceFlagMarket::_internal_set_vocation(::rme::protobuf::appearances::VOCATION value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  assert(::rme::protobuf::appearances::VOCATION_IsValid(value));
+  _impl_.vocation_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -13252,6 +14338,38 @@ inline void AppearanceFlagCyclopedia::_internal_set_cyclopedia_type(::uint32_t v
 
 // -------------------------------------------------------------------
 
+// AppearanceFlagTransparencyLevel
+
+// optional uint32 level = 1;
+inline bool AppearanceFlagTransparencyLevel::has_level() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline void AppearanceFlagTransparencyLevel::clear_level() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.level_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline ::uint32_t AppearanceFlagTransparencyLevel::level() const {
+  // @@protoc_insertion_point(field_get:rme.protobuf.appearances.AppearanceFlagTransparencyLevel.level)
+  return _internal_level();
+}
+inline void AppearanceFlagTransparencyLevel::set_level(::uint32_t value) {
+  _internal_set_level(value);
+  _impl_._has_bits_[0] |= 0x00000001u;
+  // @@protoc_insertion_point(field_set:rme.protobuf.appearances.AppearanceFlagTransparencyLevel.level)
+}
+inline ::uint32_t AppearanceFlagTransparencyLevel::_internal_level() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.level_;
+}
+inline void AppearanceFlagTransparencyLevel::_internal_set_level(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.level_ = value;
+}
+
+// -------------------------------------------------------------------
+
 // SpecialMeaningAppearanceIds
 
 // optional uint32 gold_coin_id = 1;
@@ -13612,10 +14730,22 @@ inline const EnumDescriptor* GetEnumDescriptor<::rme::protobuf::appearances::ANI
   return ::rme::protobuf::appearances::ANIMATION_LOOP_TYPE_descriptor();
 }
 template <>
+struct is_proto_enum<::rme::protobuf::appearances::ANIMATION_ANIMATION_MODE> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::rme::protobuf::appearances::ANIMATION_ANIMATION_MODE>() {
+  return ::rme::protobuf::appearances::ANIMATION_ANIMATION_MODE_descriptor();
+}
+template <>
 struct is_proto_enum<::rme::protobuf::appearances::HOOK_TYPE> : std::true_type {};
 template <>
 inline const EnumDescriptor* GetEnumDescriptor<::rme::protobuf::appearances::HOOK_TYPE>() {
   return ::rme::protobuf::appearances::HOOK_TYPE_descriptor();
+}
+template <>
+struct is_proto_enum<::rme::protobuf::appearances::APPEARANCE_TYPE> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::rme::protobuf::appearances::APPEARANCE_TYPE>() {
+  return ::rme::protobuf::appearances::APPEARANCE_TYPE_descriptor();
 }
 template <>
 struct is_proto_enum<::rme::protobuf::appearances::WEAPON_TYPE> : std::true_type {};
